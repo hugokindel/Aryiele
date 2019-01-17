@@ -1,5 +1,13 @@
+# ----------------------------------------------------------------
+# CMake build file for Aryiele.
+# ----------------------------------------------------------------
 cmake_minimum_required(VERSION 3.12)
 project("Aryiele")
+
+find_package(LLVM REQUIRED CONFIG)
+
+message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
+message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
@@ -23,11 +31,26 @@ if(UNIX AND NOT APPLE)
             stdc++fs)
 endif()
 
-add_executable(Aryiele
-        ${PROJECT_SOURCE_DIR}/Main.cpp)
+add_definitions(${LLVM_DEFINITIONS})
 
-target_include_directories(Aryiele PUBLIC ${ARYIELE_INCLUDES})
-target_link_libraries(Aryiele LINK_PUBLIC ${ARYIELE_LIBRARIES})
+llvm_map_components_to_libnames(all)
+
+add_executable(Aryiele
+        ${PROJECT_SOURCE_DIR}/Main.cpp
+        ${PROJECT_SOURCE_DIR}/Tokenizer/Token.cpp
+        ${PROJECT_SOURCE_DIR}/Tokenizer/Token.h
+        ${PROJECT_SOURCE_DIR}/Tokenizer/Tokenizer.cpp
+        ${PROJECT_SOURCE_DIR}/Tokenizer/Tokenizer.h
+        ${PROJECT_SOURCE_DIR}/Tokenizer/TokenPrecedence.cpp
+        ${PROJECT_SOURCE_DIR}/Tokenizer/TokenPrecedence.h
+        ${PROJECT_SOURCE_DIR}/Tokenizer/TokenTable.h
+        ${PROJECT_SOURCE_DIR}/Tokenizer/TokenTypes.h
+        ${PROJECT_SOURCE_DIR}/Core/Includes.h
+        ${PROJECT_SOURCE_DIR}/Core/Logger.h
+        ${PROJECT_SOURCE_DIR}/Parser/ParserTokens.h)
+
+target_include_directories(Aryiele PUBLIC ${ARYIELE_INCLUDES} ${LLVM_INCLUDE_DIRS})
+target_link_libraries(Aryiele ${ARYIELE_LIBRARIES} ${llvm_libs})
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND WIN32)
     get_filename_component(COMPILER_PATH ${CMAKE_C_COMPILER} DIRECTORY)
