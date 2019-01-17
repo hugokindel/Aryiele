@@ -1,9 +1,9 @@
 #include <Aryiele/Tokenizer/Tokenizer.h>
-#include <Aryiele/Tokenizer/TokenTable.h>
+#include <Aryiele/Tokenizer/TokenizerTable.h>
 
 namespace Aryiele
 {
-    std::vector<Token> Tokenizer::Tokenize(const std::string& filepath)
+    std::vector<TokenizerToken> Tokenizer::Tokenize(const std::string& filepath)
     {
         std::ifstream file;
         std::string expression;
@@ -24,10 +24,10 @@ namespace Aryiele
 
     void Tokenizer::UseFiniteStateMachine(std::string expression)
     {
-        Token currentToken;
-        std::vector<Token> tokens;
-        auto currentTransitionState = Reject;
-        auto previousTransitionState = Reject;
+        TokenizerToken currentToken;
+        std::vector<TokenizerToken> tokens;
+        auto currentTransitionState = TokenizerTokens_Reject;
+        auto previousTransitionState = TokenizerTokens_Reject;
         std::string currentTokenExpression;
 
         for (unsigned x = 0; x < expression.length();)
@@ -35,9 +35,9 @@ namespace Aryiele
             const auto currentCharacter = expression[x];
             const auto column = GetTransitionTableColumn(currentCharacter);
 
-            currentTransitionState = static_cast<TokenTypes>(TokenTable[currentTransitionState][column]);
+            currentTransitionState = static_cast<TokenizerTokens>(TokenizerTable[currentTransitionState][column]);
 
-            if (currentTransitionState == Reject)
+            if (currentTransitionState == TokenizerTokens_Reject)
             {
                 currentToken.Content = currentTokenExpression;
                 currentToken.Type = previousTransitionState;
@@ -62,7 +62,8 @@ namespace Aryiele
             tokens.push_back(currentToken);
         }
 
-        currentToken.Type = Newline;
+        currentToken.Content = std::string();
+        currentToken.Type = TokenizerTokens_Newline;
 
         tokens.push_back(currentToken);
 
@@ -71,8 +72,8 @@ namespace Aryiele
 
     void Tokenizer::RemoveComments()
     {
-        Token currentToken;
-        std::vector<Token> tokens;
+        TokenizerToken currentToken;
+        std::vector<TokenizerToken> tokens;
         auto isInCommentSingleLine = false;
         auto isInCommentMultiLine = false;
 
@@ -83,7 +84,7 @@ namespace Aryiele
 
             if (isInCommentSingleLine)
             {
-                if (currentToken.Type == Newline)
+                if (currentToken.Type == TokenizerTokens_Newline)
                     isInCommentSingleLine = false;
             }
             else if (isInCommentMultiLine)
@@ -112,8 +113,8 @@ namespace Aryiele
 
     void Tokenizer::DetailTokens()
     {
-        Token currentToken;
-        std::vector<Token> tokens;
+        TokenizerToken currentToken;
+        std::vector<TokenizerToken> tokens;
         auto isInText = false;
         std::string inTextQuote;
         std::string currentText;
@@ -123,14 +124,14 @@ namespace Aryiele
             const auto lastToken = currentToken;
             currentToken = token;
 
-            if (currentToken.Type == Newline)
+            if (currentToken.Type == TokenizerTokens_Newline)
                 continue;
-            if (currentToken.Type == Space && !isInText)
+            if (currentToken.Type == TokenizerTokens_Space && !isInText)
                 continue;
 
             if (isInText)
             {
-                if (currentToken.Type == StringQuote && currentToken.Content == inTextQuote)
+                if (currentToken.Type == TokenizerTokens_StringQuote && currentToken.Content == inTextQuote)
                 {
                     if (currentText[currentText.length() - 1] == '\\')
                     {
@@ -140,7 +141,7 @@ namespace Aryiele
                     else
                     {
                         currentToken.Content = currentText;
-                        currentToken.Type = String;
+                        currentToken.Type = TokenizerTokens_String;
 
                         tokens.emplace_back(currentToken);
 
@@ -154,23 +155,10 @@ namespace Aryiele
                     currentText += currentToken.Content;
                 }
             }
-            else if (currentToken.Type == StringQuote)
+            else if (currentToken.Type == TokenizerTokens_StringQuote)
             {
                 inTextQuote = currentToken.Content;
                 isInText = true;
-            }
-            else if (currentToken.Type == Identifier)
-            {
-                if (currentToken.Content == "function" ||
-                    currentToken.Content == "var" ||
-                    currentToken.Content == "return" ||
-                    currentToken.Content == "int")
-                    currentToken.Type = Keyword;
-                else if (currentToken.Content == "true" ||
-                    currentToken.Content == "false")
-                    currentToken.Type = Boolean;
-
-                tokens.emplace_back(currentToken);
             }
             else
             {
@@ -183,80 +171,65 @@ namespace Aryiele
         m_tokens = tokens;
     }
 
-    TokenTypes Tokenizer::GetTransitionTableColumn(char currentCharacter)
+    TokenizerTokens Tokenizer::GetTransitionTableColumn(char currentCharacter)
     {
         if (currentCharacter == ';')
-            return EndOfLine;
-
-        if (currentCharacter == '{' ||
-            currentCharacter == '}' ||
-            currentCharacter == '[' ||
-            currentCharacter == ']' ||
-            currentCharacter == '(' ||
-            currentCharacter == ')')
-            return Scope;
-
-        if (currentCharacter == '\"' ||
-            currentCharacter == '\'')
-            return StringQuote;
-
-        if (isspace(currentCharacter))
         {
-            return Space;
+            return TokenizerTokens_EOF;
+        }
+        else if (currentCharacter == '{' || currentCharacter == '}' ||
+            currentCharacter == '[' || currentCharacter == ']' ||
+            currentCharacter == '(' || currentCharacter == ')')
+        {
+            return TokenizerTokens_Scope;
+        }
+        else if (currentCharacter == '\"' || currentCharacter == '\'')
+        {
+            return TokenizerTokens_StringQuote;
+        }
+        else if (isspace(currentCharacter))
+        {
+            return TokenizerTokens_Space;
+        }
+        else if (isdigit(currentCharacter) || currentCharacter == '.')
+        {
+            return TokenizerTokens_Number;
+        }
+        else if (isalpha(currentCharacter))
+        {
+            return TokenizerTokens_Identifier;
+        }
+        else if (ispunct(currentCharacter))
+        {
+            return TokenizerTokens_Operator;
         }
 
-        if (isdigit(currentCharacter))
-        {
-            return Integer;
-        }
-
-        if (currentCharacter == '.')
-        {
-            return Decimal;
-        }
-
-        if (isalpha(currentCharacter))
-        {
-            return Identifier;
-        }
-
-        if (ispunct(currentCharacter))
-        {
-            return Operator;
-        }
-
-        return Unknown;
+        return TokenizerTokens_Unknown;
     }
 
-    std::string Tokenizer::GetTokenName(Token tokenType)
+    std::string Tokenizer::GetTokenName(TokenizerToken tokenType)
     {
         switch (tokenType.Type)
         {
-            case Integer:
-                return "Integer";
-            case Decimal:
-                return "Real";
-            case String:
+            case TokenizerTokens_Reject:
+                return "Reject";
+            case TokenizerTokens_Number:
+                return "Number";
+            case TokenizerTokens_String:
                 return "String";
-            case Boolean:
-                return "Boolean";
-            case Operator:
+            case TokenizerTokens_Operator:
                 return "Operator";
-            case Identifier:
+            case TokenizerTokens_Identifier:
                 return "Identifier";
-            case Keyword:
-                return "Keyword";
-            case Scope:
+            case TokenizerTokens_Scope:
                 return "Scope";
-            case Unknown:
-                return "Unknown";
-            case Space:
+            case TokenizerTokens_Space:
                 return "Space";
-            case Newline:
+            case TokenizerTokens_Newline:
                 return "Newline";
-            case EndOfLine:
-                return "EndOfLine";
-            case StringQuote:
+            case TokenizerTokens_EOF:
+                return "EOF";
+            case TokenizerTokens_StringQuote:
                 return "StringQuote";
             default:
                 return "Error";

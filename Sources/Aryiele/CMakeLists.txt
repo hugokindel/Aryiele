@@ -39,16 +39,18 @@ llvm_map_components_to_libnames(all)
 
 add_executable(Aryiele
         ${PROJECT_SOURCE_DIR}/Main.cpp
-        ${PROJECT_SOURCE_DIR}/Tokenizer/Token.cpp
-        ${PROJECT_SOURCE_DIR}/Tokenizer/Token.h
-        ${PROJECT_SOURCE_DIR}/Tokenizer/Tokenizer.cpp
-        ${PROJECT_SOURCE_DIR}/Tokenizer/Tokenizer.h
-        ${PROJECT_SOURCE_DIR}/Tokenizer/TokenPrecedence.cpp
-        ${PROJECT_SOURCE_DIR}/Tokenizer/TokenPrecedence.h
-        ${PROJECT_SOURCE_DIR}/Tokenizer/TokenTable.h
-        ${PROJECT_SOURCE_DIR}/Tokenizer/TokenTypes.h
         ${PROJECT_SOURCE_DIR}/Core/Includes.h
         ${PROJECT_SOURCE_DIR}/Core/Logger.h
+        ${PROJECT_SOURCE_DIR}/Tokenizer/Tokenizer.cpp
+        ${PROJECT_SOURCE_DIR}/Tokenizer/Tokenizer.h
+        ${PROJECT_SOURCE_DIR}/Tokenizer/TokenizerToken.cpp
+        ${PROJECT_SOURCE_DIR}/Tokenizer/TokenizerToken.h
+        ${PROJECT_SOURCE_DIR}/Tokenizer/TokenizerTokens.h
+        ${PROJECT_SOURCE_DIR}/Tokenizer/TokenizerTable.h
+        ${PROJECT_SOURCE_DIR}/Parser/Parser.cpp
+        ${PROJECT_SOURCE_DIR}/Parser/Parser.h
+        ${PROJECT_SOURCE_DIR}/Parser/ParserToken.cpp
+        ${PROJECT_SOURCE_DIR}/Parser/ParserToken.h
         ${PROJECT_SOURCE_DIR}/Parser/ParserTokens.h)
 
 target_include_directories(Aryiele PUBLIC ${ARYIELE_INCLUDES} ${LLVM_INCLUDE_DIRS})

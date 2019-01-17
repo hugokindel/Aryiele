@@ -3,6 +3,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <memory>
+#include <Vanir/FileUtils.h>
 
 int main(const int argc, char *argv[])
 {
@@ -17,14 +18,21 @@ int main(const int argc, char *argv[])
 
     std::string filename = argc < 2 ? "../test.as" : argv[1];
 
-    auto tokenizer = std::make_shared<Aryiele::Tokenizer>();
+    if (!Vanir::FileUtils::FileExist(filename))
+    {
+        LOG_ERROR("No input file.");
+    }
+    else
+    {
+        auto tokenizer = std::make_shared<Aryiele::Tokenizer>();
 
-    LOG_INFO("--> Tokenizing...");
+        LOG_INFO("--> Tokenizing...");
 
-    for (auto& token : tokenizer->Tokenize(filename))
+        for (auto& token : tokenizer->Tokenize(filename))
         LOG_INFO("%s: %s", tokenizer->GetTokenName(token).c_str(), token.Content.c_str());
 
-    LOG_INFO("--> Tokenizing finished.");
+        LOG_INFO("--> Tokenizing finished.");
+    }
 
     LOG_DEFAULT("-------------------------------------------------------------------------------------------------");
 

@@ -3,15 +3,15 @@
 
 #include <vector>
 #include <Aryiele/Core/Includes.h>
-#include <Aryiele/Tokenizer/Token.h>
+#include <Aryiele/Tokenizer/TokenizerToken.h>
 
 namespace Aryiele
 {
     class Tokenizer : public Vanir::Singleton<Tokenizer>
     {
     public:
-        std::vector<Token> Tokenize(const std::string& filepath);
-        std::string GetTokenName(Token tokenType);
+        std::vector<TokenizerToken> Tokenize(const std::string& filepath);
+        std::string GetTokenName(TokenizerToken tokenType);
 
     private:
         // First pass of the tokenizer (separate all characters by expression with a finite-state machine).
@@ -20,9 +20,9 @@ namespace Aryiele
         void RemoveComments();
         // Third pass of the tokenizer (remove all spaces; define literal strings, keywords, booleans).
         void DetailTokens();
-        TokenTypes GetTransitionTableColumn(char currentCharacter);
+        TokenizerTokens GetTransitionTableColumn(char currentCharacter);
 
-        std::vector<Token> m_tokens;
+        std::vector<TokenizerToken> m_tokens;
     };
 
 } /* Namespace Aryiele. */
