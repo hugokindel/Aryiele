@@ -115,9 +115,9 @@ namespace Aryiele
     {
         TokenizerToken currentToken;
         std::vector<TokenizerToken> tokens;
-        auto isInText = false;
         std::string inTextQuote;
         std::string currentText;
+        auto isInText = false;
 
         for (auto& token : m_tokens)
         {
@@ -211,8 +211,6 @@ namespace Aryiele
     {
         switch (tokenType.Type)
         {
-            case TokenizerTokens_Reject:
-                return "Reject";
             case TokenizerTokens_Number:
                 return "Number";
             case TokenizerTokens_String:
@@ -231,6 +229,8 @@ namespace Aryiele
                 return "EOL";
             case TokenizerTokens_StringQuote:
                 return "StringQuote";
+            case TokenizerTokens_Unknown:
+                return "Unknown";
             default:
                 return "Error";
         }

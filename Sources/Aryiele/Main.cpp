@@ -4,6 +4,7 @@
 #include <windows.h>
 #include <memory>
 #include <Vanir/FileUtils.h>
+#include <Aryiele/Parser/Parser.h>
 
 int main(const int argc, char *argv[])
 {
@@ -28,10 +29,41 @@ int main(const int argc, char *argv[])
 
         LOG_INFO("--> Tokenizing...");
 
-        for (auto& token : tokenizer->Tokenize(filename))
-        LOG_INFO("%s: %s", tokenizer->GetTokenName(token).c_str(), token.Content.c_str());
+        auto tokenizerTokens = tokenizer->Tokenize(filename);
+
+        for (auto& token : tokenizerTokens)
+        {
+            LOG_INFO("%s: %s", tokenizer->GetTokenName(token).c_str(), token.Content.c_str());
+
+            if (token.Type == Aryiele::TokenizerTokens_Unknown)
+                return 20100001;
+        }
 
         LOG_INFO("--> Tokenizing finished.");
+
+        tokenizer.reset();
+
+        auto parser = std::make_shared<Aryiele::Parser>();
+
+        LOG_INFO("--> Parsing...");
+
+        auto parserTokens = parser->ConvertTokens(tokenizerTokens);
+
+        LOG_INFO("-> Creating parsing tokens...");
+
+        for (auto& token : parserTokens)
+        {
+            LOG_INFO("%s: %s", parser->GetTokenName(token).c_str(), token.Content.c_str());
+
+            if (token.Type == Aryiele::ParserTokens_Unknown)
+                return 20100002;
+        }
+
+        LOG_INFO("-> Parsing tokens created.");
+
+        LOG_INFO("--> Parsing finished.");
+
+        parser.reset();
     }
 
     LOG_DEFAULT("-------------------------------------------------------------------------------------------------");

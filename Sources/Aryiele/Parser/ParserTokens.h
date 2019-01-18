@@ -11,6 +11,8 @@ namespace Aryiele
         ParserTokens_LiteralValue_String, // A string, example: "This is a text"
         ParserTokens_LiteralValue_Boolean, // A boolean, example: true
 
+        ParserTokens_Operator_Equal, // =, example: 5 = 5
+
         ParserTokens_Operator_Arithmetic_Plus, // +, example: 5 + 5
         ParserTokens_Operator_Arithmetic_UnaryPlus, // + (as left expression), example: +7
         ParserTokens_Operator_Arithmetic_Minus, // -, example: 5 - 8

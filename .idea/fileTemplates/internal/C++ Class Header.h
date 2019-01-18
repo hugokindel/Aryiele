@@ -1,4 +1,3 @@
-#parse("C File Header.h")
 #[[#ifndef]]# ARYIELE_${NAME}_H
 #[[#define]]# ARYIELE_${NAME}_H
 
@@ -8,7 +7,7 @@ namespace Aryiele
     {
         
     };
-
+    
 } /* Namespace Aryiele. */
 
 #[[#endif]]# /* ARYIELE_${NAME}_H. */
