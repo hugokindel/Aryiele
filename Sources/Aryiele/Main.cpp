@@ -6,6 +6,8 @@
 #include <Vanir/FileUtils.h>
 #include <Aryiele/Parser/Parser.h>
 
+// TODO: Change Tokenizer -> Lexer
+
 int main(const int argc, char *argv[])
 {
 #ifdef _WIN32

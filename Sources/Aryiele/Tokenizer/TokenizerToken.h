@@ -1,5 +1,5 @@
-#ifndef ARYIELE_TOKEN_H
-#define ARYIELE_TOKEN_H
+#ifndef ARYIELE_LEXERTOKEN_H
+#define ARYIELE_LEXERTOKEN_H
 
 #include <string>
 #include <Aryiele/Tokenizer/TokenizerTokens.h>
@@ -16,4 +16,4 @@ namespace Aryiele
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_TOKEN_H. */
+#endif /* ARYIELE_LEXERTOKEN_H. */

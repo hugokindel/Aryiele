@@ -1,5 +1,5 @@
-#ifndef ARYIELE_TOKENIZER_H
-#define ARYIELE_TOKENIZER_H
+#ifndef ARYIELE_LEXER_H
+#define ARYIELE_LEXER_H
 
 #include <vector>
 #include <Aryiele/Core/Includes.h>
@@ -27,4 +27,4 @@ namespace Aryiele
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_TOKENIZER_H. */
+#endif /* ARYIELE_LEXER_H. */

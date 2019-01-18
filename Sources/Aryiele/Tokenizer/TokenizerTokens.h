@@ -1,11 +1,11 @@
-#ifndef ARYIELE_TOKENIZERTOKENS_H
-#define ARYIELE_TOKENIZERTOKENS_H
+#ifndef ARYIELE_LEXERTOKENS_H
+#define ARYIELE_LEXERTOKENS_H
 
 namespace Aryiele
 {
     enum TokenizerTokens
     {
-        TokenizerTokens_Reject = 0,
+        TokenizerTokens_Reject,
 
         TokenizerTokens_Number,
         TokenizerTokens_String,
@@ -27,4 +27,4 @@ namespace Aryiele
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_TOKENIZERTOKENS_H. */
+#endif /* ARYIELE_LEXERTOKENS_H. */
