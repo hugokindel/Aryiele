@@ -57,10 +57,10 @@ namespace Aryiele
         //ParserTokens_Keyword_Namespace, // namespace
         //ParserTokens_Keyword_Static, // statoc
 
-        ParserTokens_Keyword_Type_Int, // int
-        ParserTokens_Keyword_Type_Float, // float
-        ParserTokens_Keyword_Type_Bool, // bool
-        //ParserTokens_Keyword_Type_Double, // double
+        //ParserTokens_Keyword_Type_Int, // int
+        //ParserTokens_Keyword_Type_Double, // float
+        //ParserTokens_Keyword_Type_Bool, // bool
+        //ParserTokens_Keyword_Type_Float, // double
         //ParserTokens_Keyword_Type_Char, // char
         //ParserTokens_Keyword_Type_String, // string
         //ParserTokens_Keyword_Type_Byte, // byte
@@ -76,7 +76,9 @@ namespace Aryiele
 
         ParserTokens_Identifier, // Any characters sequence other than a keyword.
         ParserTokens_TypeDefiner, // :, example: var test: int = 0;
+        ParserTokens_Separator, // ,
         ParserTokens_EOL, // ;, example: return 0;
+        ParserTokens_EOF, // EOF
 
         ParserTokens_Unknown
     };

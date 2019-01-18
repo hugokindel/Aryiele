@@ -1,12 +1,12 @@
 ﻿#include <Aryiele/Core/Includes.h>
-#include <Aryiele/Tokenizer/Tokenizer.h>
+#include <Aryiele/Lexer/Lexer.h>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <memory>
 #include <Vanir/FileUtils.h>
 #include <Aryiele/Parser/Parser.h>
 
-// TODO: Change Tokenizer -> Lexer
+// TODO: Change Lexer -> Lexer
 
 int main(const int argc, char *argv[])
 {
@@ -27,29 +27,29 @@ int main(const int argc, char *argv[])
     }
     else
     {
-        auto tokenizer = std::make_shared<Aryiele::Tokenizer>();
+        auto lexer = std::make_shared<Aryiele::Lexer>();
 
-        LOG_INFO("--> Tokenizing...");
+        LOG_INFO("--> Lexing...");
 
-        auto tokenizerTokens = tokenizer->Tokenize(filename);
+        auto lexerTokens = lexer->Tokenize(filename);
 
-        for (auto& token : tokenizerTokens)
+        for (auto& token : lexerTokens)
         {
-            LOG_INFO("%s: %s", tokenizer->GetTokenName(token).c_str(), token.Content.c_str());
+            LOG_INFO("%s: %s", lexer->GetTokenName(token).c_str(), token.Content.c_str());
 
-            if (token.Type == Aryiele::TokenizerTokens_Unknown)
+            if (token.Type == Aryiele::LexerTokens_Unknown)
                 return 20100001;
         }
 
-        LOG_INFO("--> Tokenizing finished.");
+        LOG_INFO("--> Lexing finished.");
 
-        tokenizer.reset();
+        lexer.reset();
 
         auto parser = std::make_shared<Aryiele::Parser>();
 
         LOG_INFO("--> Parsing...");
 
-        auto parserTokens = parser->ConvertTokens(tokenizerTokens);
+        auto parserTokens = parser->ConvertTokens(lexerTokens);
 
         LOG_INFO("-> Creating parsing tokens...");
 
@@ -62,6 +62,8 @@ int main(const int argc, char *argv[])
         }
 
         LOG_INFO("-> Parsing tokens created.");
+
+        parser->Parse(parserTokens);
 
         LOG_INFO("--> Parsing finished.");
 

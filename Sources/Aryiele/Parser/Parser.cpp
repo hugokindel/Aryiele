@@ -1,39 +1,50 @@
+#include <utility>
 #include <Aryiele/Parser/Parser.h>
 #include <Vanir/StringUtils.h>
+#include <llvm/ADT/STLExtras.h>
+#include <Aryiele/Parser/AST/ExpressionDoubleNode.h>
+#include <iostream>
+#include <fcntl.h>
 
 namespace Aryiele
 {
-    std::vector<ParserToken> Parser::ConvertTokens(std::vector<TokenizerToken> tokenizerTokens)
+    Parser::Parser() :
+        m_currentTokenIndex(-1)
+    {
+
+    }
+
+    std::vector<ParserToken> Parser::ConvertTokens(std::vector<LexerToken> LexerTokens)
     {
         auto tokens = std::vector<ParserToken>();
-        auto lastToken = TokenizerToken(std::string(), TokenizerTokens_Unknown);
+        auto lastToken = LexerToken(std::string(), LexerTokens_Unknown);
 
-        for (auto& token : tokenizerTokens)
+        for (auto& token : LexerTokens)
         {
             switch (token.Type)
             {
-                case TokenizerTokens_Number:
+                case LexerTokens_Number:
                     // Numbers.
                     if (token.Content.find('.') != std::string::npos)
                         tokens.emplace_back(token.Content, ParserTokens_LiteralValue_Decimal);
                     else
                         tokens.emplace_back(token.Content, ParserTokens_LiteralValue_Integer);
                     break;
-                case TokenizerTokens_String:
+                case LexerTokens_String:
                     tokens.emplace_back(token.Content, ParserTokens_LiteralValue_String);
                     break;
-                case TokenizerTokens_Operator:
+                case LexerTokens_Operator:
                     // Operators.
                     if (token.Content == "=")
                         tokens.emplace_back(token.Content, ParserTokens_Operator_Equal);
                     // Arithmetic Operators.
-                    else if (token.Content == "+" && lastToken.Type != TokenizerTokens_Number)
+                    else if (token.Content == "+" && lastToken.Type != LexerTokens_Number)
                         tokens.emplace_back(token.Content, ParserTokens_Operator_Arithmetic_UnaryPlus);
-                    else if (token.Content == "+" && lastToken.Type == TokenizerTokens_Number)
+                    else if (token.Content == "+" && lastToken.Type == LexerTokens_Number)
                         tokens.emplace_back(token.Content, ParserTokens_Operator_Arithmetic_Plus);
-                    else if (token.Content == "-" && lastToken.Type != TokenizerTokens_Number)
+                    else if (token.Content == "-" && lastToken.Type != LexerTokens_Number)
                         tokens.emplace_back(token.Content, ParserTokens_Operator_Arithmetic_UnaryMinus);
-                    else if (token.Content == "-" && lastToken.Type == TokenizerTokens_Number)
+                    else if (token.Content == "-" && lastToken.Type == LexerTokens_Number)
                         tokens.emplace_back(token.Content, ParserTokens_Operator_Arithmetic_Minus);
                     else if (token.Content == "*")
                         tokens.emplace_back(token.Content, ParserTokens_Operator_Arithmetic_Multiply);
@@ -63,10 +74,12 @@ namespace Aryiele
                         tokens.emplace_back(token.Content, ParserTokens_Operator_Logical_Not);
                     else if (token.Content == ":")
                         tokens.emplace_back(token.Content, ParserTokens_TypeDefiner);
+                    else if (token.Content == ",")
+                        tokens.emplace_back(token.Content, ParserTokens_Separator);
                     else
                         tokens.emplace_back(token.Content, ParserTokens_Unknown);
                     break;
-                case TokenizerTokens_Scope:
+                case LexerTokens_Scope:
                     // Scopes
                     if (token.Content == "(")
                         tokens.emplace_back(token.Content, ParserTokens_Scope_RoundBracket_Open);
@@ -83,7 +96,7 @@ namespace Aryiele
                     else
                         tokens.emplace_back(token.Content, ParserTokens_Unknown);
                     break;
-                case TokenizerTokens_Identifier:
+                case LexerTokens_Identifier:
                     // Boolean
                     if (token.Content == "true" || token.Content == "false")
                         tokens.emplace_back(token.Content, ParserTokens_LiteralValue_Boolean);
@@ -94,16 +107,10 @@ namespace Aryiele
                         tokens.emplace_back(token.Content, ParserTokens_Keyword_Var);
                     else if (token.Content == "return")
                         tokens.emplace_back(token.Content, ParserTokens_Keyword_Return);
-                    else if (token.Content == "int")
-                        tokens.emplace_back(token.Content, ParserTokens_Keyword_Type_Int);
-                    else if (token.Content == "float")
-                        tokens.emplace_back(token.Content, ParserTokens_Keyword_Type_Float);
-                    else if (token.Content == "bool")
-                        tokens.emplace_back(token.Content, ParserTokens_Keyword_Type_Bool);
                     else
                         tokens.emplace_back(token.Content, ParserTokens_Identifier);
                     break;
-                case TokenizerTokens_EOL:
+                case LexerTokens_EOL:
                     tokens.emplace_back(token.Content, ParserTokens_EOL);
                     break;
                 default:
@@ -182,20 +189,228 @@ namespace Aryiele
                 return "Keyword_Var";
             case ParserTokens_Keyword_Return:
                 return "Keyword_Return";
-            case ParserTokens_Keyword_Type_Int:
-                return "Keyword_Type_Int";
-            case ParserTokens_Keyword_Type_Float:
-                return "Keyword_Type_Float";
-            case ParserTokens_Keyword_Type_Bool:
-                return "Keyword_Type_Bool";
             case ParserTokens_Identifier:
                 return "Identifier";
             case ParserTokens_TypeDefiner:
                 return "TypeDefiner";
+            case ParserTokens_Separator:
+                return "Separator";
             case ParserTokens_EOL:
                 return "EOL";
+            case ParserTokens_EOF:
+                return "EOF";
             default:
                 return "Unknown";
+        }
+    }
+
+    void Parser::Parse(std::vector<ParserToken> tokens)
+    {
+        m_tokens = std::move(tokens);
+        m_tokens.emplace_back("", ParserTokens_EOF);
+
+        while (true)
+        {
+            GetNextToken();
+
+            if (m_currentToken.Type == ParserTokens_EOF)
+                break;
+            if (m_currentToken.Type == ParserTokens_Keyword_Function)
+                m_node.emplace_back(ParseFunction());
+        }
+
+        m_dumpNode = std::make_unique<ParserDumpTreeNode>(nullptr, L"File");
+
+        for (auto& node : m_node)
+            node->DumpInformations(m_dumpNode);
+
+        _setmode(_fileno(stdout), _O_WTEXT);
+        DumpInformations(m_dumpNode);
+        _setmode(_fileno(stdout), _O_TEXT);
+    }
+
+    ParserToken Parser::GetNextToken()
+    {
+        m_currentToken = m_tokens[++m_currentTokenIndex];
+
+        return m_currentToken;
+    }
+
+    std::shared_ptr<ExpressionNode> Parser::ParseExpressionDouble()
+    {
+        auto result = std::make_shared<ExpressionDoubleNode>(std::stod(m_currentToken.Content));
+
+        GetNextToken();
+
+        return std::move(result);
+    }
+
+    std::shared_ptr<FunctionNode> Parser::ParseFunction()
+    {
+        std::string name;
+        std::string type;
+        std::vector<Argument> arguments;
+        std::vector<std::shared_ptr<ExpressionNode>> expressions;
+
+        GetNextToken();
+
+        if (m_currentToken.Type == ParserTokens_Identifier)
+            name = m_currentToken.Content;
+        else
+        {
+            LOG_ERROR("Expected an identifier.");
+
+            return nullptr;
+        }
+
+        GetNextToken();
+
+        if (m_currentToken.Type != ParserTokens_Scope_RoundBracket_Open)
+        {
+            LOG_ERROR("Expected an opened round bracket.");
+
+            return nullptr;
+        }
+
+        while (true)
+        {
+            GetNextToken();
+
+            if (m_currentToken.Type == ParserTokens_Scope_RoundBracket_Closed)
+                break;
+            else if (m_currentToken.Type == ParserTokens_Identifier)
+            {
+                Argument argument(m_currentToken.Content);
+
+                GetNextToken();
+
+                if (m_currentToken.Type != ParserTokens_TypeDefiner)
+                {
+                    LOG_ERROR("Expected a type definer separator.");
+
+                    return nullptr;
+                }
+
+                GetNextToken();
+
+                if (m_currentToken.Type == ParserTokens_Identifier)
+                    argument.Type = m_currentToken.Content;
+                else
+                {
+                    LOG_ERROR("Expected a type name.");
+
+                    return nullptr;
+                }
+
+                arguments.emplace_back(argument);
+            }
+            else if (m_currentToken.Type == ParserTokens_Separator)
+            {
+                continue;
+            }
+            else
+            {
+                LOG_ERROR("Expected either a closed round bracket or a variable.");
+
+                return nullptr;
+            }
+        }
+
+        GetNextToken();
+
+        if (m_currentToken.Type != ParserTokens_TypeDefiner)
+        {
+            LOG_ERROR("Expected a type definer separator.");
+
+            return nullptr;
+        }
+
+        GetNextToken();
+
+        if (m_currentToken.Type == ParserTokens_Identifier)
+            type = m_currentToken.Content;
+        else
+        {
+            LOG_ERROR("Expected a type name.");
+
+            return nullptr;
+        }
+
+        GetNextToken();
+
+        if (m_currentToken.Type != ParserTokens_Scope_CurlyBracket_Open)
+        {
+            LOG_ERROR("Expected an opened curly bracket.");
+
+            return nullptr;
+        }
+
+        while (true)
+        {
+            GetNextToken();
+
+            if (m_currentToken.Type == ParserTokens_Scope_CurlyBracket_Closed)
+                break;
+
+            //auto expression = ParseBase();
+
+            //if (expression != nullptr)
+            //    implementation.emplace_back(expression);
+        }
+
+        return std::make_shared<FunctionNode>(std::make_shared<FunctionPrototypeNode>(name, type, arguments), expressions);
+    }
+
+    void Parser::DumpInformations(const std::shared_ptr<ParserDumpTreeNode>& node, std::wstring indent) const
+    {
+        const auto isRoot = node->Parent == nullptr;
+        const auto hasChildren = !node->Children.empty();
+        const auto hasInformations = !node->Informations.empty();
+        auto isLastSibling = true;
+
+
+        if (!isRoot)
+            isLastSibling = static_cast<int>(std::distance(node->Parent->Children.begin(), std::find(node->Parent->Children.begin(), node->Parent->Children.end(), node))) == static_cast<int>(node->Parent->Children.size()) - 1;
+
+        if (isRoot)
+        {
+            std::wcout << node->Name << std::endl;
+        }
+        else
+        {
+            std::wcout << indent + (isLastSibling ? L"└╴" : L"├╴") << node->Name << std::endl;
+            indent += isLastSibling ? L"  " : L"│ ";
+
+        }
+
+        if (hasChildren)
+        {
+            std::wcout << indent + (hasInformations ? L"├╴Children" : L"└╴Children") << std::endl;
+            indent += hasInformations ? L"│ " : L"  ";
+
+            for (auto& nodeChild : node->Children)
+                DumpInformations(nodeChild, indent);
+        }
+
+        if (hasInformations)
+        {
+            if (hasChildren)
+            {
+                Vanir::StringUtils::ReverseWString(indent);
+                indent = indent.erase(0, 2);
+                Vanir::StringUtils::ReverseWString(indent);
+            }
+
+            std::wcout << indent + L"└╴Informations" << std::endl;
+
+            indent += L"  ";
+
+            for (auto& information : node->Informations)
+            {
+                bool isLastInformation = isLastSibling && (static_cast<int>(std::distance(node->Informations.begin(), std::find(node->Informations.begin(), node->Informations.end(), information))) == static_cast<int>(node->Informations.size()) - 1);
+
+                std::wcout << (indent + (isLastInformation ? L"└╴" : L"├╴")).append(information) << std::endl;
+            }
         }
     }
 

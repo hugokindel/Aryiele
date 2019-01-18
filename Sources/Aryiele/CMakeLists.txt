@@ -11,6 +11,8 @@ find_package(LLVM REQUIRED CONFIG)
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 
+add_definitions(-DUNICODE -D_UNICODE)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
@@ -27,7 +29,9 @@ set(ARYIELE_LIBRARIES ${ARYIELE_LIBRARIES}
 set(ARYIELE_INCLUDES
         ${PROJECT_SOURCE_DIR}/../
         ${PROJECT_SOURCE_DIR}/../Dependencies/
-        ${PROJECT_SOURCE_DIR}/../../Build/Include/)
+        ${PROJECT_SOURCE_DIR}/../Dependencies/LLVM/include/
+        ${PROJECT_SOURCE_DIR}/../../Build/Include/
+        ${PROJECT_SOURCE_DIR}/../../Build/.Temps/CMake/${CMAKE_CXX_COMPILER_ID}_${CMAKE_SIZEOF_VOID_P}_${CMAKE_BUILD_TYPE}/Sources/Dependencies/LLVM/include/)
 if(UNIX AND NOT APPLE)
     set(ARYIELE_LIBRARIES ${ARYIELE_LIBRARIES}
             stdc++fs)
@@ -41,17 +45,37 @@ add_executable(Aryiele
         ${PROJECT_SOURCE_DIR}/Main.cpp
         ${PROJECT_SOURCE_DIR}/Core/Includes.h
         ${PROJECT_SOURCE_DIR}/Core/Logger.h
-        ${PROJECT_SOURCE_DIR}/Tokenizer/Tokenizer.cpp
-        ${PROJECT_SOURCE_DIR}/Tokenizer/Tokenizer.h
-        ${PROJECT_SOURCE_DIR}/Tokenizer/TokenizerToken.cpp
-        ${PROJECT_SOURCE_DIR}/Tokenizer/TokenizerToken.h
-        ${PROJECT_SOURCE_DIR}/Tokenizer/TokenizerTokens.h
-        ${PROJECT_SOURCE_DIR}/Tokenizer/TokenizerTable.h
+        ${PROJECT_SOURCE_DIR}/Lexer/Lexer.cpp
+        ${PROJECT_SOURCE_DIR}/Lexer/Lexer.h
+        ${PROJECT_SOURCE_DIR}/Lexer/LexerToken.cpp
+        ${PROJECT_SOURCE_DIR}/Lexer/LexerToken.h
+        ${PROJECT_SOURCE_DIR}/Lexer/LexerTokens.h
+        ${PROJECT_SOURCE_DIR}/Lexer/LexerTable.h
         ${PROJECT_SOURCE_DIR}/Parser/Parser.cpp
         ${PROJECT_SOURCE_DIR}/Parser/Parser.h
         ${PROJECT_SOURCE_DIR}/Parser/ParserToken.cpp
         ${PROJECT_SOURCE_DIR}/Parser/ParserToken.h
-        ${PROJECT_SOURCE_DIR}/Parser/ParserTokens.h)
+        ${PROJECT_SOURCE_DIR}/Parser/ParserTokens.h
+        ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionNode.cpp
+        ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionNode.h
+        ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionDoubleNode.cpp
+        ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionDoubleNode.h
+        ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionVariableNode.cpp
+        ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionVariableNode.h
+        ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionBinaryOperationNode.cpp
+        ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionBinaryOperationNode.h
+        ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionFunctionCallNode.cpp
+        ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionFunctionCallNode.h
+        ${PROJECT_SOURCE_DIR}/Parser/AST/FunctionPrototypeNode.cpp
+        ${PROJECT_SOURCE_DIR}/Parser/AST/FunctionPrototypeNode.h
+        ${PROJECT_SOURCE_DIR}/Parser/AST/FunctionNode.cpp
+        ${PROJECT_SOURCE_DIR}/Parser/AST/FunctionNode.h Parser/ParserPrecedence.cpp
+        ${PROJECT_SOURCE_DIR}/Parser/ParserPrecedence.h
+        ${PROJECT_SOURCE_DIR}/Parser/AST/Node.cpp
+        ${PROJECT_SOURCE_DIR}/Parser/AST/Node.h
+        ${PROJECT_SOURCE_DIR}/Parser/ParserDumpTreeNode.cpp
+        ${PROJECT_SOURCE_DIR}/Parser/ParserDumpTreeNode.h
+        ${PROJECT_SOURCE_DIR}/Parser/AST/Argument.h Parser/AST/ExpressionIntegerNode.cpp Parser/AST/ExpressionIntegerNode.h Parser/AST/ExpressionFunctionReturnNode.cpp Parser/AST/ExpressionFunctionReturnNode.h Parser/AST/Argument.cpp)
 
 target_include_directories(Aryiele PUBLIC ${ARYIELE_INCLUDES} ${LLVM_INCLUDE_DIRS})
 target_link_libraries(Aryiele ${ARYIELE_LIBRARIES} ${llvm_libs})

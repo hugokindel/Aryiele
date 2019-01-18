@@ -1,9 +1,9 @@
-#include <Aryiele/Tokenizer/Tokenizer.h>
-#include <Aryiele/Tokenizer/TokenizerTable.h>
+#include <Aryiele/Lexer/Lexer.h>
+#include <Aryiele/Lexer/LexerTable.h>
 
 namespace Aryiele
 {
-    std::vector<TokenizerToken> Tokenizer::Tokenize(const std::string& filepath)
+    std::vector<LexerToken> Lexer::Tokenize(const std::string& filepath)
     {
         std::ifstream file;
         std::string expression;
@@ -22,12 +22,12 @@ namespace Aryiele
         return m_tokens;
     }
 
-    void Tokenizer::UseFiniteStateMachine(std::string expression)
+    void Lexer::UseFiniteStateMachine(std::string expression)
     {
-        TokenizerToken currentToken;
-        std::vector<TokenizerToken> tokens;
-        auto currentTransitionState = TokenizerTokens_Reject;
-        auto previousTransitionState = TokenizerTokens_Reject;
+        LexerToken currentToken;
+        std::vector<LexerToken> tokens;
+        auto currentTransitionState = LexerTokens_Reject;
+        auto previousTransitionState = LexerTokens_Reject;
         std::string currentTokenExpression;
 
         for (unsigned x = 0; x < expression.length();)
@@ -35,9 +35,9 @@ namespace Aryiele
             const auto currentCharacter = expression[x];
             const auto column = GetTransitionTableColumn(currentCharacter);
 
-            currentTransitionState = static_cast<TokenizerTokens>(TokenizerTable[currentTransitionState][column]);
+            currentTransitionState = static_cast<LexerTokens>(LexerTable[currentTransitionState][column]);
 
-            if (currentTransitionState == TokenizerTokens_Reject)
+            if (currentTransitionState == LexerTokens_Reject)
             {
                 currentToken.Content = currentTokenExpression;
                 currentToken.Type = previousTransitionState;
@@ -63,17 +63,17 @@ namespace Aryiele
         }
 
         currentToken.Content = std::string();
-        currentToken.Type = TokenizerTokens_Newline;
+        currentToken.Type = LexerTokens_Newline;
 
         tokens.push_back(currentToken);
 
         m_tokens.insert(m_tokens.end(), tokens.begin(), tokens.end());
     }
 
-    void Tokenizer::RemoveComments()
+    void Lexer::RemoveComments()
     {
-        TokenizerToken currentToken;
-        std::vector<TokenizerToken> tokens;
+        LexerToken currentToken;
+        std::vector<LexerToken> tokens;
         auto isInCommentSingleLine = false;
         auto isInCommentMultiLine = false;
 
@@ -84,7 +84,7 @@ namespace Aryiele
 
             if (isInCommentSingleLine)
             {
-                if (currentToken.Type == TokenizerTokens_Newline)
+                if (currentToken.Type == LexerTokens_Newline)
                     isInCommentSingleLine = false;
             }
             else if (isInCommentMultiLine)
@@ -111,10 +111,10 @@ namespace Aryiele
         m_tokens = tokens;
     }
 
-    void Tokenizer::DetailTokens()
+    void Lexer::DetailTokens()
     {
-        TokenizerToken currentToken;
-        std::vector<TokenizerToken> tokens;
+        LexerToken currentToken;
+        std::vector<LexerToken> tokens;
         std::string inTextQuote;
         std::string currentText;
         auto isInText = false;
@@ -124,14 +124,14 @@ namespace Aryiele
             const auto lastToken = currentToken;
             currentToken = token;
 
-            if (currentToken.Type == TokenizerTokens_Newline)
+            if (currentToken.Type == LexerTokens_Newline)
                 continue;
-            if (currentToken.Type == TokenizerTokens_Space && !isInText)
+            if (currentToken.Type == LexerTokens_Space && !isInText)
                 continue;
 
             if (isInText)
             {
-                if (currentToken.Type == TokenizerTokens_StringQuote && currentToken.Content == inTextQuote)
+                if (currentToken.Type == LexerTokens_StringQuote && currentToken.Content == inTextQuote)
                 {
                     if (currentText[currentText.length() - 1] == '\\')
                     {
@@ -141,7 +141,7 @@ namespace Aryiele
                     else
                     {
                         currentToken.Content = currentText;
-                        currentToken.Type = TokenizerTokens_String;
+                        currentToken.Type = LexerTokens_String;
 
                         tokens.emplace_back(currentToken);
 
@@ -155,7 +155,7 @@ namespace Aryiele
                     currentText += currentToken.Content;
                 }
             }
-            else if (currentToken.Type == TokenizerTokens_StringQuote)
+            else if (currentToken.Type == LexerTokens_StringQuote)
             {
                 inTextQuote = currentToken.Content;
                 isInText = true;
@@ -171,65 +171,65 @@ namespace Aryiele
         m_tokens = tokens;
     }
 
-    TokenizerTokens Tokenizer::GetTransitionTableColumn(char currentCharacter)
+    LexerTokens Lexer::GetTransitionTableColumn(char currentCharacter)
     {
         if (currentCharacter == ';')
         {
-            return TokenizerTokens_EOL;
+            return LexerTokens_EOL;
         }
         else if (currentCharacter == '{' || currentCharacter == '}' ||
             currentCharacter == '[' || currentCharacter == ']' ||
             currentCharacter == '(' || currentCharacter == ')')
         {
-            return TokenizerTokens_Scope;
+            return LexerTokens_Scope;
         }
         else if (currentCharacter == '\"' || currentCharacter == '\'')
         {
-            return TokenizerTokens_StringQuote;
+            return LexerTokens_StringQuote;
         }
         else if (isspace(currentCharacter))
         {
-            return TokenizerTokens_Space;
+            return LexerTokens_Space;
         }
         else if (isdigit(currentCharacter) || currentCharacter == '.')
         {
-            return TokenizerTokens_Number;
+            return LexerTokens_Number;
         }
         else if (isalpha(currentCharacter))
         {
-            return TokenizerTokens_Identifier;
+            return LexerTokens_Identifier;
         }
         else if (ispunct(currentCharacter))
         {
-            return TokenizerTokens_Operator;
+            return LexerTokens_Operator;
         }
 
-        return TokenizerTokens_Unknown;
+        return LexerTokens_Unknown;
     }
 
-    std::string Tokenizer::GetTokenName(TokenizerToken tokenType)
+    std::string Lexer::GetTokenName(LexerToken tokenType)
     {
         switch (tokenType.Type)
         {
-            case TokenizerTokens_Number:
+            case LexerTokens_Number:
                 return "Number";
-            case TokenizerTokens_String:
+            case LexerTokens_String:
                 return "String";
-            case TokenizerTokens_Operator:
+            case LexerTokens_Operator:
                 return "Operator";
-            case TokenizerTokens_Identifier:
+            case LexerTokens_Identifier:
                 return "Identifier";
-            case TokenizerTokens_Scope:
+            case LexerTokens_Scope:
                 return "Scope";
-            case TokenizerTokens_Space:
+            case LexerTokens_Space:
                 return "Space";
-            case TokenizerTokens_Newline:
+            case LexerTokens_Newline:
                 return "Newline";
-            case TokenizerTokens_EOL:
+            case LexerTokens_EOL:
                 return "EOL";
-            case TokenizerTokens_StringQuote:
+            case LexerTokens_StringQuote:
                 return "StringQuote";
-            case TokenizerTokens_Unknown:
+            case LexerTokens_Unknown:
                 return "Unknown";
             default:
                 return "Error";

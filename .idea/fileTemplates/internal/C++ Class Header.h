@@ -1,5 +1,7 @@
-#[[#ifndef]]# ARYIELE_${NAME}_H
-#[[#define]]# ARYIELE_${NAME}_H
+#[[#ifndef]]# ARYIELE_${NAME.toUpperCase()}_H
+#[[#define]]# ARYIELE_${NAME.toUpperCase()}_H
+
+#[[#include]]# <Aryiele/Core/Includes.h>
 
 namespace Aryiele
 {
@@ -10,4 +12,4 @@ namespace Aryiele
     
 } /* Namespace Aryiele. */
 
-#[[#endif]]# /* ARYIELE_${NAME}_H. */
+#[[#endif]]# /* ARYIELE_${NAME.toUpperCase()}_H. */
