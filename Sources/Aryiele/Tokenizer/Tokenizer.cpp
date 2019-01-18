@@ -175,7 +175,7 @@ namespace Aryiele
     {
         if (currentCharacter == ';')
         {
-            return TokenizerTokens_EOF;
+            return TokenizerTokens_EOL;
         }
         else if (currentCharacter == '{' || currentCharacter == '}' ||
             currentCharacter == '[' || currentCharacter == ']' ||
@@ -227,8 +227,8 @@ namespace Aryiele
                 return "Space";
             case TokenizerTokens_Newline:
                 return "Newline";
-            case TokenizerTokens_EOF:
-                return "EOF";
+            case TokenizerTokens_EOL:
+                return "EOL";
             case TokenizerTokens_StringQuote:
                 return "StringQuote";
             default:

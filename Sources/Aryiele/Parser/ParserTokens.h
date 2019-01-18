@@ -74,7 +74,7 @@ namespace Aryiele
 
         ParserTokens_Identifier, // Any characters sequence other than a keyword.
         ParserTokens_TypeDefiner, // :, example: var test: int = 0;
-        ParserTokens_EOF, // ;, example: return 0;
+        ParserTokens_EOL, // ;, example: return 0;
 
         ParserTokens_Unknown
     };

@@ -14,7 +14,7 @@ namespace Aryiele
         TokenizerTokens_Scope,
         TokenizerTokens_Identifier,
 
-        TokenizerTokens_EOF,
+        TokenizerTokens_EOL,
 
         // Not on final pass.
         TokenizerTokens_StringQuote,
