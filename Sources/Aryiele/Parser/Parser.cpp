@@ -3,8 +3,13 @@
 #include <Vanir/StringUtils.h>
 #include <llvm/ADT/STLExtras.h>
 #include <Aryiele/Parser/AST/ExpressionDoubleNode.h>
+#include <Aryiele/Parser/AST/ExpressionBinaryOperationNode.h>
+#include <Aryiele/Parser/AST/ExpressionFunctionReturnNode.h>
+#include <Aryiele/Parser/AST/ExpressionVariableNode.h>
 #include <iostream>
 #include <fcntl.h>
+#include "Parser.h"
+
 
 namespace Aryiele
 {
@@ -102,7 +107,7 @@ namespace Aryiele
                         tokens.emplace_back(token.Content, ParserTokens_LiteralValue_Boolean);
                     // Keywords
                     else if (token.Content == "function")
-                        tokens.emplace_back(token.Content, ParserTokens_Keyword_Function);
+                        tokens.emplace_back(token.Content, ParserTokens_Keyword_TopLevel_Function);
                     else if (token.Content == "var")
                         tokens.emplace_back(token.Content, ParserTokens_Keyword_Var);
                     else if (token.Content == "return")
@@ -124,9 +129,9 @@ namespace Aryiele
         return tokens;
     }
 
-    std::string Parser::GetTokenName(ParserToken tokenType)
+    std::string Parser::GetTokenName(ParserTokens tokenType)
     {
-        switch (tokenType.Type)
+        switch (tokenType)
         {
 
             case ParserTokens_LiteralValue_Integer:
@@ -183,8 +188,8 @@ namespace Aryiele
                 return "Scope_CurlyBracket_Open";
             case ParserTokens_Scope_CurlyBracket_Closed:
                 return "Scope_CurlyBracket_Closed";
-            case ParserTokens_Keyword_Function:
-                return "Keyword_Function";
+            case ParserTokens_Keyword_TopLevel_Function:
+                return "Keyword_TopLevel_Function";
             case ParserTokens_Keyword_Var:
                 return "Keyword_Var";
             case ParserTokens_Keyword_Return:
@@ -215,18 +220,20 @@ namespace Aryiele
 
             if (m_currentToken.Type == ParserTokens_EOF)
                 break;
-            if (m_currentToken.Type == ParserTokens_Keyword_Function)
+            if (m_currentToken.Type == ParserTokens_Keyword_TopLevel_Function)
                 m_node.emplace_back(ParseFunction());
         }
 
-        m_dumpNode = std::make_unique<ParserDumpTreeNode>(nullptr, L"File");
+        m_dumpNode = std::make_unique<ParserInformation>(nullptr, "AST");
 
         for (auto& node : m_node)
             node->DumpInformations(m_dumpNode);
 
-        _setmode(_fileno(stdout), _O_WTEXT);
+        LOG_INFO("-> Creating abstract syntax tree...");
+
         DumpInformations(m_dumpNode);
-        _setmode(_fileno(stdout), _O_TEXT);
+
+        LOG_INFO("-> Abstract syntax tree created.");
     }
 
     ParserToken Parser::GetNextToken()
@@ -236,13 +243,140 @@ namespace Aryiele
         return m_currentToken;
     }
 
-    std::shared_ptr<ExpressionNode> Parser::ParseExpressionDouble()
+    /*std::shared_ptr<ExpressionNode> Parser::ParseExpressionDouble()
     {
         auto result = std::make_shared<ExpressionDoubleNode>(std::stod(m_currentToken.Content));
 
         GetNextToken();
 
-        return std::move(result);
+        return result;
+    }*/
+
+    std::shared_ptr<ExpressionNode> Parser::ParseIdentifier()
+    {
+        auto variable = std::make_shared<ExpressionVariableNode>(m_currentToken.Content);
+
+        GetNextToken();
+
+        return variable;
+    }
+
+    std::shared_ptr<ExpressionNode> Parser::ParseReturn()
+    {
+        GetNextToken();
+
+        auto expression = ParseExpression();
+
+        return std::make_shared<ExpressionFunctionReturnNode>(expression);
+    }
+
+    std::shared_ptr<ExpressionNode> Parser::ParseBinaryOperationLeft()
+    {
+        switch (m_currentToken.Type)
+        {
+            case ParserTokens_LiteralValue_Integer:
+                return nullptr;
+            case ParserTokens_LiteralValue_Decimal:
+                return nullptr;
+            case ParserTokens_LiteralValue_String:
+                return nullptr;
+            case ParserTokens_LiteralValue_Boolean:
+                return nullptr;
+            case ParserTokens_Operator_Equal:
+                return nullptr;
+            case ParserTokens_Operator_Arithmetic_Plus:
+                return nullptr;
+            case ParserTokens_Operator_Arithmetic_UnaryPlus:
+                return nullptr;
+            case ParserTokens_Operator_Arithmetic_Minus:
+                return nullptr;
+            case ParserTokens_Operator_Arithmetic_UnaryMinus:
+                return nullptr;
+            case ParserTokens_Operator_Arithmetic_Multiply:
+                return nullptr;
+            case ParserTokens_Operator_Arithmetic_Divide:
+                return nullptr;
+            case ParserTokens_Operator_Arithmetic_Remainder:
+                return nullptr;
+            case ParserTokens_Operator_Comparison_Equal:
+                return nullptr;
+            case ParserTokens_Operator_Comparison_NotEqual:
+                return nullptr;
+            case ParserTokens_Operator_Comparison_LessThan:
+                return nullptr;
+            case ParserTokens_Operator_Comparison_GreaterThan:
+                return nullptr;
+            case ParserTokens_Operator_Comparison_LessThanOrEqual:
+                return nullptr;
+            case ParserTokens_Operator_Comparison_GreaterThanOrEqual:
+                return nullptr;
+            case ParserTokens_Operator_Logical_And:
+                return nullptr;
+            case ParserTokens_Operator_Logical_Or:
+                return nullptr;
+            case ParserTokens_Operator_Logical_Not:
+                return nullptr;
+            case ParserTokens_Scope_RoundBracket_Open:
+                return nullptr;
+            case ParserTokens_Scope_RoundBracket_Closed:
+                return nullptr;
+            case ParserTokens_Scope_SquareBracket_Open:
+                return nullptr;
+            case ParserTokens_Scope_SquareBracket_Closed:
+                return nullptr;
+            case ParserTokens_Scope_CurlyBracket_Open:
+                return nullptr;
+            case ParserTokens_Scope_CurlyBracket_Closed:
+                return nullptr;
+            case ParserTokens_Keyword_Var:
+                return nullptr;
+            case ParserTokens_Keyword_Return:
+                return ParseReturn();
+            case ParserTokens_Identifier:
+                return ParseIdentifier();
+        }
+    }
+
+    std::shared_ptr<ExpressionNode> Parser::ParseBinaryOperationRight(int expressionPrecedence, std::shared_ptr<ExpressionNode> leftExpression)
+    {
+        while (true)
+        {
+            int tokenPrecedence = ParserPrecedence::GetInstance()->GetPrecedence(m_currentToken.Content);
+
+            if (tokenPrecedence < expressionPrecedence)
+                return leftExpression;
+
+            auto operationType = m_currentToken.Type;
+
+            GetNextToken();
+
+            auto rightExpression = ParseBinaryOperationLeft();
+
+            if (!rightExpression)
+                return nullptr;
+
+            int nextPrecedence = ParserPrecedence::GetInstance()->GetPrecedence(m_currentToken.Content);
+
+            if (tokenPrecedence < nextPrecedence)
+            {
+                rightExpression = ParseBinaryOperationRight(tokenPrecedence + 1, std::move(rightExpression));
+
+                if (!rightExpression)
+                    return nullptr;
+            }
+
+            leftExpression = std::make_shared<ExpressionBinaryOperationNode>(operationType, std::move(leftExpression), rightExpression);
+        }
+    }
+
+    std::shared_ptr<ExpressionNode> Parser::ParseExpression()
+    {
+        auto leftExpression = ParseBinaryOperationLeft();
+
+        if (!leftExpression)
+            return nullptr;
+
+        return ParseBinaryOperationRight(0, leftExpression);
     }
 
     std::shared_ptr<FunctionNode> Parser::ParseFunction()
@@ -352,65 +486,44 @@ namespace Aryiele
             if (m_currentToken.Type == ParserTokens_Scope_CurlyBracket_Closed)
                 break;
 
-            //auto expression = ParseBase();
+            auto expression = ParseExpression();
 
-            //if (expression != nullptr)
-            //    implementation.emplace_back(expression);
+            if (expression != nullptr)
+            {
+                expressions.emplace_back(expression);
+            }
         }
 
-        return std::make_shared<FunctionNode>(std::make_shared<FunctionPrototypeNode>(name, type, arguments), expressions);
+        return std::make_shared<FunctionNode>(name, type, arguments, expressions);
     }
 
-    void Parser::DumpInformations(const std::shared_ptr<ParserDumpTreeNode>& node, std::wstring indent) const
+    void Parser::DumpInformations(const std::shared_ptr<ParserInformation>& node, std::string indent) const
     {
         const auto isRoot = node->Parent == nullptr;
         const auto hasChildren = !node->Children.empty();
-        const auto hasInformations = !node->Informations.empty();
         auto isLastSibling = true;
 
-
         if (!isRoot)
-            isLastSibling = static_cast<int>(std::distance(node->Parent->Children.begin(), std::find(node->Parent->Children.begin(), node->Parent->Children.end(), node))) == static_cast<int>(node->Parent->Children.size()) - 1;
+        {
+            isLastSibling = (static_cast<int>(std::distance(node->Parent->Children.begin(),
+                    std::find(node->Parent->Children.begin(), node->Parent->Children.end(), node)))
+                    == static_cast<int>(node->Parent->Children.size()) - 1);
+        }
 
         if (isRoot)
         {
-            std::wcout << node->Name << std::endl;
+            ULOG_INFO(node->Name);
         }
         else
         {
-            std::wcout << indent + (isLastSibling ? L"└╴" : L"├╴") << node->Name << std::endl;
-            indent += isLastSibling ? L"  " : L"│ ";
-
+            ULOG_INFO(indent + (isLastSibling ? "└╴" : "├╴"), node->Name);
+            indent += isLastSibling ? "  " : "│ ";
         }
 
         if (hasChildren)
         {
-            std::wcout << indent + (hasInformations ? L"├╴Children" : L"└╴Children") << std::endl;
-            indent += hasInformations ? L"│ " : L"  ";
-
             for (auto& nodeChild : node->Children)
                 DumpInformations(nodeChild, indent);
-        }
-
-        if (hasInformations)
-        {
-            if (hasChildren)
-            {
-                Vanir::StringUtils::ReverseWString(indent);
-                indent = indent.erase(0, 2);
-                Vanir::StringUtils::ReverseWString(indent);
-            }
-
-            std::wcout << indent + L"└╴Informations" << std::endl;
-
-            indent += L"  ";
-
-            for (auto& information : node->Informations)
-            {
-                bool isLastInformation = isLastSibling && (static_cast<int>(std::distance(node->Informations.begin(), std::find(node->Informations.begin(), node->Informations.end(), information))) == static_cast<int>(node->Informations.size()) - 1);
-
-                std::wcout << (indent + (isLastInformation ? L"└╴" : L"├╴")).append(information) << std::endl;
-            }
         }
     }
 

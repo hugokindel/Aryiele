@@ -45,7 +45,7 @@ namespace Aryiele
         //ParserTokens_Scope_AngleBracket_Open, // <
         //ParserTokens_Scope_AngleBracket_Closed, // >
 
-        ParserTokens_Keyword_Function, // function
+        ParserTokens_Keyword_TopLevel_Function, // function
         ParserTokens_Keyword_Var, // var
         ParserTokens_Keyword_Return, // return
         //ParserTokens_Keyword_Let, // let

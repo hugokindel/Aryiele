@@ -2,7 +2,7 @@
 #define ARYIELE_NODE_H
 
 #include <Aryiele/Core/Includes.h>
-#include <Aryiele/Parser/ParserDumpTreeNode.h>
+#include <Aryiele/Parser/ParserInformation.h>
 
 namespace Aryiele
 {
@@ -11,7 +11,7 @@ namespace Aryiele
     public:
         virtual ~Node();
 
-        virtual void DumpInformations(std::shared_ptr<ParserDumpTreeNode> parentNode);
+        virtual void DumpInformations(std::shared_ptr<ParserInformation> parentNode);
     };
 
 } /* Namespace Aryiele. */

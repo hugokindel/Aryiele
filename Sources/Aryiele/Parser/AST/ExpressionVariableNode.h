@@ -11,6 +11,8 @@ namespace Aryiele
     public:
         explicit ExpressionVariableNode(const std::string& name);
 
+        void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+
     protected:
         std::string m_name;
     };

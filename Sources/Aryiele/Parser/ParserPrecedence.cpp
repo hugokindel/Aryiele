@@ -5,6 +5,8 @@ namespace Aryiele
     // TODO: Finish it.
     ParserPrecedence::ParserPrecedence()
     {
+        m_binaryOperatorPrecedence[";"] = -1;
+
         m_binaryOperatorPrecedence["<"] = 1;
 
         m_binaryOperatorPrecedence["+"] = 2;

@@ -6,8 +6,6 @@
 #include <Vanir/FileUtils.h>
 #include <Aryiele/Parser/Parser.h>
 
-// TODO: Change Lexer -> Lexer
-
 int main(const int argc, char *argv[])
 {
 #ifdef _WIN32
@@ -16,7 +14,6 @@ int main(const int argc, char *argv[])
 #endif
 
     Vanir::Logger::Start();
-
 
     LOG("-------------------------------------------- ARYIELE --------------------------------------------");
 
@@ -36,7 +33,7 @@ int main(const int argc, char *argv[])
 
         for (auto& token : lexerTokens)
         {
-            LOG_INFO("%s: %s", lexer->GetTokenName(token).c_str(), token.Content.c_str());
+            LOG_INFO(lexer->GetTokenName(token).c_str(), ": ", token.Content.c_str());
 
             if (token.Type == Aryiele::LexerTokens_Unknown)
                 return 20100001;
@@ -56,7 +53,7 @@ int main(const int argc, char *argv[])
 
         for (auto& token : parserTokens)
         {
-            LOG_INFO("%s: %s", parser->GetTokenName(token).c_str(), token.Content.c_str());
+            LOG_INFO(parser->GetTokenName(token.Type).c_str(), ": ", token.Content.c_str());
 
             if (token.Type == Aryiele::ParserTokens_Unknown)
                 return 20100002;

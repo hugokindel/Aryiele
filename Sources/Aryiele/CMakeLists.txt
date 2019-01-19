@@ -56,26 +56,30 @@ add_executable(Aryiele
         ${PROJECT_SOURCE_DIR}/Parser/ParserToken.cpp
         ${PROJECT_SOURCE_DIR}/Parser/ParserToken.h
         ${PROJECT_SOURCE_DIR}/Parser/ParserTokens.h
+        ${PROJECT_SOURCE_DIR}/Parser/ParserPrecedence.cpp
+        ${PROJECT_SOURCE_DIR}/Parser/ParserPrecedence.h
+        ${PROJECT_SOURCE_DIR}/Parser/ParserInformation.cpp
+        ${PROJECT_SOURCE_DIR}/Parser/ParserInformation.h
         ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionNode.cpp
         ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionNode.h
         ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionDoubleNode.cpp
         ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionDoubleNode.h
+        ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionIntegerNode.cpp
+        ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionIntegerNode.h
         ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionVariableNode.cpp
         ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionVariableNode.h
         ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionBinaryOperationNode.cpp
         ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionBinaryOperationNode.h
+        ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionFunctionReturnNode.cpp
+        ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionFunctionReturnNode.h
         ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionFunctionCallNode.cpp
         ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionFunctionCallNode.h
-        ${PROJECT_SOURCE_DIR}/Parser/AST/FunctionPrototypeNode.cpp
-        ${PROJECT_SOURCE_DIR}/Parser/AST/FunctionPrototypeNode.h
         ${PROJECT_SOURCE_DIR}/Parser/AST/FunctionNode.cpp
-        ${PROJECT_SOURCE_DIR}/Parser/AST/FunctionNode.h Parser/ParserPrecedence.cpp
-        ${PROJECT_SOURCE_DIR}/Parser/ParserPrecedence.h
+        ${PROJECT_SOURCE_DIR}/Parser/AST/FunctionNode.h
         ${PROJECT_SOURCE_DIR}/Parser/AST/Node.cpp
         ${PROJECT_SOURCE_DIR}/Parser/AST/Node.h
-        ${PROJECT_SOURCE_DIR}/Parser/ParserDumpTreeNode.cpp
-        ${PROJECT_SOURCE_DIR}/Parser/ParserDumpTreeNode.h
-        ${PROJECT_SOURCE_DIR}/Parser/AST/Argument.h Parser/AST/ExpressionIntegerNode.cpp Parser/AST/ExpressionIntegerNode.h Parser/AST/ExpressionFunctionReturnNode.cpp Parser/AST/ExpressionFunctionReturnNode.h Parser/AST/Argument.cpp)
+        ${PROJECT_SOURCE_DIR}/Parser/AST/Argument.h
+        ${PROJECT_SOURCE_DIR}/Parser/AST/Argument.cpp)
 
 target_include_directories(Aryiele PUBLIC ${ARYIELE_INCLUDES} ${LLVM_INCLUDE_DIRS})
 target_link_libraries(Aryiele ${ARYIELE_LIBRARIES} ${llvm_libs})

@@ -15,6 +15,8 @@ namespace Aryiele
                                       std::shared_ptr<ExpressionNode> leftExpression,
                                       std::shared_ptr<ExpressionNode> rightExpression);
 
+        void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+
     protected:
         ParserTokens m_operationCode;
         std::shared_ptr<ExpressionNode> m_leftExpression;

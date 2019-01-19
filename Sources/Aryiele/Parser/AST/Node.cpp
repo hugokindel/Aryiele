@@ -4,7 +4,7 @@ namespace Aryiele
 {
     Node::~Node() = default;
 
-    void Node::DumpInformations(std::shared_ptr<ParserDumpTreeNode> parentNode)
+    void Node::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
     {
 
     }

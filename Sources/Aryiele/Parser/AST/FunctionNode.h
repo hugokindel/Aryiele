@@ -4,20 +4,28 @@
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/Parser/AST/ExpressionNode.h>
 #include <Aryiele/Parser/AST/Node.h>
-#include <Aryiele/Parser/AST/FunctionPrototypeNode.h>
-#include <memory>
+#include <Aryiele/Parser/AST/Argument.h>
 
 namespace Aryiele
 {
     class FunctionNode : public Node
     {
     public:
-        FunctionNode(std::shared_ptr<FunctionPrototypeNode> prototype, std::vector<std::shared_ptr<ExpressionNode>> implementations);
+        FunctionNode(const std::string& name,
+                     const std::string& type,
+                     std::vector<Argument> argumentsName,
+                     std::vector<std::shared_ptr<ExpressionNode>> implementations);
 
-        void DumpInformations(std::shared_ptr<ParserDumpTreeNode> parentNode) override;
+        const std::string& GetName() const;
+        const std::string& GetType() const;
+        const std::vector<Argument>& GetArguments() const;
+
+        void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
 
     protected:
-        std::shared_ptr<FunctionPrototypeNode> m_prototype;
+        std::string m_name;
+        std::string m_type;
+        std::vector<Argument> m_arguments;
         std::vector<std::shared_ptr<ExpressionNode>> m_implementations;
     };
 
