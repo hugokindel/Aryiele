@@ -3,6 +3,7 @@
 
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/Parser/ParserInformation.h>
+#include <Aryiele/CodeGeneration/CodeGenerator.h>
 
 namespace Aryiele
 {
@@ -11,6 +12,7 @@ namespace Aryiele
     public:
         virtual ~Node();
 
+        virtual llvm::Value* GenerateCode();
         virtual void DumpInformations(std::shared_ptr<ParserInformation> parentNode);
     };
 

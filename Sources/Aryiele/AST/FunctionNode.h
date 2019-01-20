@@ -2,9 +2,9 @@
 #define ARYIELE_FUNCTIONNODE_H
 
 #include <Aryiele/Core/Includes.h>
-#include <Aryiele/Parser/AST/ExpressionNode.h>
-#include <Aryiele/Parser/AST/Node.h>
-#include <Aryiele/Parser/AST/Argument.h>
+#include <Aryiele/AST/ExpressionNode.h>
+#include <Aryiele/AST/Node.h>
+#include <Aryiele/AST/Argument.h>
 
 namespace Aryiele
 {
@@ -20,6 +20,7 @@ namespace Aryiele
         const std::string& GetType() const;
         const std::vector<Argument>& GetArguments() const;
 
+        llvm::Value* GenerateCode() override;
         void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
 
     protected:

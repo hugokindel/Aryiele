@@ -2,7 +2,7 @@
 #define ARYIELE_EXPRESSIONFUNCTIONCALLNODE_H
 
 #include <Aryiele/Core/Includes.h>
-#include <Aryiele/Parser/AST/ExpressionNode.h>
+#include <Aryiele/AST/ExpressionNode.h>
 #include <memory>
 #include <vector>
 
@@ -12,6 +12,8 @@ namespace Aryiele
     {
     public:
         ExpressionFunctionCallNode(const std::string& name, std::vector<std::shared_ptr<ExpressionNode>> arguments);
+
+        llvm::Value* GenerateCode() override;
 
     protected:
         std::string m_name;

@@ -5,6 +5,9 @@
 #include <memory>
 #include <Vanir/FileUtils.h>
 #include <Aryiele/Parser/Parser.h>
+#include <llvm/Bitcode/BitcodeWriter.h>
+#include <llvm/Bitcode/BitcodeReader.h>
+#include <stdio.h>
 
 int main(const int argc, char *argv[])
 {
@@ -21,11 +24,22 @@ int main(const int argc, char *argv[])
 
     if (!Vanir::FileUtils::FileExist(filename))
     {
-        LOG_ERROR("No input file.");
+        LOG_ERROR("No input file provided.");
     }
     else
     {
-        auto lexer = std::make_shared<Aryiele::Lexer>();
+        LOG_INFO("Reading code...")
+
+        std::ifstream infile(filename);
+
+        for( std::string line; getline( infile, line ); )
+            LOG_INFO(line);
+
+        LOG_INFO("Code readed.")
+
+        infile.close();
+
+        auto lexer = Aryiele::Lexer::GetInstance();
 
         LOG_INFO("--> Lexing...");
 
@@ -41,9 +55,7 @@ int main(const int argc, char *argv[])
 
         LOG_INFO("--> Lexing finished.");
 
-        lexer.reset();
-
-        auto parser = std::make_shared<Aryiele::Parser>();
+        auto parser = Aryiele::Parser::GetInstance();
 
         LOG_INFO("--> Parsing...");
 
@@ -64,6 +76,26 @@ int main(const int argc, char *argv[])
         parser->Parse(parserTokens);
 
         LOG_INFO("--> Parsing finished.");
+
+        auto codeGenerator = Aryiele::CodeGenerator::GetInstance();
+
+        LOG_INFO("--> Generating code...");
+
+        codeGenerator->GenerateCode(parser->GetNodes());
+
+        std::error_code EC;
+        llvm::raw_fd_ostream OS("../test.ll", EC, llvm::sys::fs::F_None); // TODO: Filename without extension
+        codeGenerator->Module->print(OS, nullptr);
+        OS.flush();
+
+        infile = std::ifstream("../test.ll"); // TODO: Filename without extension
+
+        for( std::string line; getline( infile, line ); )
+            LOG_INFO(line);
+
+        infile.close();
+
+        LOG_INFO("--> Code generated.");
 
         parser.reset();
     }

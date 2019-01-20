@@ -1,4 +1,4 @@
-#include <Aryiele/Parser/AST/ExpressionDoubleNode.h>
+#include <Aryiele/AST/ExpressionDoubleNode.h>
 
 namespace Aryiele
 {
@@ -6,6 +6,11 @@ namespace Aryiele
         m_value(value)
     {
 
+    }
+
+    llvm::Value* ExpressionDoubleNode::GenerateCode()
+    {
+        return llvm::ConstantFP::get(CodeGenerator::GetInstance()->Context, llvm::APFloat(m_value));
     }
 
     void ExpressionDoubleNode::DumpInformations(std::shared_ptr<ParserInformation> parentNode)

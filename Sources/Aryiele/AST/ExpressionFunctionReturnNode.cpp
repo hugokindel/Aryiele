@@ -1,4 +1,6 @@
-#include <Aryiele/Parser/AST/ExpressionFunctionReturnNode.h>
+#include <Aryiele/AST/ExpressionFunctionReturnNode.h>
+#include "ExpressionFunctionReturnNode.h"
+
 
 namespace Aryiele
 {
@@ -12,6 +14,11 @@ namespace Aryiele
     std::shared_ptr<ExpressionNode> ExpressionFunctionReturnNode::GetExpression()
     {
         return m_expression;
+    }
+
+    llvm::Value *ExpressionFunctionReturnNode::GenerateCode()
+    {
+        return m_expression->GenerateCode();
     }
 
     void ExpressionFunctionReturnNode::DumpInformations(std::shared_ptr<ParserInformation> parentNode)

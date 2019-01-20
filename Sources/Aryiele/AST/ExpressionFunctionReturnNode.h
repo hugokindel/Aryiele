@@ -2,7 +2,7 @@
 #define ARYIELE_EXPRESSIONFUNCTIONRETURNNODE_H
 
 #include <Aryiele/Core/Includes.h>
-#include <Aryiele/Parser/AST/ExpressionNode.h>
+#include <Aryiele/AST/ExpressionNode.h>
 
 namespace Aryiele
 {
@@ -13,6 +13,7 @@ namespace Aryiele
 
         std::shared_ptr<ExpressionNode> GetExpression();
 
+        llvm::Value* GenerateCode() override;
         void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
 
     protected:

@@ -1,4 +1,4 @@
-#include <Aryiele/Parser/AST/FunctionNode.h>
+#include <Aryiele/AST/FunctionNode.h>
 #include <Vanir/StringUtils.h>
 
 namespace Aryiele
@@ -25,6 +25,65 @@ namespace Aryiele
     const std::vector<Argument>& FunctionNode::GetArguments() const
     {
         return m_arguments;
+    }
+
+    llvm::Value* FunctionNode::GenerateCode()
+    {
+        auto codeGenerator = CodeGenerator::GetInstance();
+
+        llvm::Function *function = codeGenerator->Module->getFunction(m_name);
+
+        if (!function)
+        {
+            std::vector<llvm::Type*> arguments;
+            llvm::Type* functionTypeValue;
+
+            for (const auto &argument : m_arguments)
+            {
+                if (argument.Type == "double")
+                    arguments.emplace_back(llvm::Type::getDoubleTy(codeGenerator->Context));
+                else if (argument.Type == "int")
+                    arguments.emplace_back(llvm::Type::getInt32Ty(codeGenerator->Context));
+            }
+
+            if (m_type == "int")
+                functionTypeValue = llvm::Type::getInt32Ty(codeGenerator->Context);
+            else if (m_type == "double")
+                functionTypeValue = llvm::Type::getDoubleTy(codeGenerator->Context);
+
+            llvm::FunctionType *functionType = llvm::FunctionType::get(functionTypeValue, arguments, false);
+
+            function = llvm::Function::Create(functionType, llvm::Function::ExternalLinkage, m_name, codeGenerator->Module.get());
+
+            unsigned i = 0;
+
+            for (auto &Arg : function->args())
+                Arg.setName(m_arguments[i++].Name);
+        }
+
+        llvm::BasicBlock *basicBlock = llvm::BasicBlock::Create(codeGenerator->Context, "entry", function);
+
+        codeGenerator->Builder.SetInsertPoint(basicBlock);
+
+        codeGenerator->NamedValues.clear();
+
+        for (auto &Arg : function->args())
+            codeGenerator->NamedValues[Arg.getName()] = &Arg;
+
+        if (llvm::Value *returnValue = m_implementations[0]->GenerateCode())
+        {
+            codeGenerator->Builder.CreateRet(returnValue);
+
+            verifyFunction(*function);
+
+            return function;
+        }
+
+        function->eraseFromParent();
+
+        LOG_ERROR("Error generating code for the body of a function: ", m_name);
+
+        return nullptr;
     }
 
     void FunctionNode::DumpInformations(std::shared_ptr<ParserInformation> parentNode)

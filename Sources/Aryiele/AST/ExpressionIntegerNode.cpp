@@ -1,4 +1,4 @@
-#include <Aryiele/Parser/AST/ExpressionIntegerNode.h>
+#include <Aryiele/AST/ExpressionIntegerNode.h>
 
 namespace Aryiele
 {
@@ -7,6 +7,11 @@ namespace Aryiele
     {
 
     }
+
+    llvm::Value* ExpressionIntegerNode::GenerateCode()
+    {
+        return llvm::ConstantInt::get(CodeGenerator::GetInstance()->Context, llvm::APInt(32, static_cast<uint64_t>(m_value)));
+    };
 
     void ExpressionIntegerNode::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
     {

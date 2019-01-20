@@ -2,15 +2,17 @@
 #include <Aryiele/Parser/Parser.h>
 #include <Vanir/StringUtils.h>
 #include <llvm/ADT/STLExtras.h>
-#include <Aryiele/Parser/AST/ExpressionDoubleNode.h>
-#include <Aryiele/Parser/AST/ExpressionIntegerNode.h>
-#include <Aryiele/Parser/AST/ExpressionStringNode.h>
-#include <Aryiele/Parser/AST/ExpressionBooleanNode.h>
-#include <Aryiele/Parser/AST/ExpressionBinaryOperationNode.h>
-#include <Aryiele/Parser/AST/ExpressionFunctionReturnNode.h>
-#include <Aryiele/Parser/AST/ExpressionVariableNode.h>
+#include <Aryiele/AST/ExpressionDoubleNode.h>
+#include <Aryiele/AST/ExpressionIntegerNode.h>
+#include <Aryiele/AST/ExpressionStringNode.h>
+#include <Aryiele/AST/ExpressionBooleanNode.h>
+#include <Aryiele/AST/ExpressionBinaryOperationNode.h>
+#include <Aryiele/AST/ExpressionFunctionReturnNode.h>
+#include <Aryiele/AST/ExpressionVariableNode.h>
 #include <iostream>
 #include <fcntl.h>
+#include "Parser.h"
+
 
 namespace Aryiele
 {
@@ -44,11 +46,19 @@ namespace Aryiele
                     if (token.Content == "=")
                         tokens.emplace_back(token.Content, ParserTokens_Operator_Equal);
                     // Arithmetic Operators.
-                    else if (token.Content == "+" && lastToken.Type != LexerTokens_Number && lastToken.Type != LexerTokens_Identifier)
+                    else if ((token.Content == "+" &&
+                             lastToken.Type != LexerTokens_Number &&
+                             lastToken.Type != LexerTokens_Identifier) &&
+                             lastToken.Content != "(" &&
+                             lastToken.Content != ")")
                         tokens.emplace_back(token.Content, ParserTokens_Operator_Arithmetic_UnaryPlus);
                     else if (token.Content == "+")
                         tokens.emplace_back(token.Content, ParserTokens_Operator_Arithmetic_Plus);
-                    else if (token.Content == "-" && lastToken.Type != LexerTokens_Number && lastToken.Type != LexerTokens_Identifier)
+                    else if ((token.Content == "-" &&
+                              lastToken.Type != LexerTokens_Number &&
+                              lastToken.Type != LexerTokens_Identifier) &&
+                              lastToken.Content != "(" &&
+                              lastToken.Content != ")")
                         tokens.emplace_back(token.Content, ParserTokens_Operator_Arithmetic_UnaryMinus);
                     else if (token.Content == "-")
                         tokens.emplace_back(token.Content, ParserTokens_Operator_Arithmetic_Minus);
@@ -221,12 +231,12 @@ namespace Aryiele
             if (m_currentToken.Type == ParserTokens_EOF)
                 break;
             if (m_currentToken.Type == ParserTokens_Keyword_TopLevel_Function)
-                m_node.emplace_back(ParseFunction());
+                m_nodes.emplace_back(ParseFunction());
         }
 
         m_dumpNode = std::make_unique<ParserInformation>(nullptr, "AST");
 
-        for (auto& node : m_node)
+        for (auto& node : m_nodes)
             node->DumpInformations(m_dumpNode);
 
         LOG_INFO("-> Creating abstract syntax tree...");
@@ -561,6 +571,11 @@ namespace Aryiele
             for (auto& nodeChild : node->Children)
                 DumpInformations(nodeChild, indent);
         }
+    }
+
+    std::vector<std::shared_ptr<Node>> Parser::GetNodes()
+    {
+        return m_nodes;
     }
 
 } /* Namespace Aryiele. */

@@ -1,14 +1,14 @@
 #ifndef ARYIELE_EXPRESSIONNODE_H
 #define ARYIELE_EXPRESSIONNODE_H
 
-#include <Aryiele/Parser/AST/Node.h>
+#include <Aryiele/AST/Node.h>
 
 namespace Aryiele
 {
     class ExpressionNode : public Node
     {
     public:
-        virtual ~ExpressionNode();
+        ~ExpressionNode() override;
     };
 
 } /* Namespace Aryiele. */

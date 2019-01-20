@@ -2,7 +2,7 @@
 #define ARYIELE_EXPRESSIONBOOLEANNODE_H
 
 #include <Aryiele/Core/Includes.h>
-#include <Aryiele/Parser/AST/ExpressionNode.h>
+#include <Aryiele/AST/ExpressionNode.h>
 
 namespace Aryiele
 {

@@ -1,4 +1,4 @@
-#include <Aryiele/Parser/AST/ExpressionVariableNode.h>
+#include <Aryiele/AST/ExpressionVariableNode.h>
 
 namespace Aryiele
 {
@@ -6,6 +6,16 @@ namespace Aryiele
             m_name(name)
     {
 
+    }
+
+    llvm::Value* ExpressionVariableNode::GenerateCode()
+    {
+        llvm::Value *V = CodeGenerator::GetInstance()->NamedValues[m_name];
+
+        if (!V)
+            LOG_ERROR("Unknown variable: ", m_name);
+
+        return V;
     }
 
     void ExpressionVariableNode::DumpInformations(std::shared_ptr<ParserInformation> parentNode)

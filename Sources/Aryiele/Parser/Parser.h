@@ -4,15 +4,15 @@
 #include <vector>
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/Parser/ParserToken.h>
-#include <Aryiele/Parser/AST/ExpressionNode.h>
+#include <Aryiele/AST/ExpressionNode.h>
 #include <Aryiele/Lexer/LexerToken.h>
 #include <Aryiele/Parser/ParserPrecedence.h>
-#include <Aryiele/Parser/AST/FunctionNode.h>
+#include <Aryiele/AST/FunctionNode.h>
 #include <Aryiele/Parser/ParserInformation.h>
 
 namespace Aryiele
 {
-    class Parser
+    class Parser : public Vanir::Singleton<Parser>
     {
     public:
         Parser();
@@ -20,6 +20,7 @@ namespace Aryiele
         std::vector<ParserToken> ConvertTokens(std::vector<LexerToken> tokenizerTokens);
         static std::string GetTokenName(ParserTokens tokenType);
         void Parse(std::vector<ParserToken> tokens);
+        std::vector<std::shared_ptr<Node>> GetNodes();
 
     private:
         ParserToken GetNextToken();
@@ -38,7 +39,7 @@ namespace Aryiele
 
         void DumpInformations(const std::shared_ptr<ParserInformation>& node, std::string indent = "") const;
 
-        std::vector<std::shared_ptr<Node>> m_node;
+        std::vector<std::shared_ptr<Node>> m_nodes;
         std::vector<ParserToken> m_tokens;
         ParserToken m_currentToken;
         int m_currentTokenIndex;

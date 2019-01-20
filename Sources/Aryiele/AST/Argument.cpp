@@ -1,4 +1,4 @@
-#include <Aryiele/Parser/AST/Argument.h>
+#include <Aryiele/AST/Argument.h>
 
 namespace Aryiele
 {
