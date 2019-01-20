@@ -11,10 +11,8 @@ namespace Aryiele
         LexerTokens_String,
 
         LexerTokens_Operator,
-        LexerTokens_Scope,
+        LexerTokens_Separator,
         LexerTokens_Identifier,
-
-        LexerTokens_EOL,
 
         // Not on final pass.
         LexerTokens_StringQuote,

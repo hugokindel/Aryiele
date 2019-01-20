@@ -173,15 +173,12 @@ namespace Aryiele
 
     LexerTokens Lexer::GetTransitionTableColumn(char currentCharacter)
     {
-        if (currentCharacter == ';')
-        {
-            return LexerTokens_EOL;
-        }
-        else if (currentCharacter == '{' || currentCharacter == '}' ||
+        if (currentCharacter == '{' || currentCharacter == '}' ||
             currentCharacter == '[' || currentCharacter == ']' ||
-            currentCharacter == '(' || currentCharacter == ')')
+            currentCharacter == '(' || currentCharacter == ')' ||
+            currentCharacter == ';' || currentCharacter == ',' || currentCharacter == ':')
         {
-            return LexerTokens_Scope;
+            return LexerTokens_Separator;
         }
         else if (currentCharacter == '\"' || currentCharacter == '\'')
         {
@@ -219,14 +216,12 @@ namespace Aryiele
                 return "Operator";
             case LexerTokens_Identifier:
                 return "Identifier";
-            case LexerTokens_Scope:
-                return "Scope";
+            case LexerTokens_Separator:
+                return "Separator";
             case LexerTokens_Space:
                 return "Space";
             case LexerTokens_Newline:
                 return "Newline";
-            case LexerTokens_EOL:
-                return "EOL";
             case LexerTokens_StringQuote:
                 return "StringQuote";
             case LexerTokens_Unknown:

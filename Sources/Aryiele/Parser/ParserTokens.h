@@ -36,14 +36,17 @@ namespace Aryiele
         //ParserTokens_Operator_Logical_Bitwise_ExcluseOr, // ^, example: x ^ y
         //ParserTokens_Operator_Logical_Bitwise_Complement, // ~ (as left expression), example: ~x
 
-        ParserTokens_Scope_RoundBracket_Open, // (
-        ParserTokens_Scope_RoundBracket_Closed, // )
-        ParserTokens_Scope_SquareBracket_Open, // [
-        ParserTokens_Scope_SquareBracket_Closed, // ]
-        ParserTokens_Scope_CurlyBracket_Open, // {
-        ParserTokens_Scope_CurlyBracket_Closed, // }
-        //ParserTokens_Scope_AngleBracket_Open, // <
-        //ParserTokens_Scope_AngleBracket_Closed, // >
+        ParserTokens_Separator_RoundBracket_Open, // (
+        ParserTokens_Separator_RoundBracket_Closed, // )
+        ParserTokens_Separator_SquareBracket_Open, // [
+        ParserTokens_Separator_SquareBracket_Closed, // ]
+        ParserTokens_Separator_CurlyBracket_Open, // {
+        ParserTokens_Separator_CurlyBracket_Closed, // }
+        ParserTokens_Separator_Colon, // :, example: var test: int = 0;
+        ParserTokens_Separator_Semicolon, // ;, example: return 0;
+        ParserTokens_Separator_Comma, // ,
+        //ParserTokens_Separator_AngleBracket_Open, // <
+        //ParserTokens_Separator_AngleBracket_Closed, // >
 
         ParserTokens_Keyword_TopLevel_Function, // function
         ParserTokens_Keyword_Var, // var
@@ -75,9 +78,6 @@ namespace Aryiele
         //ParserTokens_Preprocessor_Newline, // \, #TEST "Aryiele" \ "test"
 
         ParserTokens_Identifier, // Any characters sequence other than a keyword.
-        ParserTokens_TypeDefiner, // :, example: var test: int = 0;
-        ParserTokens_Separator, // ,
-        ParserTokens_EOL, // ;, example: return 0;
         ParserTokens_EOF, // EOF
 
         ParserTokens_Unknown

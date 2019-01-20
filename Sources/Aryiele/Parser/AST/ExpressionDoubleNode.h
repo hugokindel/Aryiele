@@ -11,6 +11,8 @@ namespace Aryiele
     public:
         explicit ExpressionDoubleNode(double value);
 
+        void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+
     protected:
         double m_value;
     };

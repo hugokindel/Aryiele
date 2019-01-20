@@ -66,6 +66,10 @@ add_executable(Aryiele
         ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionDoubleNode.h
         ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionIntegerNode.cpp
         ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionIntegerNode.h
+        ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionStringNode.cpp
+        ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionStringNode.h
+        ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionBooleanNode.cpp
+        ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionBooleanNode.h
         ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionVariableNode.cpp
         ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionVariableNode.h
         ${PROJECT_SOURCE_DIR}/Parser/AST/ExpressionBinaryOperationNode.cpp

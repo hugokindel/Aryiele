@@ -23,8 +23,12 @@ namespace Aryiele
 
     private:
         ParserToken GetNextToken();
-        //std::shared_ptr<ExpressionNode> ParseExpressionDouble();
+        std::shared_ptr<ExpressionNode> ParseString();
+        std::shared_ptr<ExpressionNode> ParseBoolean();
+        std::shared_ptr<ExpressionNode> ParseInteger();
+        std::shared_ptr<ExpressionNode> ParseDouble();
         std::shared_ptr<ExpressionNode> ParseIdentifier();
+        std::shared_ptr<ExpressionNode> ParseParenthese();
         std::shared_ptr<ExpressionNode> ParseReturn();
         std::shared_ptr<ExpressionNode> ParseBinaryOperationLeft();
         std::shared_ptr<ExpressionNode> ParseBinaryOperationRight(int expressionPrecedence, std::shared_ptr<ExpressionNode> leftExpression);
