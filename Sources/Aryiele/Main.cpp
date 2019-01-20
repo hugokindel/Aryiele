@@ -18,7 +18,7 @@ int main(const int argc, char *argv[])
 
     Vanir::Logger::Start();
 
-    LOG("-------------------------------------------- ARYIELE --------------------------------------------");
+    LOG(Vanir::LoggerColor(), "-------------------------------------------[ ARYIELE ]-------------------------------------------");
 
     std::string filename = argc < 2 ? "../test.as" : argv[1];
 
@@ -83,12 +83,14 @@ int main(const int argc, char *argv[])
 
         codeGenerator->GenerateCode(parser->GetNodes());
 
+        auto irFilepath = Vanir::FileUtils::GetFilePathWithoutExtension(filename) + ".ll";
+
         std::error_code EC;
-        llvm::raw_fd_ostream OS("../test.ll", EC, llvm::sys::fs::F_None); // TODO: Filename without extension
+        llvm::raw_fd_ostream OS(irFilepath, EC, llvm::sys::fs::F_None); // TODO: Filename without extension
         codeGenerator->Module->print(OS, nullptr);
         OS.flush();
 
-        infile = std::ifstream("../test.ll"); // TODO: Filename without extension
+        infile = std::ifstream(irFilepath); // TODO: Filename without extension
 
         for( std::string line; getline( infile, line ); )
             LOG_INFO(line);
@@ -100,7 +102,7 @@ int main(const int argc, char *argv[])
         parser.reset();
     }
 
-    LOG("-------------------------------------------------------------------------------------------------");
+    LOG(Vanir::LoggerColor(), "-------------------------------------------------------------------------------------------------");
 
     Vanir::Logger::Stop();
 
