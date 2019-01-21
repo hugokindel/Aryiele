@@ -4,7 +4,8 @@
 cmake_minimum_required(VERSION 3.12)
 project("Aryiele")
 
-set(LLVM_DIR ../Dependencies/LLVM/cmake/modules)
+set(LLVM_DIR ${PROJECT_SOURCE_DIR}/../Dependencies/LLVM/cmake/modules)
+
 
 find_package(LLVM REQUIRED CONFIG)
 
