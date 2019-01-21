@@ -34,6 +34,7 @@ set(ARYIELE_LIBRARIES ${ARYIELE_LIBRARIES}
         LLVMBinaryFormat
         LLVMSupport
         LLVMDemangle
+        LLVMPasses
         ${X11_LIBRARIES})
 set(ARYIELE_INCLUDES
         ${PROJECT_SOURCE_DIR}/../

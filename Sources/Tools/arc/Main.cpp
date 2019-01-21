@@ -176,12 +176,12 @@ int main(const int argc, char *argv[])
         codeGenerator->Module->print(OS, nullptr);
         OS.flush();
 
-        auto infile = std::ifstream(irFilepath);
+        auto infile2 = std::ifstream(irFilepath);
 
-        for( std::string line; getline( infile, line ); )
+        for( std::string line; getline( infile2, line ); )
             LOG_INFO(line);
 
-        infile.close();
+        infile2.close();
 
         LOG_INFO("--> Code generated.");
 

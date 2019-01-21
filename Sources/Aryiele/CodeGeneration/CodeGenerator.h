@@ -13,6 +13,11 @@
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Type.h>
 #include <llvm/IR/Verifier.h>
+#include <llvm/Support/TargetSelect.h>
+#include <llvm/Target/TargetMachine.h>
+#include <llvm/Transforms/InstCombine/InstCombine.h>
+#include <llvm/Transforms/Scalar.h>
+#include <llvm/Transforms/Scalar/GVN.h>
 
 namespace Aryiele
 {
@@ -29,6 +34,7 @@ namespace Aryiele
         llvm::IRBuilder<> Builder;
         std::shared_ptr<llvm::Module> Module;
         std::map<std::string, llvm::Value*> NamedValues;
+        std::shared_ptr<llvm::FunctionPassManager> FunctionPassManager;
     };
 
 } /* Namespace Aryiele. */
