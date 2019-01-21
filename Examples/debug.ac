@@ -1,3 +1,7 @@
+function main(): int
+{
+	return 12;
+}
 /*function main(): int
 {
 	var numberVal1: double = 5.0;
@@ -5,7 +9,7 @@
 
 	return multiplier(numberVal1, numberVal2);
 }*/
-function multiplier(a: double, b: double): double
+/*function multiplier(a: double, b: double): double
 {
 	return a * b + (50.0 - b * 2);
-}
+}*/

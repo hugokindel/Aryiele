@@ -11,7 +11,7 @@
 #include <llvm/Bitcode/BitcodeReader.h>
 #include <stdio.h>
 #include <Vanir/JSONFile.h>
-
+#include <filesystem>
 int main(const int argc, char *argv[])
 {
 #ifdef _WIN32
@@ -74,16 +74,18 @@ int main(const int argc, char *argv[])
         jsonFile.Content["Tools"]["NativeAssembler"] = "";
     }
 
+    if (!jsonFile.Content["Debug"]["Filepath"].is_null())
+        filepath = jsonFile.Content["Debug"]["Filepath"].get<std::string>();
+    else
+    {
+        jsonFile.Content["Debug"]["Filepath"] = "../debug.ac";
+
+        if (isDebug)
+            filepath = "../debug.ac";
+    }
+
     if (isDebug)
     {
-        if (!jsonFile.Content["Debug"]["Filepath"].is_null())
-            filepath = jsonFile.Content["Debug"]["Filepath"].get<std::string>();
-        else
-        {
-            jsonFile.Content["Debug"]["Filepath"] = "../debug.ac";
-            filepath = "../debug.ac";
-        }
-
         filepath = argc < 2 ? filepath : argv[1];
     }
     else
