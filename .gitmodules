@@ -4,3 +4,6 @@
 [submodule "Sources/Dependencies/LLVM"]
 	path = Sources/Dependencies/LLVM
 	url = https://github.com/ForxVT/LLVM.git
+[submodule "Sources/Dependencies/JSON"]
+	path = Sources/Dependencies/JSON
+	url = https://github.com/ForxVT/json.git
