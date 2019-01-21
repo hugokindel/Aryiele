@@ -8,12 +8,12 @@ namespace Aryiele
     CodeGenerator::CodeGenerator() :
         Builder(llvm::IRBuilder<>(Context)),
         Module(std::make_shared<llvm::Module>("Aryiele", Context)),
-        FunctionPassManager(std::make_shared<llvm::FunctionPassManager>(Module.get()))
+        FunctionPassManager(std::make_shared<llvm::legacy::FunctionPassManager>(Module.get()))
     {
-        FunctionPassManager->addPass(llvm::InstCombinePass());
-        FunctionPassManager->addPass(llvm::ReassociatePass());
-        FunctionPassManager->addPass(llvm::GVN());
-        FunctionPassManager->addPass(llvm::SimplifyCFGPass());
+        FunctionPassManager->add(llvm::createInstructionCombiningPass());
+        FunctionPassManager->add(llvm::createReassociatePass());
+        FunctionPassManager->add(llvm::createGVNPass());
+        FunctionPassManager->add(llvm::createCFGSimplificationPass());
     }
 
     void CodeGenerator::GenerateCode(std::vector<std::shared_ptr<Node>> nodes)

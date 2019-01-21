@@ -1,17 +1,33 @@
-﻿#include <Aryiele/Core/Includes.h>
-#include <Aryiele/Lexer/Lexer.h>
+﻿//===----- Ariyele Compiler -----------------------------------------------===//
+//
+// This project is a tool of the Aryiele language. Its main purpose is to
+// compile Aryiele to LLVM Intermediate Representation using the Aryiele
+// library and Vanir. But it can also serve to translate this code directly
+// to assembly for a specified architecture (using LLC), and also generate a
+// native executable using a native assembler/linker (GCC, Clang, MSVC, ...).
+//
+//===----------------------------------------------------------------------===//
+
 #ifdef PLATFORM_WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #endif
-#include <memory>
-#include <Vanir/FileUtils.h>
-#include <Aryiele/Parser/Parser.h>
 #include <llvm/Bitcode/BitcodeWriter.h>
 #include <llvm/Bitcode/BitcodeReader.h>
-#include <stdio.h>
+#include <Aryiele/Core/Includes.h>
+#include <Aryiele/Lexer/Lexer.h>
+#include <Aryiele/Parser/Parser.h>
+#include <Vanir/FileUtils.h>
 #include <Vanir/JSONFile.h>
+#include <stdio.h>
 #include <filesystem>
+#include <memory>
+
+void CompileAryieleToIR()
+{
+
+}
+
 int main(const int argc, char *argv[])
 {
 #ifdef _WIN32
@@ -49,29 +65,48 @@ int main(const int argc, char *argv[])
 
     if (!jsonFile.Content["Tools"]["StaticCompiler"].is_null())
         staticCompilerPath = jsonFile.Content["Tools"]["StaticCompiler"].get<std::string>();
-    else
+
+    if (staticCompilerPath.empty())
     {
-#ifdef PLATFORM_WINDOWS
+#if defined(PLATFORM_WINDOWS)
         if (Vanir::FileUtils::FileExist("data/llvm/bin/llc.exe"))
+        {
             jsonFile.Content["Tools"]["StaticCompiler"] = "data/llvm/bin/llc.exe";
+            staticCompilerPath = "data/llvm/bin/llc.exe";
+        }
+#elif defined(PLATFORM_MACOSX)
+        if (Vanir::FileUtils::FileExist("data/llvm/bin/llc"))
+        {
+            jsonFile.Content["Tools"]["StaticCompiler"] = "data/llvm/bin/llc";
+            staticCompilerPath = "data/llvm/bin/llc.exe";
+        }
 #else
         if (Vanir::FileUtils::FileExist("data/llvm/bin/llc"))
+        {
             jsonFile.Content["Tools"]["StaticCompiler"] = "data/llvm/bin/llc";
+            staticCompilerPath = "data/llvm/bin/llc.exe";
+        }
 #endif
-        jsonFile.Content["Tools"]["StaticCompiler"] = "";
     }
+
     if (!jsonFile.Content["Tools"]["NativeAssembler"].is_null())
         nativeAssemblerPath = jsonFile.Content["Tools"]["NativeAssembler"].get<std::string>();
-    else
+
+    if (nativeAssemblerPath.empty())
     {
-#ifdef PLATFORM_WINDOWS
+#if defined(PLATFORM_WINDOWS)
         if (Vanir::FileUtils::FileExist("data/gnu/bin/gcc.exe"))
+        {
             jsonFile.Content["Tools"]["NativeAssembler"] = "data/gnu/bin/gcc.exe";
+            nativeAssemblerPath = "data/gnu/bin/gcc.exe";
+        }
+#elif defined(PLATFORM_MACOSX)
+        jsonFile.Content["Tools"]["NativeAssembler"] = "clang";
+        nativeAssemblerPath = "clang";
 #else
-        if (Vanir::FileUtils::FileExist("data/gnu/bin/gcc"))
-            jsonFile.Content["Tools"]["NativeAssembler"] = "data/gnu/bin/gcc";
+        jsonFile.Content["Tools"]["NativeAssembler"] = "gcc";
+        nativeAssemblerPath = "gcc";
 #endif
-        jsonFile.Content["Tools"]["NativeAssembler"] = "";
     }
 
     if (!jsonFile.Content["Debug"]["Filepath"].is_null())

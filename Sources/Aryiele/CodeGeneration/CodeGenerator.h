@@ -18,6 +18,7 @@
 #include <llvm/Transforms/InstCombine/InstCombine.h>
 #include <llvm/Transforms/Scalar.h>
 #include <llvm/Transforms/Scalar/GVN.h>
+#include <llvm/IR/LegacyPassManager.h>
 
 namespace Aryiele
 {
@@ -34,7 +35,7 @@ namespace Aryiele
         llvm::IRBuilder<> Builder;
         std::shared_ptr<llvm::Module> Module;
         std::map<std::string, llvm::Value*> NamedValues;
-        std::shared_ptr<llvm::FunctionPassManager> FunctionPassManager;
+        std::shared_ptr<llvm::legacy::FunctionPassManager> FunctionPassManager;
     };
 
 } /* Namespace Aryiele. */

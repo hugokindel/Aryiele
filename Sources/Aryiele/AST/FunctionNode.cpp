@@ -76,6 +76,8 @@ namespace Aryiele
 
             verifyFunction(*function);
 
+            codeGenerator->FunctionPassManager->run(*function);
+
             return function;
         }
 
