@@ -1,3 +1,6 @@
 [submodule "Sources/Vanir"]
 	path = Sources/Vanir
 	url = https://github.com/ForxVT/Vanir.git
+[submodule "Sources/Dependencies/LLVM"]
+	path = Sources/Dependencies/LLVM
+	url = https://github.com/ForxVT/LLVM.git
