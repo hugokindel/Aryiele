@@ -17,11 +17,16 @@
 
 namespace ARC
 {
-    ARC::ARC() :
-        m_buildType(BuildType_Executable)
-    {
-
-    }
+    std::vector<Vanir::CommandLineOption> ARC::m_options;
+    std::string ARC::m_inputFilepath;
+    std::string ARC::m_outputFilepath;
+    std::string ARC::m_tempIRFilepath;
+    std::string ARC::m_tempOBJFilepath;
+    std::string ARC::m_tempEXEFilepath;
+    std::string ARC::m_tempArgv;
+    bool ARC::m_verboseMode;
+    bool ARC::m_keepAllFiles;
+    BuildType ARC::m_buildType = BuildType_Executable;
 
     int ARC::Run(const int argc, char *argv[])
     {
@@ -33,6 +38,63 @@ namespace ARC
 #ifndef FINAL_RELEASE
         Vanir::Logger::Start("data/logs.log");
 #else
+
+        m_options.emplace_back(
+            "--help", std::vector<std::string>({
+                "Display this information."
+            }),
+            &ARC::CommandShowHelp);
+        m_options.emplace_back(
+            "--version", std::vector<std::string>({
+                "Display version information."
+            }),
+            &ARC::CommandShowVersion);
+        m_options.emplace_back(
+            "-k", std::vector<std::string>({
+                "Keep all files after compilation."
+            }),
+            &ARC::CommandKeepAllFiles);
+        m_options.emplace_back(
+            "-v", std::vector<std::string>({
+                "Activate the verbose mode to display",
+                "informations about the compilation."
+            }),
+            &ARC::CommandActivateVerboseMode);
+        m_options.emplace_back(
+            "-out", std::vector<std::string>({
+                "Define the output file at <filename>."
+            }),
+            &ARC::CommandDefineOutputFilepath,
+            Vanir::CommandLineOptionTypes_Value,
+            "<filename>");
+        m_options.emplace_back(
+            "-type", std::vector<std::string>({
+                "Choose a build type (default is exe):"
+            }),
+            &ARC::CommandDefineBuildType,
+            Vanir::CommandLineOptionTypes_Value,
+            std::string(),
+            std::vector<Vanir::CommandLineOption>({
+                Vanir::CommandLineOption(
+                    "ir", std::vector<std::string>({
+                        "Emit an LLVM IR ('.ll') file."
+                    })),
+                Vanir::CommandLineOption(
+                    "obj",
+                    std::vector<std::string>({
+                        "Emit a native object ('.o') file."
+                    })),
+                Vanir::CommandLineOption(
+                    "exe",
+                    std::vector<std::string>({
+#ifdef PLATFORM_WINDOWS
+                        "Emit a native executable ('.exe') file."
+#else
+                        "Emit a native executable file."
+#endif
+                    }))
+            }));
+
         if(argc < 2)
         {
             LOG("");
@@ -50,22 +112,49 @@ namespace ARC
 
         for (int i = 1; i < argc; i++)
         {
-            if (!strcmp(argv[i], "--help"))
-                CommandShowHelp();
-            else if (!strcmp(argv[i], "--version"))
-                CommandShowVersion();
-            else if (std::string(argv[i]).rfind("-o=", 0) == 0)
-                CommandDefineOutputFilepath(argv[i]);
-            else if (std::string(argv[i]).rfind("-type=", 0) == 0)
-                CommandDefineBuildType(argv[i]);
-            else if (!strcmp(argv[i], "-v"))
-                CommandActivateVerboseMode();
-            else if (!strcmp(argv[i], "-k"))
-                CommandKeepAllFiles();
-            else if (std::string(argv[i]).rfind('-', 0) == 0)
-                CommandOptionNotFound(argv[i]);
-            else
-                CommandDefineInputFilepath(argv[i]);
+            m_tempArgv = argv[i];
+            bool found = false;
+
+            for (auto y : m_options)
+            {
+                if (y.Type == Vanir::CommandLineOptionTypes_Option)
+                {
+                    if (!strcmp(m_tempArgv.c_str(), y.Name.c_str()))
+                    {
+                        y.FunctionToCall();
+
+                        found = true;
+
+                        break;
+                    }
+                }
+                else
+                {
+                    if (m_tempArgv.rfind(y.Name + "=", 0) == 0)
+                    {
+                        if (m_tempArgv.size() > y.Name.size() + 1)
+                        {
+                            y.FunctionToCall();
+
+                            found = true;
+
+                            break;
+                        }
+                        else
+                        {
+                            ALOG_WARNING("You cannot use an empty value for option: '", y.Name, "'");
+                        }
+                    }
+                }
+            }
+
+            if (!found)
+            {
+                if (std::string(argv[i]).rfind('-', 0) == 0)
+                    CommandOptionNotFound();
+                else
+                    CommandDefineInputFilepath();
+            }
         }
 
 #ifndef FINAL_RELEASE
@@ -261,7 +350,7 @@ namespace ARC
         }
     }
 
-    void ARC::DumpASTInformations(const std::shared_ptr<Aryiele::ParserInformation>& node, std::string indent) const
+    void ARC::DumpASTInformations(const std::shared_ptr<Aryiele::ParserInformation>& node, std::string indent)
     {
         const auto isRoot = node->Parent == nullptr;
         const auto hasChildren = !node->Children.empty();
@@ -299,21 +388,8 @@ namespace ARC
         LOG("Usage: arc [options] <file>");
 #endif
         LOG("")
-        LOG("Options:")
-        LOG("  --help         Display this information.");
-        LOG("  --version      Display version information.");
-        LOG("  -o=<filename>  Define the output file at <filename>.");
-        LOG("  -v             Activate the verbose mode to display");
-        LOG("  -k             Keep all files after compilation.");
-        LOG("                 informations about the compilation.")
-        LOG("  -type          Choose a build type (default is exe):");
-        LOG("    =ir            Emit an LLVM IR ('.ll') file");
-        LOG("    =obj           Emit a native object ('.o') file.");
-#ifdef PLATFORM_WINDOWS
-        LOG("    =exe           Emit a native executable ('.exe') file.");
-#else
-        LOG("    =exe           Emit a native executable file.");
-#endif
+
+        Vanir::CommandLineUtils::DrawOptions(m_options);
     }
 
     void ARC::CommandShowVersion()
@@ -321,14 +397,14 @@ namespace ARC
         LOG("arc (Aryiele Compiler) ", ARC_VERSION);
     }
 
-    void ARC::CommandDefineInputFilepath(const std::string &filepath)
+    void ARC::CommandDefineInputFilepath()
     {
-        m_inputFilepath = filepath;
+        m_inputFilepath = m_tempArgv;
     }
 
-    void ARC::CommandDefineOutputFilepath(const std::string &filepath)
+    void ARC::CommandDefineOutputFilepath()
     {
-        auto result = GetOptionValue(filepath);
+        auto result = GetOptionValue(m_tempArgv);
 
         if (!result.empty())
         {
@@ -346,9 +422,9 @@ namespace ARC
         m_keepAllFiles = true;
     }
 
-    void ARC::CommandDefineBuildType(const std::string& option)
+    void ARC::CommandDefineBuildType()
     {
-        auto result = GetOptionValue(option);
+        auto result = GetOptionValue(m_tempArgv);
 
         if (!result.empty())
         {
@@ -366,14 +442,30 @@ namespace ARC
             }
             else
             {
-                ULOG_WARNING("arc: Unknown type value: ", option);
+                ULOG_WARNING("arc: Unknown type value: ", m_tempArgv);
             }
         }
     }
 
-    void ARC::CommandOptionNotFound(const std::string &option)
+    void ARC::CommandOptionNotFound()
     {
-        ULOG("arc: Unknown command line argument '", option, "'. Try: 'arc --help'")
+        ULOG("arc: Unknown command line argument '", m_tempArgv, "'. Try: 'arc --help'")
+
+        int distance = -1;
+        std::string nearest = std::string();
+
+        for (const auto& y : m_options)
+        {
+            auto optionDistance = Vanir::StringUtils::GeneralizedLevensteinDistance(y.Name, m_tempArgv);
+
+            if (optionDistance < distance || distance == -1)
+            {
+                distance = optionDistance;
+                nearest = y.Name;
+            }
+        }
+
+        ULOG("arc: Did you mean '", nearest, "'?");
     }
 
     std::string ARC::GetOptionValue(const std::string &option)
