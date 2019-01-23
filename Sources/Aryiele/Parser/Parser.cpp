@@ -219,7 +219,7 @@ namespace Aryiele
         }
     }
 
-    void Parser::Parse(std::vector<ParserToken> tokens)
+    std::vector<std::shared_ptr<Node>> Parser::Parse(std::vector<ParserToken> tokens)
     {
         m_tokens = std::move(tokens);
         m_tokens.emplace_back("", ParserTokens_EOF);
@@ -234,16 +234,7 @@ namespace Aryiele
                 m_nodes.emplace_back(ParseFunction());
         }
 
-        m_dumpNode = std::make_unique<ParserInformation>(nullptr, "AST");
-
-        for (auto& node : m_nodes)
-            node->DumpInformations(m_dumpNode);
-
-        LOG_INFO("-> Creating abstract syntax tree...");
-
-        DumpInformations(m_dumpNode);
-
-        LOG_INFO("-> Abstract syntax tree created.");
+        return m_nodes;
     }
 
     ParserToken Parser::GetNextToken()
@@ -541,41 +532,6 @@ namespace Aryiele
         }
 
         return std::make_shared<FunctionNode>(name, type, arguments, expressions);
-    }
-
-    void Parser::DumpInformations(const std::shared_ptr<ParserInformation>& node, std::string indent) const
-    {
-        const auto isRoot = node->Parent == nullptr;
-        const auto hasChildren = !node->Children.empty();
-        auto isLastSibling = true;
-
-        if (!isRoot)
-        {
-            isLastSibling = (static_cast<int>(std::distance(node->Parent->Children.begin(),
-                    std::find(node->Parent->Children.begin(), node->Parent->Children.end(), node)))
-                    == static_cast<int>(node->Parent->Children.size()) - 1);
-        }
-
-        if (isRoot)
-        {
-            ULOG_INFO(node->Name);
-        }
-        else
-        {
-            ULOG_INFO(indent + (isLastSibling ? "└╴" : "├╴"), node->Name);
-            indent += isLastSibling ? "  " : "│ ";
-        }
-
-        if (hasChildren)
-        {
-            for (auto& nodeChild : node->Children)
-                DumpInformations(nodeChild, indent);
-        }
-    }
-
-    std::vector<std::shared_ptr<Node>> Parser::GetNodes()
-    {
-        return m_nodes;
     }
 
 } /* Namespace Aryiele. */

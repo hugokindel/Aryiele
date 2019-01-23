@@ -39,6 +39,7 @@ set(ARC_LIBRARIES ${ARC_LIBRARIES}
         ${X11_LIBRARIES})
 set(ARC_INCLUDES
         ${PROJECT_SOURCE_DIR}/../../
+        ${PROJECT_SOURCE_DIR}/../
         ${PROJECT_SOURCE_DIR}/../../Dependencies/
         ${PROJECT_SOURCE_DIR}/../../Dependencies/LLVM/include/
         ${PROJECT_SOURCE_DIR}/../../Dependencies/JSON/include/
@@ -52,7 +53,7 @@ endif()
 add_definitions(${LLVM_DEFINITIONS})
 
 add_executable(arc
-        ${PROJECT_SOURCE_DIR}/Main.cpp)
+        ${PROJECT_SOURCE_DIR}/Main.cpp ARC.cpp ARC.h BuildType.h)
         
 
 target_include_directories(arc PUBLIC ${ARC_INCLUDES})

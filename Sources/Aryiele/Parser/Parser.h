@@ -19,8 +19,7 @@ namespace Aryiele
 
         std::vector<ParserToken> ConvertTokens(std::vector<LexerToken> tokenizerTokens);
         static std::string GetTokenName(ParserTokens tokenType);
-        void Parse(std::vector<ParserToken> tokens);
-        std::vector<std::shared_ptr<Node>> GetNodes();
+        std::vector<std::shared_ptr<Node>> Parse(std::vector<ParserToken> tokens);
 
     private:
         ParserToken GetNextToken();
@@ -37,13 +36,10 @@ namespace Aryiele
 
         std::shared_ptr<FunctionNode> ParseFunction();
 
-        void DumpInformations(const std::shared_ptr<ParserInformation>& node, std::string indent = "") const;
-
         std::vector<std::shared_ptr<Node>> m_nodes;
         std::vector<ParserToken> m_tokens;
         ParserToken m_currentToken;
         int m_currentTokenIndex;
-        std::shared_ptr<ParserInformation> m_dumpNode;
     };
 
 } /* Namespace Aryiele. */

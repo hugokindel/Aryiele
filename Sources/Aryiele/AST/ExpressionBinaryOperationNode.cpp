@@ -25,11 +25,13 @@ namespace Aryiele
         switch (m_operationType)
         {
             case ParserTokens_Operator_Arithmetic_Plus:
-                return CodeGenerator::GetInstance()->Builder.CreateFAdd(leftValue, rightValue, "addtmp");
+                return CodeGenerator::GetInstance()->Builder.CreateFAdd(leftValue, rightValue, "fadd");
             case ParserTokens_Operator_Arithmetic_Minus:
-                return CodeGenerator::GetInstance()->Builder.CreateFSub(leftValue, rightValue, "subtmp");
+                return CodeGenerator::GetInstance()->Builder.CreateFSub(leftValue, rightValue, "fsyb");
             case ParserTokens_Operator_Arithmetic_Multiply:
-                return CodeGenerator::GetInstance()->Builder.CreateFMul(leftValue, rightValue, "multmp");
+                return CodeGenerator::GetInstance()->Builder.CreateFMul(leftValue, rightValue, "fmul");
+            case ParserTokens_Operator_Arithmetic_Divide:
+                return CodeGenerator::GetInstance()->Builder.CreateFDiv(leftValue, rightValue, "fdiv");
             default:
             {
                 LOG_ERROR("Unknown binary operator: ", Parser::GetTokenName(m_operationType));
