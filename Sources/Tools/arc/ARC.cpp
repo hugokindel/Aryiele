@@ -24,9 +24,17 @@ namespace ARC
     std::string ARC::m_tempOBJFilepath;
     std::string ARC::m_tempEXEFilepath;
     std::string ARC::m_tempArgv;
+#ifndef FINAL_RELEASE
+    bool ARC::m_verboseMode = true;
+#else
     bool ARC::m_verboseMode;
+#endif
     bool ARC::m_keepAllFiles;
+#ifndef FINAL_RELEASE
+    BuildType ARC::m_buildType = BuildType_IR;
+#else
     BuildType ARC::m_buildType = BuildType_Executable;
+#endif
 
     int ARC::Run(const int argc, char *argv[])
     {
@@ -37,7 +45,7 @@ namespace ARC
 
 #ifndef FINAL_RELEASE
         Vanir::Logger::Start("data/logs.log");
-#else
+#endif
 
         m_options.emplace_back(
             "--help", std::vector<std::string>({
@@ -95,6 +103,7 @@ namespace ARC
                     }))
             }));
 
+#ifdef FINAL_RELEASE
         if(argc < 2)
         {
             LOG("");
