@@ -11,8 +11,8 @@
 #include <Aryiele/AST/ExpressionVariableNode.h>
 #include <iostream>
 #include <fcntl.h>
+#include <Aryiele/AST/ExpressionIfNode.h>
 #include "Parser.h"
-
 
 namespace Aryiele
 {
@@ -125,6 +125,10 @@ namespace Aryiele
                         tokens.emplace_back(token.Content, ParserTokens_Keyword_Var);
                     else if (token.Content == "return")
                         tokens.emplace_back(token.Content, ParserTokens_Keyword_Return);
+                    else if (token.Content == "if")
+                        tokens.emplace_back(token.Content, ParserTokens_Keyword_If);
+                    else if (token.Content == "else")
+                        tokens.emplace_back(token.Content, ParserTokens_Keyword_Else);
                     else
                         tokens.emplace_back(token.Content, ParserTokens_Identifier);
                     break;
@@ -210,6 +214,10 @@ namespace Aryiele
                 return "Keyword_Var";
             case ParserTokens_Keyword_Return:
                 return "Keyword_Return";
+            case ParserTokens_Keyword_If:
+                return "Keyword_If";
+            case ParserTokens_Keyword_Else:
+                return "Keyword_Else";
             case ParserTokens_Identifier:
                 return "Identifier";
             case ParserTokens_EOF:
@@ -237,11 +245,48 @@ namespace Aryiele
         return m_nodes;
     }
 
+    ParserToken Parser::GetCurrentToken()
+    {
+        return m_currentToken;
+    }
+
     ParserToken Parser::GetNextToken()
     {
         m_currentToken = m_tokens[++m_currentTokenIndex];
 
         return m_currentToken;
+    }
+
+    ParserToken Parser::GetPreviousToken()
+    {
+        if (m_currentTokenIndex > 0)
+            m_currentToken = m_tokens[--m_currentTokenIndex];
+
+        return m_currentToken;
+    }
+
+    std::vector<std::shared_ptr<ExpressionNode>> Parser::ParseBody()
+    {
+        std::vector<std::shared_ptr<ExpressionNode>> expressions;
+
+        while (true)
+        {
+            GetNextToken();
+
+            LOG_INFO(m_currentToken.Content)
+
+            if (m_currentToken.Type == ParserTokens_Separator_CurlyBracket_Closed)
+                break;
+
+            auto expression = ParseExpression();
+
+            if (expression != nullptr)
+            {
+                expressions.emplace_back(expression);
+            }
+        }
+
+        return expressions;
     }
 
     std::shared_ptr<ExpressionNode> Parser::ParseString()
@@ -307,6 +352,45 @@ namespace Aryiele
         return std::make_shared<ExpressionFunctionReturnNode>(ParseExpression());
     }
 
+    std::shared_ptr<ExpressionNode> Parser::ParseIf()
+    {
+        GetNextToken();
+
+        auto condition = ParseParenthese();
+
+        if (!condition)
+        {
+            LOG_ERROR("Cannot parse if condition");
+
+            return nullptr;
+        }
+
+        PARSER_CHECKTOKEN(ParserTokens_Separator_CurlyBracket_Open);
+
+        auto if_body = ParseBody();
+
+        PARSER_CHECKTOKEN(ParserTokens_Separator_CurlyBracket_Closed);
+
+        std::vector<std::shared_ptr<ExpressionNode>> else_body;
+
+        GetNextToken();
+
+        if (m_currentToken.Type == ParserTokens_Keyword_Else)
+        {
+            GetNextToken();
+
+            PARSER_CHECKTOKEN(ParserTokens_Separator_CurlyBracket_Open);
+
+            else_body = ParseBody();
+
+            PARSER_CHECKTOKEN(ParserTokens_Separator_CurlyBracket_Closed);
+        }
+        else
+            GetPreviousToken();
+
+        return std::make_shared<ExpressionIfNode>(condition, if_body, else_body);
+    }
+
     std::shared_ptr<ExpressionNode> Parser::ParseBinaryOperationLeft()
     {
         switch (m_currentToken.Type)
@@ -319,58 +403,16 @@ namespace Aryiele
                 return ParseString();
             case ParserTokens_LiteralValue_Boolean:
                 return ParseBoolean();
-            case ParserTokens_Operator_Equal:
-                return nullptr;
-            case ParserTokens_Operator_Arithmetic_Plus:
-                return nullptr;
-            case ParserTokens_Operator_Arithmetic_UnaryPlus:
-                return nullptr;
-            case ParserTokens_Operator_Arithmetic_Minus:
-                return nullptr;
-            case ParserTokens_Operator_Arithmetic_UnaryMinus:
-                return nullptr;
-            case ParserTokens_Operator_Arithmetic_Multiply:
-                return nullptr;
-            case ParserTokens_Operator_Arithmetic_Divide:
-                return nullptr;
-            case ParserTokens_Operator_Arithmetic_Remainder:
-                return nullptr;
-            case ParserTokens_Operator_Comparison_Equal:
-                return nullptr;
-            case ParserTokens_Operator_Comparison_NotEqual:
-                return nullptr;
-            case ParserTokens_Operator_Comparison_LessThan:
-                return nullptr;
-            case ParserTokens_Operator_Comparison_GreaterThan:
-                return nullptr;
-            case ParserTokens_Operator_Comparison_LessThanOrEqual:
-                return nullptr;
-            case ParserTokens_Operator_Comparison_GreaterThanOrEqual:
-                return nullptr;
-            case ParserTokens_Operator_Logical_And:
-                return nullptr;
-            case ParserTokens_Operator_Logical_Or:
-                return nullptr;
-            case ParserTokens_Operator_Logical_Not:
-                return nullptr;
             case ParserTokens_Separator_RoundBracket_Open:
                 return ParseParenthese();
-            case ParserTokens_Separator_RoundBracket_Closed:
-                return nullptr;
-            case ParserTokens_Separator_SquareBracket_Open:
-                return nullptr;
-            case ParserTokens_Separator_SquareBracket_Closed:
-                return nullptr;
-            case ParserTokens_Separator_CurlyBracket_Open:
-                return nullptr;
-            case ParserTokens_Separator_CurlyBracket_Closed:
-                return nullptr;
-            case ParserTokens_Keyword_Var:
-                return nullptr;
             case ParserTokens_Keyword_Return:
                 return ParseReturn();
+            case ParserTokens_Keyword_If:
+                return ParseIf();
             case ParserTokens_Identifier:
                 return ParseIdentifier();
+            default:
+                return nullptr;
         }
     }
 
@@ -421,7 +463,6 @@ namespace Aryiele
         std::string name;
         std::string type;
         std::vector<Argument> arguments;
-        std::vector<std::shared_ptr<ExpressionNode>> expressions;
 
         GetNextToken();
 
@@ -455,23 +496,13 @@ namespace Aryiele
 
                 GetNextToken();
 
-                if (m_currentToken.Type != ParserTokens_Separator_Colon)
-                {
-                    LOG_ERROR("Expected a type definer separator.");
-
-                    return nullptr;
-                }
+                PARSER_CHECKTOKEN(ParserTokens_Separator_Colon);
 
                 GetNextToken();
 
-                if (m_currentToken.Type == ParserTokens_Identifier)
-                    argument.Type = m_currentToken.Content;
-                else
-                {
-                    LOG_ERROR("Expected a type name.");
+                PARSER_CHECKTOKEN(ParserTokens_Identifier);
 
-                    return nullptr;
-                }
+                argument.Type = m_currentToken.Content;
 
                 arguments.emplace_back(argument);
             }
@@ -489,12 +520,7 @@ namespace Aryiele
 
         GetNextToken();
 
-        if (m_currentToken.Type != ParserTokens_Separator_Colon)
-        {
-            LOG_ERROR("Expected a type definer separator.");
-
-            return nullptr;
-        }
+        PARSER_CHECKTOKEN(ParserTokens_Separator_Colon);
 
         GetNextToken();
 
@@ -509,27 +535,9 @@ namespace Aryiele
 
         GetNextToken();
 
-        if (m_currentToken.Type != ParserTokens_Separator_CurlyBracket_Open)
-        {
-            LOG_ERROR("Expected an opened curly bracket.");
+        PARSER_CHECKTOKEN(ParserTokens_Separator_CurlyBracket_Open);
 
-            return nullptr;
-        }
-
-        while (true)
-        {
-            GetNextToken();
-
-            if (m_currentToken.Type == ParserTokens_Separator_CurlyBracket_Closed)
-                break;
-
-            auto expression = ParseExpression();
-
-            if (expression != nullptr)
-            {
-                expressions.emplace_back(expression);
-            }
-        }
+        auto expressions = ParseBody();
 
         return std::make_shared<FunctionNode>(name, type, arguments, expressions);
     }

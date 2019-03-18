@@ -180,7 +180,10 @@ namespace ARC
             }
             else
             {
-                DoCodeGeneratorPass(DoParserPass(DoLexerPass(m_inputFilepath)));
+                auto lexerPass = DoLexerPass(m_inputFilepath);
+                auto parserPass = DoParserPass(lexerPass);
+
+                /*DoCodeGeneratorPass(parserPass);
 
                 if (m_buildType == BuildType_Object || m_buildType == BuildType_Executable)
                 {
@@ -195,7 +198,7 @@ namespace ARC
 
                     if (!m_keepAllFiles)
                         remove(m_tempOBJFilepath.c_str());
-                }
+                }*/ // TODO Put back
             }
         }
 

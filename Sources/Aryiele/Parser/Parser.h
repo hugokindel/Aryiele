@@ -20,9 +20,12 @@ namespace Aryiele
         std::vector<ParserToken> ConvertTokens(std::vector<LexerToken> tokenizerTokens);
         static std::string GetTokenName(ParserTokens tokenType);
         std::vector<std::shared_ptr<Node>> Parse(std::vector<ParserToken> tokens);
+        ParserToken GetCurrentToken();
 
     private:
         ParserToken GetNextToken();
+        ParserToken GetPreviousToken();
+        std::vector<std::shared_ptr<ExpressionNode>> ParseBody();
         std::shared_ptr<ExpressionNode> ParseString();
         std::shared_ptr<ExpressionNode> ParseBoolean();
         std::shared_ptr<ExpressionNode> ParseInteger();
@@ -30,6 +33,7 @@ namespace Aryiele
         std::shared_ptr<ExpressionNode> ParseIdentifier();
         std::shared_ptr<ExpressionNode> ParseParenthese();
         std::shared_ptr<ExpressionNode> ParseReturn();
+        std::shared_ptr<ExpressionNode> ParseIf();
         //std::shared_ptr<ExpressionNode> ParseVariable(); TODO
         std::shared_ptr<ExpressionNode> ParseBinaryOperationLeft();
         std::shared_ptr<ExpressionNode> ParseBinaryOperationRight(int expressionPrecedence, std::shared_ptr<ExpressionNode> leftExpression);
@@ -44,5 +48,12 @@ namespace Aryiele
     };
 
 } /* Namespace Aryiele. */
+
+#define PARSER_CHECKTOKEN(EXPECTEDTOKENTYPE) \
+if (Parser::GetInstance()->GetCurrentToken().Type != EXPECTEDTOKENTYPE) \
+{ \
+    LOG_ERROR("wrong token, got '", Parser::GetTokenName(m_currentToken.Type), "' but expected '", Parser::GetTokenName(EXPECTEDTOKENTYPE), "'"); \
+    return nullptr; \
+}
 
 #endif /* ARYIELE_PARSER_H. */

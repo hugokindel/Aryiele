@@ -51,6 +51,8 @@ namespace Aryiele
         ParserTokens_Keyword_TopLevel_Function, // function
         ParserTokens_Keyword_Var, // var
         ParserTokens_Keyword_Return, // return
+        ParserTokens_Keyword_If, // if
+        ParserTokens_Keyword_Else, // else
         //ParserTokens_Keyword_Let, // let
         //ParserTokens_Keyword_Import, // import
         //ParserTokens_Keyword_Class, // class

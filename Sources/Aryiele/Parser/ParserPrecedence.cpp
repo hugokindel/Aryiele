@@ -8,6 +8,9 @@ namespace Aryiele
         m_binaryOperatorPrecedence[";"] = -1;
 
         m_binaryOperatorPrecedence["<"] = 1;
+        m_binaryOperatorPrecedence[">"] = 1;
+        m_binaryOperatorPrecedence["<="] = 1;
+        m_binaryOperatorPrecedence[">="] = 1;
 
         m_binaryOperatorPrecedence["+"] = 2;
         m_binaryOperatorPrecedence["-"] = 2;
@@ -18,7 +21,10 @@ namespace Aryiele
 
     int ParserPrecedence::GetPrecedence(const std::string& binaryOperator)
     {
-        return m_binaryOperatorPrecedence[binaryOperator] <= 0 ? -1 : m_binaryOperatorPrecedence[binaryOperator];
+        if(m_binaryOperatorPrecedence.find(binaryOperator) == m_binaryOperatorPrecedence.end())
+            return -1;
+        else
+            return m_binaryOperatorPrecedence[binaryOperator] <= 0 ? -1 : m_binaryOperatorPrecedence[binaryOperator];
     }
 
 } /* Namespace Aryiele. */
