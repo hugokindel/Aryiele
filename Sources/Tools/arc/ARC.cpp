@@ -266,32 +266,49 @@ namespace ARC
     {
         auto codeGenerator = Aryiele::CodeGenerator::GetInstance();
 
+        LOG_RESETCOUNTERS();
+
         codeGenerator->GenerateCode(astNodes);
 
-        m_tempIRFilepath = Vanir::FileUtils::GetFilePathWithoutExtension(m_inputFilepath) + ".ll";
-
-        if (!m_outputFilepath.empty())
+        if (::Vanir::Logger::ErrorCount > 0)
         {
-            switch (m_buildType)
+            if (m_verboseMode)
             {
-                case BuildType_IR:
-                    m_tempIRFilepath = m_outputFilepath;
-                    break;
-                default:
-                    m_tempIRFilepath = Vanir::FileUtils::GetFilePathWithoutExtension(m_outputFilepath) + ".ll";
-                    break;
+                ALOG_VERBOSE("ir code generation failed with ", ::Vanir::Logger::ErrorCount, " errors");
             }
         }
-
-        std::error_code errorCode;
-        llvm::raw_fd_ostream ostream(m_tempIRFilepath, errorCode, llvm::sys::fs::F_None);
-
-        codeGenerator->Module->print(ostream, nullptr);
-        ostream.flush();
-
-        if (m_verboseMode)
+        else
         {
-            ALOG_VERBOSE("ir code generated with success");
+            if (m_verboseMode)
+            {
+                ALOG_VERBOSE("ir code generated with success");
+            }
+
+            m_tempIRFilepath = Vanir::FileUtils::GetFilePathWithoutExtension(m_inputFilepath) + ".ll";
+
+            if (!m_outputFilepath.empty())
+            {
+                switch (m_buildType)
+                {
+                    case BuildType_IR:
+                        m_tempIRFilepath = m_outputFilepath;
+                        break;
+                    default:
+                        m_tempIRFilepath = Vanir::FileUtils::GetFilePathWithoutExtension(m_outputFilepath) + ".ll";
+                        break;
+                }
+            }
+
+            std::error_code errorCode;
+            llvm::raw_fd_ostream ostream(m_tempIRFilepath, errorCode, llvm::sys::fs::F_None);
+
+            codeGenerator->Module->print(ostream, nullptr);
+            ostream.flush();
+
+            if (m_verboseMode)
+            {
+                ALOG_VERBOSE("ir code file generated with success");
+            }
         }
     }
 
@@ -318,7 +335,7 @@ namespace ARC
         {
             if (m_verboseMode)
             {
-                ALOG_VERBOSE("object generated with success");
+                ALOG_VERBOSE("object file generated with success");
             }
         }
         else
@@ -350,7 +367,7 @@ namespace ARC
         {
             if (m_verboseMode)
             {
-                ALOG_VERBOSE("executable generated with success");
+                ALOG_VERBOSE("executable file generated with success");
             }
         }
         else
@@ -378,7 +395,7 @@ namespace ARC
         }
         else
         {
-            AULOG_VERBOSE("ast :", indent + (isLastSibling ? "└╴" : "├╴"), node->Name);
+            AULOG_VERBOSE("ast:", indent + (isLastSibling ? "└╴" : "├╴"), node->Name);
             indent += isLastSibling ? "  " : "│ ";
         }
 

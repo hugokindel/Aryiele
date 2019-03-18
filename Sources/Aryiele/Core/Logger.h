@@ -3,6 +3,8 @@
 
 #include <Vanir/Logger.h>
 
+#define LOG_RESETCOUNTERS() VANIR_LOG_RESETCOUNTERS();
+
 #define LOG(...) VANIR_LOG(__VA_ARGS__)
 #define LOG_INFO(...) VANIR_LOG_INFO(__VA_ARGS__)
 #define LOG_WARNING(...) VANIR_LOG_WARNING(__VA_ARGS__)

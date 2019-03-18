@@ -30,6 +30,7 @@ namespace Aryiele
         std::shared_ptr<ExpressionNode> ParseIdentifier();
         std::shared_ptr<ExpressionNode> ParseParenthese();
         std::shared_ptr<ExpressionNode> ParseReturn();
+        //std::shared_ptr<ExpressionNode> ParseVariable(); TODO
         std::shared_ptr<ExpressionNode> ParseBinaryOperationLeft();
         std::shared_ptr<ExpressionNode> ParseBinaryOperationRight(int expressionPrecedence, std::shared_ptr<ExpressionNode> leftExpression);
         std::shared_ptr<ExpressionNode> ParseExpression();

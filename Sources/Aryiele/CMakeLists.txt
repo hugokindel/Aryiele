@@ -93,7 +93,9 @@ add_library(Aryiele
         ${PROJECT_SOURCE_DIR}/AST/Argument.h
         ${PROJECT_SOURCE_DIR}/AST/Argument.cpp
         ${PROJECT_SOURCE_DIR}/CodeGeneration/CodeGenerator.h
-        ${PROJECT_SOURCE_DIR}/CodeGeneration/CodeGenerator.cpp)
+        ${PROJECT_SOURCE_DIR}/CodeGeneration/CodeGenerator.cpp
+        ${PROJECT_SOURCE_DIR}/AST/ExpressionIfNode.cpp
+        ${PROJECT_SOURCE_DIR}/AST/ExpressionIfNode.h)
 
 target_include_directories(Aryiele PUBLIC ${ARYIELE_INCLUDES})
 target_link_libraries(Aryiele ${ARYIELE_LIBRARIES})
