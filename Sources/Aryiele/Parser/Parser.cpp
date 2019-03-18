@@ -8,11 +8,11 @@
 #include <Aryiele/AST/ExpressionBooleanNode.h>
 #include <Aryiele/AST/ExpressionBinaryOperationNode.h>
 #include <Aryiele/AST/ExpressionFunctionReturnNode.h>
+#include <Aryiele/AST/ExpressionFunctionCallNode.h>
 #include <Aryiele/AST/ExpressionVariableNode.h>
+#include <Aryiele/AST/ExpressionIfNode.h>
 #include <iostream>
 #include <fcntl.h>
-#include <Aryiele/AST/ExpressionIfNode.h>
-#include "Parser.h"
 
 namespace Aryiele
 {
@@ -325,11 +325,45 @@ namespace Aryiele
 
     std::shared_ptr<ExpressionNode> Parser::ParseIdentifier()
     {
-        auto variable = std::make_shared<ExpressionVariableNode>(m_currentToken.Content);
+        auto identifier = m_currentToken.Content;
 
         GetNextToken();
 
-        return variable;
+        if (m_currentToken.Type == ParserTokens_Separator_RoundBracket_Open)
+        {
+            GetNextToken();
+
+            std::vector<std::shared_ptr<ExpressionNode>> arguments;
+
+            if (m_currentToken.Type != ParserTokens_Separator_RoundBracket_Closed)
+            {
+                while (true)
+                {
+                    if (auto arg = ParseExpression())
+                        arguments.emplace_back(arg);
+                    else
+                        return nullptr;
+
+                    if (m_currentToken.Type == ParserTokens_Separator_RoundBracket_Closed)
+                        break;
+
+                    if (m_currentToken.Type != ParserTokens_Separator_Comma)
+                    {
+                        LOG_ERROR("Expected ')' or ',' in argument list");
+                    }
+
+                    GetNextToken();
+                }
+            }
+
+            GetNextToken();
+
+            return std::make_shared<ExpressionFunctionCallNode>(identifier, arguments);
+        }
+        else
+        {
+            return std::make_shared<ExpressionVariableNode>(identifier);
+        }
     }
 
     std::shared_ptr<ExpressionNode> Parser::ParseParenthese()

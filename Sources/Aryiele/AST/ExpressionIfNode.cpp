@@ -17,8 +17,8 @@ namespace Aryiele
         if (!conditionValue)
             return nullptr;
 
-        conditionValue = CodeGenerator::GetInstance()->Builder.CreateFCmpONE(conditionValue,
-            llvm::ConstantFP::get(CodeGenerator::GetInstance()->Context, llvm::APFloat(0.0)), "ifcond");
+        //conditionValue = CodeGenerator::GetInstance()->Builder.CreateICmpNE(conditionValue,
+        //    llvm::ConstantInt::get(CodeGenerator::GetInstance()->Context, llvm::APInt(1, static_cast<uint64_t>(0))), "ifcond");
 
         llvm::Function *function = CodeGenerator::GetInstance()->Builder.GetInsertBlock()->getParent();
 
@@ -50,7 +50,7 @@ namespace Aryiele
 
         function->getBasicBlockList().push_back(mergeBasicBlock);
         CodeGenerator::GetInstance()->Builder.SetInsertPoint(mergeBasicBlock);
-        llvm::PHINode *PN = CodeGenerator::GetInstance()->Builder.CreatePHI(llvm::Type::getDoubleTy(CodeGenerator::GetInstance()->Context), 2, "iftmp");
+        llvm::PHINode *PN = CodeGenerator::GetInstance()->Builder.CreatePHI(llvm::Type::getInt32Ty(CodeGenerator::GetInstance()->Context), 2, "iftmp");
 
         PN->addIncoming(ThenV, thenBasicBlock);
         PN->addIncoming(ElseV, elseBasicBlock);

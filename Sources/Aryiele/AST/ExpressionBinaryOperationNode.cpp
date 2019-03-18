@@ -26,18 +26,17 @@ namespace Aryiele
         switch (m_operationType)
         {
             case ParserTokens_Operator_Arithmetic_Plus:
-                return CodeGenerator::GetInstance()->Builder.CreateFAdd(leftValue, rightValue, "fadd");
+                return CodeGenerator::GetInstance()->Builder.CreateAdd(leftValue, rightValue, "add");
             case ParserTokens_Operator_Arithmetic_Minus:
-                return CodeGenerator::GetInstance()->Builder.CreateFSub(leftValue, rightValue, "fsyb");
+                return CodeGenerator::GetInstance()->Builder.CreateSub(leftValue, rightValue, "sub");
             case ParserTokens_Operator_Arithmetic_Multiply:
-                return CodeGenerator::GetInstance()->Builder.CreateFMul(leftValue, rightValue, "fmul");
+                return CodeGenerator::GetInstance()->Builder.CreateMul(leftValue, rightValue, "mul");
             case ParserTokens_Operator_Arithmetic_Divide:
-                return CodeGenerator::GetInstance()->Builder.CreateFDiv(leftValue, rightValue, "fdiv");
+                return CodeGenerator::GetInstance()->Builder.CreateSDiv(leftValue, rightValue, "sdiv");
             case ParserTokens_Operator_Comparison_LessThan:
-                leftValue = CodeGenerator::GetInstance()->Builder.CreateFCmpULT(leftValue, rightValue, "cmptmp");
-
-                return CodeGenerator::GetInstance()->Builder.CreateUIToFP(
-                    leftValue, llvm::Type::getDoubleTy(CodeGenerator::GetInstance()->Context), "booltmp");
+                return CodeGenerator::GetInstance()->Builder.CreateICmpULT(leftValue, rightValue, "icmpulttmp");
+            case ParserTokens_Operator_Comparison_LessThanOrEqual:
+                return CodeGenerator::GetInstance()->Builder.CreateICmpULE(leftValue, rightValue, "icmpuletmp");
             default:
             {
                 LOG_ERROR("unknown binary operator: ", Parser::GetTokenName(m_operationType));

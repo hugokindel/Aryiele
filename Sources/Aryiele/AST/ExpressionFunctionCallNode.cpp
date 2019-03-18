@@ -1,4 +1,6 @@
 #include <Aryiele/AST/ExpressionFunctionCallNode.h>
+#include "ExpressionFunctionCallNode.h"
+
 
 namespace Aryiele
 {
@@ -39,6 +41,15 @@ namespace Aryiele
         }
 
         return CodeGenerator::GetInstance()->Builder.CreateCall(calledFunction, argumentsValues, "calltmp");
+    }
+
+    void ExpressionFunctionCallNode::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
+    {
+        auto node = std::make_shared<ParserInformation>(parentNode, "Function Call");
+        auto name = std::make_shared<ParserInformation>(node, "Identifier: " + m_name);
+        // TODO: Add args
+        node->Children.emplace_back(name);
+        parentNode->Children.emplace_back(node);
     }
 
 } /* Namespace Aryiele. */

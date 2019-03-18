@@ -14,6 +14,7 @@ namespace Aryiele
         ExpressionFunctionCallNode(const std::string& name, std::vector<std::shared_ptr<ExpressionNode>> arguments);
 
         llvm::Value* GenerateCode() override;
+        void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
 
     protected:
         std::string m_name;
