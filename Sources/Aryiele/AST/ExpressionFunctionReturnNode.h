@@ -17,7 +17,7 @@ namespace Aryiele
         void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
 
     protected:
-        std::shared_ptr<ExpressionNode> m_expression;
+        std::shared_ptr<ExpressionNode> m_expression; // TODO: All
     };
 
 } /* Namespace Aryiele. */

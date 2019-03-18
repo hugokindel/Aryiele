@@ -83,7 +83,7 @@ namespace Aryiele
 
         function->eraseFromParent();
 
-        LOG_ERROR("Error generating code for the body of a function: ", m_name);
+        LOG_ERROR("error generating code for the body of a function: ", m_name);
 
         return nullptr;
     }

@@ -273,8 +273,6 @@ namespace Aryiele
         {
             GetNextToken();
 
-            LOG_INFO(m_currentToken.Content)
-
             if (m_currentToken.Type == ParserTokens_Separator_CurlyBracket_Closed)
                 break;
 
@@ -386,7 +384,9 @@ namespace Aryiele
             PARSER_CHECKTOKEN(ParserTokens_Separator_CurlyBracket_Closed);
         }
         else
+        {
             GetPreviousToken();
+        }
 
         return std::make_shared<ExpressionIfNode>(condition, if_body, else_body);
     }

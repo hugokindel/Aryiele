@@ -22,6 +22,7 @@ namespace Aryiele
         if (!leftValue || !rightValue)
             return nullptr;
 
+        // TODO: Only support floatant (double) for now
         switch (m_operationType)
         {
             case ParserTokens_Operator_Arithmetic_Plus:
@@ -32,9 +33,14 @@ namespace Aryiele
                 return CodeGenerator::GetInstance()->Builder.CreateFMul(leftValue, rightValue, "fmul");
             case ParserTokens_Operator_Arithmetic_Divide:
                 return CodeGenerator::GetInstance()->Builder.CreateFDiv(leftValue, rightValue, "fdiv");
+            case ParserTokens_Operator_Comparison_LessThan:
+                leftValue = CodeGenerator::GetInstance()->Builder.CreateFCmpULT(leftValue, rightValue, "cmptmp");
+
+                return CodeGenerator::GetInstance()->Builder.CreateUIToFP(
+                    leftValue, llvm::Type::getDoubleTy(CodeGenerator::GetInstance()->Context), "booltmp");
             default:
             {
-                LOG_ERROR("Unknown binary operator: ", Parser::GetTokenName(m_operationType));
+                LOG_ERROR("unknown binary operator: ", Parser::GetTokenName(m_operationType));
 
                 return nullptr;
             }

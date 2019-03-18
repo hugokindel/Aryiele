@@ -183,7 +183,7 @@ namespace ARC
                 auto lexerPass = DoLexerPass(m_inputFilepath);
                 auto parserPass = DoParserPass(lexerPass);
 
-                /*DoCodeGeneratorPass(parserPass);
+                DoCodeGeneratorPass(parserPass);
 
                 if (m_buildType == BuildType_Object || m_buildType == BuildType_Executable)
                 {
@@ -198,7 +198,7 @@ namespace ARC
 
                     if (!m_keepAllFiles)
                         remove(m_tempOBJFilepath.c_str());
-                }*/ // TODO Put back
+                }
             }
         }
 
@@ -275,10 +275,9 @@ namespace ARC
 
         if (::Vanir::Logger::ErrorCount > 0)
         {
-            if (m_verboseMode)
-            {
-                ALOG_VERBOSE("ir code generation failed with ", ::Vanir::Logger::ErrorCount, " errors");
-            }
+            ALOG_ERROR("ir code generation failed with ", ::Vanir::Logger::ErrorCount, " errors");
+
+            LOG_RESETCOUNTERS();
         }
         else
         {

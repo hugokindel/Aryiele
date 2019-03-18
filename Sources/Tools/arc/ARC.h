@@ -8,25 +8,49 @@
 #include <arc/BuildType.h>
 
 #define ARC_VERSION "0.0.1"
-//#define FINAL_RELEASE // ONLY use for final releases.
+#define FINAL_RELEASE // ONLY use for final releases.
 
-#define ALOG(...) VANIR_LOG("arc: ", __VA_ARGS__)
-#define ALOG_INFO(...) VANIR_LOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Blue), "info: ", Vanir::LoggerColor(), __VA_ARGS__)
-#define ALOG_VERBOSE(...) VANIR_LOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Bright_Blue), "verbose: ", Vanir::LoggerColor(), __VA_ARGS__)
-#define ALOG_WARNING(...) VANIR_LOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Yellow), "warning: ", Vanir::LoggerColor(), __VA_ARGS__)
-#define ALOG_ERROR(...) VANIR_LOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Red), "error: ", Vanir::LoggerColor(), __VA_ARGS__)
+#define ALOG(...) VANIR_LOG("arc: ", __VA_ARGS__);
+#define ALOG_VERBOSE(...) VANIR_LOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Bright_Blue), "verbose: ", Vanir::LoggerColor(), __VA_ARGS__);
+#define ALOG_INFO(...) \
+{ \
+    VANIR_LOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Blue), "info: ", Vanir::LoggerColor(), __VA_ARGS__); \
+    VANIR_LOG_INCREASECOUNTER(::Vanir::LoggerTypes::LoggerTypes_Info); \
+}
+#define ALOG_WARNING(...) \
+{ \
+    VANIR_LOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Yellow), "warning: ", __VA_ARGS__, Vanir::LoggerColor()); \
+    VANIR_LOG_INCREASECOUNTER(::Vanir::LoggerTypes::LoggerTypes_Warning); \
+}
+#define ALOG_ERROR(...) \
+{ \
+    VANIR_LOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Red), "error: ", __VA_ARGS__, Vanir::LoggerColor()); \
+    VANIR_LOG_INCREASECOUNTER(::Vanir::LoggerTypes::LoggerTypes_Error); \
+}
 #ifdef PLATFORM_WINDOWS
-#define AULOG(...) VANIR_ULOG("arc: ", __VA_ARGS__)
-#define AULOG_INFO(...) VANIR_ULOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Blue), "info: ", Vanir::LoggerColor(), __VA_ARGS__)
-#define AULOG_VERBOSE(...) VANIR_ULOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Bright_Blue), "verbose: ", Vanir::LoggerColor(), __VA_ARGS__)
-#define AULOG_WARNING(...) VANIR_ULOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Yellow), "warning: ", Vanir::LoggerColor(), __VA_ARGS__)
-#define AULOG_ERROR(...) VANIR_ULOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Red), "error: ", Vanir::LoggerColor(), __VA_ARGS__)
+#define AULOG(...) VANIR_ULOG("arc: ", __VA_ARGS__);
+#define AULOG_VERBOSE(...) VANIR_ULOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Bright_Blue), "verbose: ", Vanir::LoggerColor(), __VA_ARGS__);
+#define AULOG_INFO(...) \
+{ \
+    VANIR_ULOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Blue), "info: ", Vanir::LoggerColor(), __VA_ARGS__); \
+    VANIR_LOG_INCREASECOUNTER(::Vanir::LoggerTypes::LoggerTypes_Info); \
+}
+#define AULOG_WARNING(...) \
+{ \
+    VANIR_ULOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Yellow), "warning: ", __VA_ARGS__, Vanir::LoggerColor()); \
+    VANIR_LOG_INCREASECOUNTER(::Vanir::LoggerTypes::LoggerTypes_Warning); \
+}
+#define AULOG_ERROR(...) \
+{ \
+    VANIR_ULOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Red), "error: ", __VA_ARGS__, Vanir::LoggerColor()); \
+    VANIR_LOG_INCREASECOUNTER(::Vanir::LoggerTypes::LoggerTypes_Error); \
+}
 #else
-#define AULOG(...) ALOG(__VA_ARGS__)
-#define AULOG_INFO(...) ALOG_INFO(__VA_ARGS__)
-#define AULOG_VERBOSE(...) ALOG_VERBOSE(__VA_ARGS__)
-#define AULOG_WARNING(...) ALOG_WARNING(__VA_ARGS__)
-#define AULOG_ERROR(...) ALOG_ERROR(__VA_ARGS__)
+#define AULOG(...) ALOG(__VA_ARGS__);
+#define AULOG_INFO(...) ALOG_INFO(__VA_ARGS__);
+#define AULOG_VERBOSE(...) ALOG_VERBOSE(__VA_ARGS__);
+#define AULOG_WARNING(...) ALOG_WARNING(__VA_ARGS__);
+#define AULOG_ERROR(...) ALOG_ERROR(__VA_ARGS__);
 #endif
 
 namespace ARC

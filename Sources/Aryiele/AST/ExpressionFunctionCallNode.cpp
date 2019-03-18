@@ -16,14 +16,14 @@ namespace Aryiele
 
         if (!calledFunction)
         {
-            LOG_ERROR("Unknown function referenced: ", m_name);
+            LOG_ERROR("unknown function referenced: ", m_name);
 
             return nullptr;
         }
 
         if (calledFunction->arg_size() != m_arguments.size())
         {
-            LOG_ERROR("Incorrect number of argument passed: ", calledFunction->arg_size(), " while expecting ", m_arguments.size());
+            LOG_ERROR("incorrect number of argument passed: ", calledFunction->arg_size(), " while expecting ", m_arguments.size());
 
             return nullptr;
         }

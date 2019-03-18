@@ -3,7 +3,6 @@
 
 namespace Aryiele
 {
-    // TODO - V2: Implement all token types.
     enum ParserTokens
     {
         ParserTokens_LiteralValue_Integer, // A number, example: 9

@@ -10,12 +10,14 @@ namespace Aryiele
 
     llvm::Value* ExpressionVariableNode::GenerateCode()
     {
-        llvm::Value *V = CodeGenerator::GetInstance()->NamedValues[m_name];
+        llvm::Value *value = CodeGenerator::GetInstance()->NamedValues[m_name];
 
-        if (!V)
-            LOG_ERROR("Unknown variable: ", m_name);
+        if (!value)
+        {
+            LOG_ERROR("unknown variable: ", m_name);
+        }
 
-        return V;
+        return value;
     }
 
     void ExpressionVariableNode::DumpInformations(std::shared_ptr<ParserInformation> parentNode)

@@ -12,7 +12,50 @@ namespace Aryiele
 
     llvm::Value *ExpressionIfNode::GenerateCode()
     {
+        llvm::Value *conditionValue = m_condition->GenerateCode();
 
+        if (!conditionValue)
+            return nullptr;
+
+        conditionValue = CodeGenerator::GetInstance()->Builder.CreateFCmpONE(conditionValue,
+            llvm::ConstantFP::get(CodeGenerator::GetInstance()->Context, llvm::APFloat(0.0)), "ifcond");
+
+        llvm::Function *function = CodeGenerator::GetInstance()->Builder.GetInsertBlock()->getParent();
+
+        llvm::BasicBlock *thenBasicBlock = llvm::BasicBlock::Create(CodeGenerator::GetInstance()->Context, "then", function);
+        llvm::BasicBlock *elseBasicBlock = llvm::BasicBlock::Create(CodeGenerator::GetInstance()->Context, "else");
+        llvm::BasicBlock *mergeBasicBlock = llvm::BasicBlock::Create(CodeGenerator::GetInstance()->Context, "ifcont");
+
+        CodeGenerator::GetInstance()->Builder.CreateCondBr(conditionValue, thenBasicBlock, elseBasicBlock);
+
+        CodeGenerator::GetInstance()->Builder.SetInsertPoint(thenBasicBlock);
+
+        llvm::Value *ThenV = m_if_body[0]->GenerateCode(); // TODO: All
+        if (!ThenV)
+            return nullptr;
+
+        CodeGenerator::GetInstance()->Builder.CreateBr(mergeBasicBlock);
+        thenBasicBlock = CodeGenerator::GetInstance()->Builder.GetInsertBlock();
+
+        function->getBasicBlockList().push_back(elseBasicBlock);
+        CodeGenerator::GetInstance()->Builder.SetInsertPoint(elseBasicBlock);
+
+        // TODO: Support for no else
+        llvm::Value *ElseV = m_else_body[0]->GenerateCode(); // TODO: All
+        if (!ElseV)
+            return nullptr;
+
+        CodeGenerator::GetInstance()->Builder.CreateBr(mergeBasicBlock);
+        elseBasicBlock = CodeGenerator::GetInstance()->Builder.GetInsertBlock();
+
+        function->getBasicBlockList().push_back(mergeBasicBlock);
+        CodeGenerator::GetInstance()->Builder.SetInsertPoint(mergeBasicBlock);
+        llvm::PHINode *PN = CodeGenerator::GetInstance()->Builder.CreatePHI(llvm::Type::getDoubleTy(CodeGenerator::GetInstance()->Context), 2, "iftmp");
+
+        PN->addIncoming(ThenV, thenBasicBlock);
+        PN->addIncoming(ElseV, elseBasicBlock);
+
+        return PN;
     }
 
     void ExpressionIfNode::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
