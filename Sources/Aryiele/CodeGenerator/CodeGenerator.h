@@ -41,6 +41,7 @@ namespace Aryiele
 
     private:
         llvm::Value* CastType(llvm::Value *value, llvm::Type *returnType);
+        llvm::AllocaInst *CreateEntryBlockAllocation(llvm::Function *function, const std::string &identifier, llvm::Type *type);
         llvm::Value* GenerateCode(std::shared_ptr<Node> node);
         llvm::Value* GenerateCode(NodeConstantDouble* node);
         llvm::Value* GenerateCode(NodeConstantInteger* node);

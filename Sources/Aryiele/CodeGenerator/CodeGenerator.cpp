@@ -3,6 +3,8 @@
 #include <Aryiele/AST/Nodes/Node.h>
 #include <llvm/Transforms/Scalar/SimplifyCFG.h>
 #include <llvm/Transforms/Scalar/Reassociate.h>
+#include "CodeGenerator.h"
+
 
 namespace Aryiele
 {
@@ -49,6 +51,15 @@ namespace Aryiele
         return m_builder.CreateTruncOrBitCast(value, returnType);
     }
 
+    // Definition code from https://llvm.org/docs/tutorial/LangImpl07.html
+    llvm::AllocaInst *
+    CodeGenerator::CreateEntryBlockAllocation(llvm::Function *function, const std::string &identifier, llvm::Type *type)
+    {
+        llvm::IRBuilder<> TmpB(&function->getEntryBlock(), function->getEntryBlock().begin());
+
+        return TmpB.CreateAlloca(type == nullptr ? llvm::Type::getInt32Ty(m_context) : type, nullptr, identifier);
+    }
+
     llvm::Value *CodeGenerator::GenerateCode(std::shared_ptr<Node> node)
     {
         auto nodePtr = node.get();
@@ -84,8 +95,7 @@ namespace Aryiele
 
     llvm::Value *CodeGenerator::GenerateCode(NodeConstantInteger* node)
     {
-        // TODO: Remove cast ?
-        return llvm::ConstantInt::get(m_context, llvm::APInt(32, static_cast<uint64_t>(node->Value)));
+        return llvm::ConstantInt::get(m_context, llvm::APInt(32, node->Value));
     }
 
     // TODO: Return + Types

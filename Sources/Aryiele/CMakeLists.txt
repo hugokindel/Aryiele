@@ -89,7 +89,14 @@ add_library(Aryiele
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeVariable.cpp
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeVariable.h
         ${PROJECT_SOURCE_DIR}/CodeGenerator/CodeGenerator.h
-        ${PROJECT_SOURCE_DIR}/CodeGenerator/CodeGenerator.cpp)
+        ${PROJECT_SOURCE_DIR}/CodeGenerator/CodeGenerator.cpp
+        ${PROJECT_SOURCE_DIR}/CodeGenerator/Variable.cpp
+        ${PROJECT_SOURCE_DIR}/CodeGenerator/Variable.h
+        ${PROJECT_SOURCE_DIR}/CodeGenerator/Block.h
+        ${PROJECT_SOURCE_DIR}/CodeGenerator/BlockStack.cpp
+        ${PROJECT_SOURCE_DIR}/CodeGenerator/BlockStack.h
+        ${PROJECT_SOURCE_DIR}/CodeGenerator/VariableStack.cpp
+        ${PROJECT_SOURCE_DIR}/CodeGenerator/VariableStack.h)
 
 target_include_directories(Aryiele PUBLIC ${ARYIELE_INCLUDES})
 target_link_libraries(Aryiele ${ARYIELE_LIBRARIES})
