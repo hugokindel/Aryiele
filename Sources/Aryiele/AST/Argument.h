@@ -7,9 +7,9 @@ namespace Aryiele
 {
     struct Argument
     {
-        Argument(const std::string& name, const std::string& type);
+        Argument(const std::string& identifier, const std::string& type);
 
-        std::string Name;
+        std::string Identifier;
         std::string Type;
     };
 

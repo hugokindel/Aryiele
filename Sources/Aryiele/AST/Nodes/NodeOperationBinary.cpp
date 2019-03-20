@@ -1,66 +1,42 @@
 #include <Aryiele/AST/Nodes/NodeOperationBinary.h>
 #include <Aryiele/Parser/Parser.h>
+#include "NodeOperationBinary.h"
+
 
 namespace Aryiele
 {
 
     NodeOperationBinary::NodeOperationBinary(ParserTokens operationType,
-                                                                 std::shared_ptr<Node> leftExpression,
-                                                                 std::shared_ptr<Node> rightExpression) :
-            m_operationType(operationType),
-            m_leftExpression(leftExpression),
-            m_rightExpression(rightExpression)
+                                             std::shared_ptr<Node> lhs,
+                                             std::shared_ptr<Node> rhs) :
+            OperationType(operationType),
+            LHS(lhs),
+            RHS(rhs)
     {
 
     }
 
-    llvm::Value* NodeOperationBinary::GenerateCode()
-    {
-        llvm::Value *leftValue = m_leftExpression->GenerateCode();
-        llvm::Value *rightValue = m_rightExpression->GenerateCode();
-
-        if (!leftValue || !rightValue)
-            return nullptr;
-
-        // TODO: Only support floatant (double) for now
-        switch (m_operationType)
-        {
-            case ParserTokens_Operator_Arithmetic_Plus:
-                return CodeGenerator::GetInstance()->Builder.CreateAdd(leftValue, rightValue, "add");
-            case ParserTokens_Operator_Arithmetic_Minus:
-                return CodeGenerator::GetInstance()->Builder.CreateSub(leftValue, rightValue, "sub");
-            case ParserTokens_Operator_Arithmetic_Multiply:
-                return CodeGenerator::GetInstance()->Builder.CreateMul(leftValue, rightValue, "mul");
-            case ParserTokens_Operator_Arithmetic_Divide:
-                return CodeGenerator::GetInstance()->Builder.CreateSDiv(leftValue, rightValue, "sdiv");
-            case ParserTokens_Operator_Comparison_LessThan:
-                return CodeGenerator::GetInstance()->Builder.CreateICmpULT(leftValue, rightValue, "icmpulttmp");
-            case ParserTokens_Operator_Comparison_LessThanOrEqual:
-                return CodeGenerator::GetInstance()->Builder.CreateICmpULE(leftValue, rightValue, "icmpuletmp");
-            default:
-            {
-                LOG_ERROR("unknown binary operator: ", Parser::GetTokenName(m_operationType));
-
-                return nullptr;
-            }
-        }
-    };
-
     void NodeOperationBinary::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
     {
         auto node = std::make_shared<ParserInformation>(parentNode, "Binary Operation");
-        auto operationType = std::make_shared<ParserInformation>(node, "Operation Type: " + Parser::GetTokenName(m_operationType));
-        auto leftExpression = std::make_shared<ParserInformation>(node, "Left Expression:");
-        auto rightExpression = std::make_shared<ParserInformation>(node, "Right Expression:");
+        auto operationType = std::make_shared<ParserInformation>(
+            node, "Operation Type: " + Parser::GetTokenName(OperationType));
+        auto lhs = std::make_shared<ParserInformation>(node, "LHS:");
+        auto rhs = std::make_shared<ParserInformation>(node, "RHS:");
 
-        m_leftExpression->DumpInformations(leftExpression);
-        m_rightExpression->DumpInformations(rightExpression);
+        LHS->DumpInformations(lhs);
+        RHS->DumpInformations(rhs);
 
         node->Children.emplace_back(operationType);
-        node->Children.emplace_back(leftExpression);
-        node->Children.emplace_back(rightExpression);
+        node->Children.emplace_back(lhs);
+        node->Children.emplace_back(rhs);
 
         parentNode->Children.emplace_back(node);
+    }
+
+    Nodes NodeOperationBinary::GetType()
+    {
+        return Nodes_Operation_Binary;
     }
 
 } /* Namespace Aryiele. */

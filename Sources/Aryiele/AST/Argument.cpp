@@ -2,8 +2,8 @@
 
 namespace Aryiele
 {
-    Argument::Argument(const std::string& name, const std::string& type) :
-        Name(name), Type(type)
+    Argument::Argument(const std::string& identifier, const std::string& type) :
+        Identifier(identifier), Type(type)
     {
 
     }

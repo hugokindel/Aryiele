@@ -1,14 +1,14 @@
 #include <arc/ARC.h>
-#include <stdio.h>
-#include <memory>
-#include <llvm/Bitcode/BitcodeWriter.h>
-#include <llvm/Bitcode/BitcodeReader.h>
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/Lexer/Lexer.h>
 #include <Aryiele/Parser/Parser.h>
+#include <Aryiele/CodeGenerator/CodeGenerator.h>
 #include <Vanir/FileUtils.h>
 #include <Vanir/JSONFile.h>
-#include "ARC.h"
+#include <llvm/Bitcode/BitcodeWriter.h>
+#include <llvm/Bitcode/BitcodeReader.h>
+#include <stdio.h>
+#include <memory>
 
 #ifdef PLATFORM_WINDOWS
 #define WIN32_LEAN_AND_MEAN
@@ -269,9 +269,11 @@ namespace ARC
     {
         auto codeGenerator = Aryiele::CodeGenerator::GetInstance();
 
+        codeGenerator->Create();
+
         LOG_RESETCOUNTERS();
 
-        codeGenerator->GenerateCode(astNodes);
+        codeGenerator->GenerateCode(std::move(astNodes));
 
         if (::Vanir::Logger::ErrorCount > 0)
         {
@@ -504,6 +506,8 @@ namespace ARC
         if (result.empty())
         {
             ALOG_WARNING("Empty value after option '", optionName, "'");
+
+            return std::string();
         }
         else
         {

@@ -71,14 +71,11 @@ add_library(Aryiele
         ${PROJECT_SOURCE_DIR}/AST/Argument.cpp
         ${PROJECT_SOURCE_DIR}/AST/Argument.h
         ${PROJECT_SOURCE_DIR}/AST/Nodes.h
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/Node.cpp
         ${PROJECT_SOURCE_DIR}/AST/Nodes/Node.h
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeConstantDouble.cpp
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeConstantDouble.h
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeConstantInteger.cpp
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeConstantInteger.h
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeFunctionDefinition.cpp
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeFunctionDefinition.h
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeFunctionPrototype.cpp
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeFunctionPrototype.h
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeOperationBinary.cpp
@@ -87,10 +84,12 @@ add_library(Aryiele
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementFunctionCall.h
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementIf.cpp
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementIf.h
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementReturn.cpp
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementReturn.h
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeVariable.cpp
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeVariable.h
-        ${PROJECT_SOURCE_DIR}/CodeGeneration/CodeGenerator.h
-        ${PROJECT_SOURCE_DIR}/CodeGeneration/CodeGenerator.cpp)
+        ${PROJECT_SOURCE_DIR}/CodeGenerator/CodeGenerator.h
+        ${PROJECT_SOURCE_DIR}/CodeGenerator/CodeGenerator.cpp)
 
 target_include_directories(Aryiele PUBLIC ${ARYIELE_INCLUDES})
 target_link_libraries(Aryiele ${ARYIELE_LIBRARIES})

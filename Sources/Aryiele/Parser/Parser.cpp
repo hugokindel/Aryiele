@@ -2,7 +2,7 @@
 #include <Aryiele/AST/Nodes/NodeConstantDouble.h>
 #include <Aryiele/AST/Nodes/NodeConstantInteger.h>
 #include <Aryiele/AST/Nodes/NodeOperationBinary.h>
-#include <Aryiele/AST/Nodes/NodeFunctionDefinition.h>
+#include <Aryiele/AST/Nodes/NodeStatementReturn.h>
 #include <Aryiele/AST/Nodes/NodeStatementFunctionCall.h>
 #include <Aryiele/AST/Nodes/NodeVariable.h>
 #include <Aryiele/AST/Nodes/NodeStatementIf.h>
@@ -281,7 +281,7 @@ namespace Aryiele
 
     std::shared_ptr<Node> Parser::ParseInteger()
     {
-        auto result = std::make_shared<NodeVariableInteger>(std::stoi(m_currentToken.Content));
+        auto result = std::make_shared<NodeConstantInteger>(std::stoi(m_currentToken.Content));
 
         GetNextToken();
 
@@ -290,7 +290,7 @@ namespace Aryiele
 
     std::shared_ptr<Node> Parser::ParseDouble()
     {
-        auto result = std::make_shared<NodeVariableDouble>(std::stod(m_currentToken.Content));
+        auto result = std::make_shared<NodeConstantDouble>(std::stod(m_currentToken.Content));
 
         GetNextToken();
 
@@ -355,7 +355,7 @@ namespace Aryiele
     {
         GetNextToken();
 
-        return std::make_shared<NodeFunctionDefinition>(ParseExpression());
+        return std::make_shared<NodeStatementReturn>(ParseExpression());
     }
 
     std::shared_ptr<Node> Parser::ParseIf()

@@ -1,91 +1,17 @@
 #include <Aryiele/AST/Nodes/NodeFunctionPrototype.h>
 #include <Vanir/StringUtils.h>
+#include "NodeFunctionPrototype.h"
+
 
 namespace Aryiele
 {
-    NodeFunctionPrototype::NodeFunctionPrototype(const std::string& name,
+    NodeFunctionPrototype::NodeFunctionPrototype(const std::string& identifier,
                                const std::string& type,
                                std::vector<Argument> arguments,
-                               std::vector<std::shared_ptr<Node>> implementations) :
-        m_name(name), m_type(type), m_arguments(arguments), m_implementations(implementations)
+                               std::vector<std::shared_ptr<Node>> body) :
+        Identifier(identifier), Type(type), Arguments(arguments), Body(body)
     {
 
-    }
-
-    const std::string& NodeFunctionPrototype::GetName() const
-    {
-        return m_name;
-    }
-
-    const std::string& NodeFunctionPrototype::GetType() const
-    {
-        return m_type;
-    }
-
-    const std::vector<Argument>& NodeFunctionPrototype::GetArguments() const
-    {
-        return m_arguments;
-    }
-
-    llvm::Value* NodeFunctionPrototype::GenerateCode()
-    {
-        auto codeGenerator = CodeGenerator::GetInstance();
-
-        llvm::Function *function = codeGenerator->Module->getFunction(m_name);
-
-        if (!function)
-        {
-            std::vector<llvm::Type*> arguments;
-            llvm::Type* functionTypeValue;
-
-            for (const auto &argument : m_arguments)
-            {
-                if (argument.Type == "double")
-                    arguments.emplace_back(llvm::Type::getDoubleTy(codeGenerator->Context));
-                else if (argument.Type == "int")
-                    arguments.emplace_back(llvm::Type::getInt32Ty(codeGenerator->Context));
-            }
-
-            if (m_type == "int")
-                functionTypeValue = llvm::Type::getInt32Ty(codeGenerator->Context);
-            else if (m_type == "double")
-                functionTypeValue = llvm::Type::getDoubleTy(codeGenerator->Context);
-
-            llvm::FunctionType *functionType = llvm::FunctionType::get(functionTypeValue, arguments, false);
-
-            function = llvm::Function::Create(functionType, llvm::Function::ExternalLinkage, m_name, codeGenerator->Module.get());
-
-            unsigned i = 0;
-
-            for (auto &Arg : function->args())
-                Arg.setName(m_arguments[i++].Name);
-        }
-
-        llvm::BasicBlock *basicBlock = llvm::BasicBlock::Create(codeGenerator->Context, "entry", function);
-
-        codeGenerator->Builder.SetInsertPoint(basicBlock);
-
-        codeGenerator->NamedValues.clear();
-
-        for (auto &Arg : function->args())
-            codeGenerator->NamedValues[Arg.getName()] = &Arg;
-
-        if (llvm::Value *returnValue = m_implementations[0]->GenerateCode())
-        {
-            codeGenerator->Builder.CreateRet(returnValue);
-
-            verifyFunction(*function);
-
-            codeGenerator->FunctionPassManager->run(*function);
-
-            return function;
-        }
-
-        function->eraseFromParent();
-
-        LOG_ERROR("error generating code for the body of a function: ", m_name);
-
-        return nullptr;
     }
 
     void NodeFunctionPrototype::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
@@ -94,29 +20,36 @@ namespace Aryiele
         auto argumentsNode = std::make_shared<ParserInformation>(node, "Arguments:");
         auto valueNode = std::make_shared<ParserInformation>(node, "Body:");
 
-        for (auto& childNode : m_implementations)
+        for (auto& childNode : Body)
             childNode->DumpInformations(valueNode);
 
         int i = 0;
 
-        for(auto& argument : m_arguments)
+        for(auto& argument : Arguments)
         {
             auto argumentNode = std::make_shared<ParserInformation>(argumentsNode, std::to_string(i));
 
-            argumentNode->Children.emplace_back(std::make_shared<ParserInformation>(argumentNode, "Identifier: " + argument.Name));
-            argumentNode->Children.emplace_back(std::make_shared<ParserInformation>(argumentNode, "Type: " + argument.Type));
+            argumentNode->Children.emplace_back(std::make_shared<ParserInformation>(
+                argumentNode, "Identifier: " + argument.Identifier));
+            argumentNode->Children.emplace_back(std::make_shared<ParserInformation>(
+                argumentNode, "Type: " + argument.Type));
 
             argumentsNode->Children.emplace_back(argumentNode);
 
             i++;
         }
 
-        node->Children.emplace_back(std::make_shared<ParserInformation>(node, "Identifier: " + m_name));
-        node->Children.emplace_back(std::make_shared<ParserInformation>(node, "Type: " + m_type));
+        node->Children.emplace_back(std::make_shared<ParserInformation>(node, "Identifier: " + Identifier));
+        node->Children.emplace_back(std::make_shared<ParserInformation>(node, "Type: " + Type));
         node->Children.emplace_back(argumentsNode);
         node->Children.emplace_back(valueNode);
 
         parentNode->Children.emplace_back(node);
+    }
+
+    Nodes NodeFunctionPrototype::GetType()
+    {
+        return Nodes_Function_Prototype;
     }
 
 } /* Namespace Aryiele. */

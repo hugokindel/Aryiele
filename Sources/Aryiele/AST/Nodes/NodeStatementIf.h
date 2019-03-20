@@ -1,5 +1,5 @@
-#ifndef ARYIELE_EXPRESSIONIFNODE_H
-#define ARYIELE_EXPRESSIONIFNODE_H
+#ifndef ARYIELE_NODESTATEMENTIF_H
+#define ARYIELE_NODESTATEMENTIF_H
 
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/AST/Nodes/Node.h>
@@ -10,18 +10,17 @@ namespace Aryiele
     {
     public:
         NodeStatementIf(std::shared_ptr<Node> condition,
-                         std::vector<std::shared_ptr<Node>> if_body,
-                         std::vector<std::shared_ptr<Node>> else_body);
+                         std::vector<std::shared_ptr<Node>> ifBody,
+                         std::vector<std::shared_ptr<Node>> elseBody);
 
-        llvm::Value* GenerateCode() override;
         void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        Nodes GetType() override;
 
-    private:
-        std::shared_ptr<Node> m_condition;
-        std::vector<std::shared_ptr<Node>> m_if_body;
-        std::vector<std::shared_ptr<Node>> m_else_body;
+        std::shared_ptr<Node> Condition;
+        std::vector<std::shared_ptr<Node>> IfBody;
+        std::vector<std::shared_ptr<Node>> ElseBody;
     };
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_EXPRESSIONIFNODE_H. */
+#endif /* ARYIELE_NODESTATEMENTIF_H. */

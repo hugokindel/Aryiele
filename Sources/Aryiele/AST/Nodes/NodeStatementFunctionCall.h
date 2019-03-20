@@ -1,5 +1,5 @@
-#ifndef ARYIELE_EXPRESSIONFUNCTIONCALLNODE_H
-#define ARYIELE_EXPRESSIONFUNCTIONCALLNODE_H
+#ifndef ARYIELE_NODESTATEMENTFUNCTIONCALL_H
+#define ARYIELE_NODESTATEMENTFUNCTIONCALL_H
 
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/AST/Nodes/Node.h>
@@ -11,16 +11,15 @@ namespace Aryiele
     class NodeStatementFunctionCall : public Node
     {
     public:
-        NodeStatementFunctionCall(const std::string& name, std::vector<std::shared_ptr<Node>> arguments);
+        NodeStatementFunctionCall(const std::string& identifier, std::vector<std::shared_ptr<Node>> arguments);
 
-        llvm::Value* GenerateCode() override;
         void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        Nodes GetType() override;
 
-    protected:
-        std::string m_name;
-        std::vector<std::shared_ptr<Node>> m_arguments;
+        std::string Identifier;
+        std::vector<std::shared_ptr<Node>> Arguments;
     };
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_EXPRESSIONFUNCTIONCALLNODE_H. */
+#endif /* ARYIELE_NODESTATEMENTFUNCTIONCALL_H. */

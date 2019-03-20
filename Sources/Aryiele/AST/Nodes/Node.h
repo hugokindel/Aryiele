@@ -3,7 +3,6 @@
 
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/Parser/ParserInformation.h>
-#include <Aryiele/CodeGeneration/CodeGenerator.h>
 #include <Aryiele/AST/Nodes.h>
 
 namespace Aryiele
@@ -11,11 +10,10 @@ namespace Aryiele
     class Node
     {
     public:
-        virtual ~Node();
+        virtual ~Node() = default;
 
-        virtual llvm::Value* GenerateCode();
-        virtual void DumpInformations(std::shared_ptr<ParserInformation> parentNode);
-        virtual Nodes GetType();
+        virtual void DumpInformations(std::shared_ptr<ParserInformation> parentNode) = 0;
+        virtual Nodes GetType() = 0;
     };
 
 } /* Namespace Aryiele. */

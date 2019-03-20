@@ -1,5 +1,5 @@
-#ifndef ARYIELE_EXPRESSIONVARIABLENODE_H
-#define ARYIELE_EXPRESSIONVARIABLENODE_H
+#ifndef ARYIELE_NODEVARIABLE_H
+#define ARYIELE_NODEVARIABLE_H
 
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/AST/Nodes/Node.h>
@@ -9,15 +9,14 @@ namespace Aryiele
     class NodeVariable : public Node
     {
     public:
-        explicit NodeVariable(const std::string& name);
+        explicit NodeVariable(const std::string& identifier);
 
-        llvm::Value* GenerateCode() override;
         void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        Nodes GetType() override;
 
-    protected:
-        std::string m_name;
+        std::string Identifier;
     };
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_EXPRESSIONVARIABLENODE_H. */
+#endif /* ARYIELE_NODEVARIABLE_H. */

@@ -1,25 +1,27 @@
 #include <Aryiele/AST/Nodes/NodeConstantInteger.h>
+#include "NodeConstantInteger.h"
+
 
 namespace Aryiele
 {
-    NodeVariableInteger::NodeVariableInteger(int value) :
-            m_value(value)
+    NodeConstantInteger::NodeConstantInteger(int value) :
+            Value(value)
     {
 
     }
 
-    llvm::Value* NodeVariableInteger::GenerateCode()
-    {
-        return llvm::ConstantInt::get(CodeGenerator::GetInstance()->Context, llvm::APInt(32, static_cast<uint64_t>(m_value)));
-    };
-
-    void NodeVariableInteger::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
+    void NodeConstantInteger::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
     {
         auto node = std::make_shared<ParserInformation>(parentNode, "Integer");
-        auto body = std::make_shared<ParserInformation>(node, "Value: " + std::to_string(m_value));
+        auto body = std::make_shared<ParserInformation>(node, "Value: " + std::to_string(Value));
 
         node->Children.emplace_back(body);
         parentNode->Children.emplace_back(node);
+    }
+
+    Nodes NodeConstantInteger::GetType()
+    {
+        return Nodes_Constant_Integer;
     }
 
 } /* Namespace Aryiele. */
