@@ -103,7 +103,7 @@ namespace Aryiele
         {
             auto argumentNode = std::make_shared<ParserInformation>(argumentsNode, std::to_string(i));
 
-            argumentNode->Children.emplace_back(std::make_shared<ParserInformation>(argumentNode, "Name: " + argument.Name));
+            argumentNode->Children.emplace_back(std::make_shared<ParserInformation>(argumentNode, "Identifier: " + argument.Name));
             argumentNode->Children.emplace_back(std::make_shared<ParserInformation>(argumentNode, "Type: " + argument.Type));
 
             argumentsNode->Children.emplace_back(argumentNode);
@@ -111,7 +111,7 @@ namespace Aryiele
             i++;
         }
 
-        node->Children.emplace_back(std::make_shared<ParserInformation>(node, "Name: " + m_name));
+        node->Children.emplace_back(std::make_shared<ParserInformation>(node, "Identifier: " + m_name));
         node->Children.emplace_back(std::make_shared<ParserInformation>(node, "Type: " + m_type));
         node->Children.emplace_back(argumentsNode);
         node->Children.emplace_back(valueNode);

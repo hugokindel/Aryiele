@@ -47,8 +47,25 @@ namespace Aryiele
     {
         auto node = std::make_shared<ParserInformation>(parentNode, "Function Call");
         auto name = std::make_shared<ParserInformation>(node, "Identifier: " + m_name);
-        // TODO: Add args
+        auto argumentsNode = std::make_shared<ParserInformation>(node, "Arguments:");
+
+        auto i = 0;
+
+        for(auto& argument : m_arguments)
+        {
+            auto argumentNode = std::make_shared<ParserInformation>(argumentsNode, std::to_string(i));
+            auto body = std::make_shared<ParserInformation>(argumentNode, "Body:");
+
+            argument->DumpInformations(body);
+
+            argumentNode->Children.emplace_back(body);
+            argumentsNode->Children.emplace_back(argumentNode);
+
+            i++;
+        }
+
         node->Children.emplace_back(name);
+        node->Children.emplace_back(argumentsNode);
         parentNode->Children.emplace_back(node);
     }
 
