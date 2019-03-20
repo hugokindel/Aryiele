@@ -1,3 +1,5 @@
+#include <utility>
+
 #include <arc/ARC.h>
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/Lexer/Lexer.h>
@@ -235,7 +237,7 @@ namespace ARC
     {
         auto parser = Aryiele::Parser::GetInstance();
 
-        auto parserTokens = parser->ConvertTokens(lexerTokens);
+        auto parserTokens = parser->ConvertTokens(std::move(lexerTokens));
 
         for (auto& token : parserTokens)
         {
@@ -256,10 +258,13 @@ namespace ARC
         {
             auto dumpNode = std::make_shared<Aryiele::ParserInformation>(nullptr, "AST");
 
+            // TODO: Small memory leak coming from here (see valgrind)
             for (auto& node : nodes)
                 node->DumpInformations(dumpNode);
 
             DumpASTInformations(dumpNode);
+
+            dumpNode.reset();
         }
 
         return nodes;
@@ -306,7 +311,7 @@ namespace ARC
             std::error_code errorCode;
             llvm::raw_fd_ostream ostream(m_tempIRFilepath, errorCode, llvm::sys::fs::F_None);
 
-            codeGenerator->Module->print(ostream, nullptr);
+            codeGenerator->GetModule()->print(ostream, nullptr);
             ostream.flush();
 
             if (m_verboseMode)

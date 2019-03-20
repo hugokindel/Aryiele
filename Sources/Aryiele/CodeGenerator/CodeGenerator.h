@@ -37,23 +37,25 @@ namespace Aryiele
     public:
         void Create();
         void GenerateCode(std::vector<std::shared_ptr<Node>> nodes);
-
-        llvm::LLVMContext Context;
-        llvm::IRBuilder<> Builder = llvm::IRBuilder<>(Context);
-        std::shared_ptr<llvm::Module> Module;
-        std::map<std::string, llvm::Value*> NamedValues;
-        std::shared_ptr<llvm::legacy::FunctionPassManager> FunctionPassManager;
+        std::shared_ptr<llvm::Module> GetModule();
 
     private:
+        llvm::Value* CastType(llvm::Value *value, llvm::Type *returnType);
         llvm::Value* GenerateCode(std::shared_ptr<Node> node);
         llvm::Value* GenerateCode(NodeConstantDouble* node);
         llvm::Value* GenerateCode(NodeConstantInteger* node);
-        llvm::Value* GenerateCode(NodeStatementReturn* node);
         llvm::Value* GenerateCode(NodeFunctionPrototype* node);
         llvm::Value* GenerateCode(NodeOperationBinary* node);
         llvm::Value* GenerateCode(NodeStatementFunctionCall* node);
         llvm::Value* GenerateCode(NodeStatementIf* node);
+        llvm::Value* GenerateCode(NodeStatementReturn* node);
         llvm::Value* GenerateCode(NodeVariable* node);
+
+        llvm::LLVMContext m_context;
+        llvm::IRBuilder<> m_builder = llvm::IRBuilder<>(m_context);
+        std::shared_ptr<llvm::DataLayout> m_dataLayout;
+        std::shared_ptr<llvm::Module> m_module;
+        std::map<std::string, llvm::Value*> m_namedValues;
     };
 
 } /* Namespace Aryiele. */
