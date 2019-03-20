@@ -1,14 +1,14 @@
-#include <Aryiele/AST/ExpressionVariableNode.h>
+#include <Aryiele/AST/Nodes/NodeVariable.h>
 
 namespace Aryiele
 {
-    ExpressionVariableNode::ExpressionVariableNode(const std::string& name) :
+    NodeVariable::NodeVariable(const std::string& name) :
             m_name(name)
     {
 
     }
 
-    llvm::Value* ExpressionVariableNode::GenerateCode()
+    llvm::Value* NodeVariable::GenerateCode()
     {
         llvm::Value *value = CodeGenerator::GetInstance()->NamedValues[m_name];
 
@@ -20,7 +20,7 @@ namespace Aryiele
         return value;
     }
 
-    void ExpressionVariableNode::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
+    void NodeVariable::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
     {
         auto node = std::make_shared<ParserInformation>(parentNode, "Variable");
         auto body = std::make_shared<ParserInformation>(node, "Identifier: " + m_name);

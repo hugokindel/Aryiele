@@ -1,33 +1,33 @@
-#include <Aryiele/AST/FunctionNode.h>
+#include <Aryiele/AST/Nodes/NodeFunctionPrototype.h>
 #include <Vanir/StringUtils.h>
 
 namespace Aryiele
 {
-    FunctionNode::FunctionNode(const std::string& name,
+    NodeFunctionPrototype::NodeFunctionPrototype(const std::string& name,
                                const std::string& type,
                                std::vector<Argument> arguments,
-                               std::vector<std::shared_ptr<ExpressionNode>> implementations) :
+                               std::vector<std::shared_ptr<Node>> implementations) :
         m_name(name), m_type(type), m_arguments(arguments), m_implementations(implementations)
     {
 
     }
 
-    const std::string& FunctionNode::GetName() const
+    const std::string& NodeFunctionPrototype::GetName() const
     {
         return m_name;
     }
 
-    const std::string& FunctionNode::GetType() const
+    const std::string& NodeFunctionPrototype::GetType() const
     {
         return m_type;
     }
 
-    const std::vector<Argument>& FunctionNode::GetArguments() const
+    const std::vector<Argument>& NodeFunctionPrototype::GetArguments() const
     {
         return m_arguments;
     }
 
-    llvm::Value* FunctionNode::GenerateCode()
+    llvm::Value* NodeFunctionPrototype::GenerateCode()
     {
         auto codeGenerator = CodeGenerator::GetInstance();
 
@@ -88,7 +88,7 @@ namespace Aryiele
         return nullptr;
     }
 
-    void FunctionNode::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
+    void NodeFunctionPrototype::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
     {
         auto node = std::make_shared<ParserInformation>(parentNode, "Function");
         auto argumentsNode = std::make_shared<ParserInformation>(node, "Arguments:");

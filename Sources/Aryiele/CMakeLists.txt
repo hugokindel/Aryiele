@@ -68,34 +68,29 @@ add_library(Aryiele
         ${PROJECT_SOURCE_DIR}/Parser/ParserPrecedence.h
         ${PROJECT_SOURCE_DIR}/Parser/ParserInformation.cpp
         ${PROJECT_SOURCE_DIR}/Parser/ParserInformation.h
-        ${PROJECT_SOURCE_DIR}/AST/ExpressionNode.cpp
-        ${PROJECT_SOURCE_DIR}/AST/ExpressionNode.h
-        ${PROJECT_SOURCE_DIR}/AST/ExpressionDoubleNode.cpp
-        ${PROJECT_SOURCE_DIR}/AST/ExpressionDoubleNode.h
-        ${PROJECT_SOURCE_DIR}/AST/ExpressionIntegerNode.cpp
-        ${PROJECT_SOURCE_DIR}/AST/ExpressionIntegerNode.h
-        ${PROJECT_SOURCE_DIR}/AST/ExpressionStringNode.cpp
-        ${PROJECT_SOURCE_DIR}/AST/ExpressionStringNode.h
-        ${PROJECT_SOURCE_DIR}/AST/ExpressionBooleanNode.cpp
-        ${PROJECT_SOURCE_DIR}/AST/ExpressionBooleanNode.h
-        ${PROJECT_SOURCE_DIR}/AST/ExpressionVariableNode.cpp
-        ${PROJECT_SOURCE_DIR}/AST/ExpressionVariableNode.h
-        ${PROJECT_SOURCE_DIR}/AST/ExpressionBinaryOperationNode.cpp
-        ${PROJECT_SOURCE_DIR}/AST/ExpressionBinaryOperationNode.h
-        ${PROJECT_SOURCE_DIR}/AST/ExpressionFunctionReturnNode.cpp
-        ${PROJECT_SOURCE_DIR}/AST/ExpressionFunctionReturnNode.h
-        ${PROJECT_SOURCE_DIR}/AST/ExpressionFunctionCallNode.cpp
-        ${PROJECT_SOURCE_DIR}/AST/ExpressionFunctionCallNode.h
-        ${PROJECT_SOURCE_DIR}/AST/FunctionNode.cpp
-        ${PROJECT_SOURCE_DIR}/AST/FunctionNode.h
-        ${PROJECT_SOURCE_DIR}/AST/Node.cpp
-        ${PROJECT_SOURCE_DIR}/AST/Node.h
-        ${PROJECT_SOURCE_DIR}/AST/Argument.h
         ${PROJECT_SOURCE_DIR}/AST/Argument.cpp
+        ${PROJECT_SOURCE_DIR}/AST/Argument.h
+        ${PROJECT_SOURCE_DIR}/AST/Nodes.h
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/Node.cpp
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/Node.h
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeConstantDouble.cpp
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeConstantDouble.h
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeConstantInteger.cpp
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeConstantInteger.h
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeFunctionDefinition.cpp
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeFunctionDefinition.h
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeFunctionPrototype.cpp
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeFunctionPrototype.h
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeOperationBinary.cpp
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeOperationBinary.h
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementFunctionCall.cpp
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementFunctionCall.h
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementIf.cpp
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementIf.h
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeVariable.cpp
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeVariable.h
         ${PROJECT_SOURCE_DIR}/CodeGeneration/CodeGenerator.h
-        ${PROJECT_SOURCE_DIR}/CodeGeneration/CodeGenerator.cpp
-        ${PROJECT_SOURCE_DIR}/AST/ExpressionIfNode.cpp
-        ${PROJECT_SOURCE_DIR}/AST/ExpressionIfNode.h)
+        ${PROJECT_SOURCE_DIR}/CodeGeneration/CodeGenerator.cpp)
 
 target_include_directories(Aryiele PUBLIC ${ARYIELE_INCLUDES})
 target_link_libraries(Aryiele ${ARYIELE_LIBRARIES})

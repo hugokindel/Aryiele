@@ -1,5 +1,5 @@
 #include <Aryiele/CodeGeneration/CodeGenerator.h>
-#include <Aryiele/AST/Node.h>
+#include <Aryiele/AST/Nodes/Node.h>
 #include <llvm/Transforms/Scalar/SimplifyCFG.h>
 #include <llvm/Transforms/Scalar/Reassociate.h>
 

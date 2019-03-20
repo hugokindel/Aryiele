@@ -3,25 +3,25 @@
 
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/Parser/ParserTokens.h>
-#include <Aryiele/AST/ExpressionNode.h>
+#include <Aryiele/AST/Nodes/Node.h>
 #include <memory>
 
 namespace Aryiele
 {
-    class ExpressionBinaryOperationNode : public ExpressionNode
+    class NodeOperationBinary : public Node
     {
     public:
-        ExpressionBinaryOperationNode(ParserTokens operationType,
-                                      std::shared_ptr<ExpressionNode> leftExpression,
-                                      std::shared_ptr<ExpressionNode> rightExpression);
+        NodeOperationBinary(ParserTokens operationType,
+                                      std::shared_ptr<Node> leftExpression,
+                                      std::shared_ptr<Node> rightExpression);
 
         llvm::Value* GenerateCode() override;
         void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
 
     protected:
         ParserTokens m_operationType;
-        std::shared_ptr<ExpressionNode> m_leftExpression;
-        std::shared_ptr<ExpressionNode> m_rightExpression;
+        std::shared_ptr<Node> m_leftExpression;
+        std::shared_ptr<Node> m_rightExpression;
     };
 
 } /* Namespace Aryiele. */

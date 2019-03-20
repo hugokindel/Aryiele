@@ -2,19 +2,19 @@
 #define ARYIELE_FUNCTIONNODE_H
 
 #include <Aryiele/Core/Includes.h>
-#include <Aryiele/AST/ExpressionNode.h>
-#include <Aryiele/AST/Node.h>
+#include <Aryiele/AST/Nodes/Node.h>
+#include <Aryiele/AST/Nodes/Node.h>
 #include <Aryiele/AST/Argument.h>
 
 namespace Aryiele
 {
-    class FunctionNode : public Node
+    class NodeFunctionPrototype : public Node
     {
     public:
-        FunctionNode(const std::string& name,
+        NodeFunctionPrototype(const std::string& name,
                      const std::string& type,
                      std::vector<Argument> argumentsName,
-                     std::vector<std::shared_ptr<ExpressionNode>> implementations);
+                     std::vector<std::shared_ptr<Node>> implementations);
 
         const std::string& GetName() const;
         const std::string& GetType() const;
@@ -27,7 +27,7 @@ namespace Aryiele
         std::string m_name;
         std::string m_type;
         std::vector<Argument> m_arguments;
-        std::vector<std::shared_ptr<ExpressionNode>> m_implementations;
+        std::vector<std::shared_ptr<Node>> m_implementations;
     };
 
 } /* Namespace Aryiele. */

@@ -1,27 +1,25 @@
-#include <Aryiele/AST/ExpressionFunctionReturnNode.h>
-#include "ExpressionFunctionReturnNode.h"
-
+#include <Aryiele/AST/Nodes/NodeFunctionDefinition.h>
 
 namespace Aryiele
 {
 
-    ExpressionFunctionReturnNode::ExpressionFunctionReturnNode(std::shared_ptr<ExpressionNode> expression) :
+    NodeFunctionDefinition::NodeFunctionDefinition(std::shared_ptr<Node> expression) :
         m_expression(expression)
     {
 
     }
 
-    std::shared_ptr<ExpressionNode> ExpressionFunctionReturnNode::GetExpression()
+    std::shared_ptr<Node> NodeFunctionDefinition::GetExpression()
     {
         return m_expression;
     }
 
-    llvm::Value *ExpressionFunctionReturnNode::GenerateCode()
+    llvm::Value *NodeFunctionDefinition::GenerateCode()
     {
         return m_expression->GenerateCode();
     }
 
-    void ExpressionFunctionReturnNode::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
+    void NodeFunctionDefinition::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
     {
         auto node = std::make_shared<ParserInformation>(parentNode, "Return");
         auto body = std::make_shared<ParserInformation>(node, "Body:");

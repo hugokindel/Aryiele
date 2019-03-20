@@ -2,22 +2,22 @@
 #define ARYIELE_EXPRESSIONFUNCTIONRETURNNODE_H
 
 #include <Aryiele/Core/Includes.h>
-#include <Aryiele/AST/ExpressionNode.h>
+#include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele
 {
-    class ExpressionFunctionReturnNode : public ExpressionNode
+    class NodeFunctionDefinition : public Node
     {
     public:
-        ExpressionFunctionReturnNode(std::shared_ptr<ExpressionNode> expression);
+        NodeFunctionDefinition(std::shared_ptr<Node> expression);
 
-        std::shared_ptr<ExpressionNode> GetExpression();
+        std::shared_ptr<Node> GetExpression();
 
         llvm::Value* GenerateCode() override;
         void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
 
     protected:
-        std::shared_ptr<ExpressionNode> m_expression; // TODO: All
+        std::shared_ptr<Node> m_expression; // TODO: All
     };
 
 } /* Namespace Aryiele. */

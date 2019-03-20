@@ -1,12 +1,12 @@
-#include <Aryiele/AST/ExpressionBinaryOperationNode.h>
+#include <Aryiele/AST/Nodes/NodeOperationBinary.h>
 #include <Aryiele/Parser/Parser.h>
 
 namespace Aryiele
 {
 
-    ExpressionBinaryOperationNode::ExpressionBinaryOperationNode(ParserTokens operationType,
-                                                                 std::shared_ptr<ExpressionNode> leftExpression,
-                                                                 std::shared_ptr<ExpressionNode> rightExpression) :
+    NodeOperationBinary::NodeOperationBinary(ParserTokens operationType,
+                                                                 std::shared_ptr<Node> leftExpression,
+                                                                 std::shared_ptr<Node> rightExpression) :
             m_operationType(operationType),
             m_leftExpression(leftExpression),
             m_rightExpression(rightExpression)
@@ -14,7 +14,7 @@ namespace Aryiele
 
     }
 
-    llvm::Value* ExpressionBinaryOperationNode::GenerateCode()
+    llvm::Value* NodeOperationBinary::GenerateCode()
     {
         llvm::Value *leftValue = m_leftExpression->GenerateCode();
         llvm::Value *rightValue = m_rightExpression->GenerateCode();
@@ -46,7 +46,7 @@ namespace Aryiele
         }
     };
 
-    void ExpressionBinaryOperationNode::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
+    void NodeOperationBinary::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
     {
         auto node = std::make_shared<ParserInformation>(parentNode, "Binary Operation");
         auto operationType = std::make_shared<ParserInformation>(node, "Operation Type: " + Parser::GetTokenName(m_operationType));

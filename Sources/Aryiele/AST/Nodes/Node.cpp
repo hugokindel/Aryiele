@@ -1,4 +1,4 @@
-#include <Aryiele/AST/Node.h>
+#include <Aryiele/AST/Nodes/Node.h>
 #include "Node.h"
 
 
@@ -14,6 +14,11 @@ namespace Aryiele
     llvm::Value *Node::GenerateCode()
     {
         return nullptr;
+    }
+
+    Nodes Node::GetType()
+    {
+        return Nodes_Unknown;
     }
 
 } /* Namespace Aryiele. */

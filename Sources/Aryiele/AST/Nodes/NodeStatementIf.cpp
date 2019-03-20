@@ -1,16 +1,16 @@
-#include "ExpressionIfNode.h"
+#include <Aryiele/AST/Nodes/NodeStatementIf.h>
 
 namespace Aryiele
 {
-    ExpressionIfNode::ExpressionIfNode(std::shared_ptr<ExpressionNode> condition,
-                                       std::vector<std::shared_ptr<ExpressionNode>> if_body,
-                                       std::vector<std::shared_ptr<ExpressionNode>> else_body) :
+    NodeStatementIf::NodeStatementIf(std::shared_ptr<Node> condition,
+                                       std::vector<std::shared_ptr<Node>> if_body,
+                                       std::vector<std::shared_ptr<Node>> else_body) :
         m_condition(condition), m_if_body(if_body), m_else_body(else_body)
     {
 
     }
 
-    llvm::Value *ExpressionIfNode::GenerateCode()
+    llvm::Value *NodeStatementIf::GenerateCode()
     {
         llvm::Value *conditionValue = m_condition->GenerateCode();
 
@@ -58,7 +58,7 @@ namespace Aryiele
         return PN;
     }
 
-    void ExpressionIfNode::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
+    void NodeStatementIf::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
     {
         auto node = std::make_shared<ParserInformation>(parentNode, "If/Else");
 

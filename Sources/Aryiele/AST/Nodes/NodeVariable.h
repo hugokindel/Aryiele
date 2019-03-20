@@ -2,14 +2,14 @@
 #define ARYIELE_EXPRESSIONVARIABLENODE_H
 
 #include <Aryiele/Core/Includes.h>
-#include <Aryiele/AST/ExpressionNode.h>
+#include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele
 {
-    class ExpressionVariableNode : public ExpressionNode
+    class NodeVariable : public Node
     {
     public:
-        explicit ExpressionVariableNode(const std::string& name);
+        explicit NodeVariable(const std::string& name);
 
         llvm::Value* GenerateCode() override;
         void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;

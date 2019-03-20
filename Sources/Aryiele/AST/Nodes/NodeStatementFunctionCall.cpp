@@ -1,18 +1,16 @@
-#include <Aryiele/AST/ExpressionFunctionCallNode.h>
-#include "ExpressionFunctionCallNode.h"
-
+#include <Aryiele/AST/Nodes/NodeStatementFunctionCall.h>
 
 namespace Aryiele
 {
 
-    ExpressionFunctionCallNode::ExpressionFunctionCallNode(const std::string &name,
-                                                           std::vector<std::shared_ptr<ExpressionNode>> arguments) :
+    NodeStatementFunctionCall::NodeStatementFunctionCall(const std::string &name,
+                                                           std::vector<std::shared_ptr<Node>> arguments) :
         m_name(name), m_arguments(arguments)
     {
 
     }
 
-    llvm::Value *ExpressionFunctionCallNode::GenerateCode()
+    llvm::Value *NodeStatementFunctionCall::GenerateCode()
     {
         llvm::Function *calledFunction = CodeGenerator::GetInstance()->Module->getFunction(m_name);
 
@@ -43,7 +41,7 @@ namespace Aryiele
         return CodeGenerator::GetInstance()->Builder.CreateCall(calledFunction, argumentsValues, "calltmp");
     }
 
-    void ExpressionFunctionCallNode::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
+    void NodeStatementFunctionCall::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
     {
         auto node = std::make_shared<ParserInformation>(parentNode, "Function Call");
         auto name = std::make_shared<ParserInformation>(node, "Identifier: " + m_name);
