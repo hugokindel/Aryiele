@@ -2,29 +2,30 @@
 
 namespace Aryiele
 {
-    // TODO: Bitwise operator ?
-    // TODO: Ternary operator ?
-    // TODO: Negative logical operator ?
+    /* TODO: Add operators:
+     * Bitwise operator ?
+     * Ternary operator ?
+     * Negative logical operator ? */
     ParserPrecedence::ParserPrecedence()
     {
         m_binaryOperatorPrecedence[";"] = -1;
 
-        m_binaryOperatorPrecedence["&&"] = 2;
-        m_binaryOperatorPrecedence["||"] = 2;
+        m_binaryOperatorPrecedence["&&"] = 10;
+        m_binaryOperatorPrecedence["||"] = 10;
 
-        m_binaryOperatorPrecedence["<"] = 4;
-        m_binaryOperatorPrecedence[">"] = 4;
-        m_binaryOperatorPrecedence["<="] = 4;
-        m_binaryOperatorPrecedence[">="] = 4;
-        m_binaryOperatorPrecedence["=="] = 4;
-        m_binaryOperatorPrecedence["!="] = 4;
+        m_binaryOperatorPrecedence["<"] = 20;
+        m_binaryOperatorPrecedence[">"] = 20;
+        m_binaryOperatorPrecedence["<="] = 20;
+        m_binaryOperatorPrecedence[">="] = 20;
+        m_binaryOperatorPrecedence["=="] = 20;
+        m_binaryOperatorPrecedence["!="] = 20;
 
-        m_binaryOperatorPrecedence["+"] = 6;
-        m_binaryOperatorPrecedence["-"] = 6;
+        m_binaryOperatorPrecedence["+"] = 30;
+        m_binaryOperatorPrecedence["-"] = 30;
 
-        m_binaryOperatorPrecedence["%"] = 8;
-        m_binaryOperatorPrecedence["*"] = 8;
-        m_binaryOperatorPrecedence["/"] = 8;
+        m_binaryOperatorPrecedence["%"] = 40;
+        m_binaryOperatorPrecedence["*"] = 40;
+        m_binaryOperatorPrecedence["/"] = 40;
     }
 
     int ParserPrecedence::GetPrecedence(const std::string& binaryOperator)
