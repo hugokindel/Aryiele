@@ -462,7 +462,7 @@ namespace Aryiele
         return ParseBinaryOperationRight(0, leftExpression);
     }
 
-    std::shared_ptr<NodeFunctionPrototype> Parser::ParseFunction()
+    std::shared_ptr<NodeFunction> Parser::ParseFunction()
     {
         std::string name;
         std::string type;
@@ -539,7 +539,7 @@ namespace Aryiele
 
         auto expressions = ParseBody();
 
-        return std::make_shared<NodeFunctionPrototype>(name, type, arguments, expressions);
+        return std::make_shared<NodeFunction>(name, type, arguments, expressions);
     }
 
 } /* Namespace Aryiele. */

@@ -1,5 +1,5 @@
-#ifndef ARYIELE_NODEFUNCTIONPROTOTYPE_H
-#define ARYIELE_NODEFUNCTIONPROTOTYPE_H
+#ifndef ARYIELE_NODEFUNCTION_H
+#define ARYIELE_NODEFUNCTION_H
 
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/AST/Nodes/Node.h>
@@ -7,10 +7,10 @@
 
 namespace Aryiele
 {
-    class NodeFunctionPrototype : public Node
+    class NodeFunction : public Node
     {
     public:
-        NodeFunctionPrototype(const std::string& identifier,
+        NodeFunction(const std::string& identifier,
                      const std::string& type,
                      std::vector<Argument> argumentsName,
                      std::vector<std::shared_ptr<Node>> body);
@@ -26,4 +26,4 @@ namespace Aryiele
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_NODEFUNCTIONPROTOTYPE_H. */
+#endif /* ARYIELE_NODEFUNCTION_H. */

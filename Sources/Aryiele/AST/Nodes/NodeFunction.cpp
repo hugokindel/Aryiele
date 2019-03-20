@@ -1,11 +1,11 @@
-#include <Aryiele/AST/Nodes/NodeFunctionPrototype.h>
+#include <Aryiele/AST/Nodes/NodeFunction.h>
 #include <Vanir/StringUtils.h>
-#include "NodeFunctionPrototype.h"
+#include "NodeFunction.h"
 
 
 namespace Aryiele
 {
-    NodeFunctionPrototype::NodeFunctionPrototype(const std::string& identifier,
+    NodeFunction::NodeFunction(const std::string& identifier,
                                const std::string& type,
                                std::vector<Argument> arguments,
                                std::vector<std::shared_ptr<Node>> body) :
@@ -14,7 +14,7 @@ namespace Aryiele
 
     }
 
-    void NodeFunctionPrototype::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
+    void NodeFunction::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
     {
         auto node = std::make_shared<ParserInformation>(parentNode, "Function");
         auto argumentsNode = std::make_shared<ParserInformation>(node, "Arguments:");
@@ -47,7 +47,7 @@ namespace Aryiele
         parentNode->Children.emplace_back(node);
     }
 
-    Nodes NodeFunctionPrototype::GetType()
+    Nodes NodeFunction::GetType()
     {
         return Nodes_Function_Prototype;
     }

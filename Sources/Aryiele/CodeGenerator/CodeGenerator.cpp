@@ -60,7 +60,7 @@ namespace Aryiele
             case Nodes_Constant_Integer:
                 return GenerateCode((NodeConstantInteger*)nodePtr);
             case Nodes_Function_Prototype:
-                return GenerateCode((NodeFunctionPrototype*)nodePtr);
+                return GenerateCode((NodeFunction*)nodePtr);
             case Nodes_Operation_Binary:
                 return GenerateCode((NodeOperationBinary*)nodePtr);
             case Nodes_Statement_FunctionCall:
@@ -89,7 +89,7 @@ namespace Aryiele
     }
 
     // TODO: Return + Types
-    llvm::Value *CodeGenerator::GenerateCode(NodeFunctionPrototype* node)
+    llvm::Value *CodeGenerator::GenerateCode(NodeFunction* node)
     {
         llvm::Function *function = m_module->getFunction(node->Identifier);
 

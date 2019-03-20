@@ -4,7 +4,7 @@
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/AST/Nodes/NodeConstantDouble.h>
 #include <Aryiele/AST/Nodes/NodeConstantInteger.h>
-#include <Aryiele/AST/Nodes/NodeFunctionPrototype.h>
+#include <Aryiele/AST/Nodes/NodeFunction.h>
 #include <Aryiele/AST/Nodes/NodeOperationBinary.h>
 #include <Aryiele/AST/Nodes/NodeStatementFunctionCall.h>
 #include <Aryiele/AST/Nodes/NodeStatementIf.h>
@@ -44,7 +44,7 @@ namespace Aryiele
         llvm::Value* GenerateCode(std::shared_ptr<Node> node);
         llvm::Value* GenerateCode(NodeConstantDouble* node);
         llvm::Value* GenerateCode(NodeConstantInteger* node);
-        llvm::Value* GenerateCode(NodeFunctionPrototype* node);
+        llvm::Value* GenerateCode(NodeFunction* node);
         llvm::Value* GenerateCode(NodeOperationBinary* node);
         llvm::Value* GenerateCode(NodeStatementFunctionCall* node);
         llvm::Value* GenerateCode(NodeStatementIf* node);

@@ -76,8 +76,8 @@ add_library(Aryiele
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeConstantDouble.h
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeConstantInteger.cpp
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeConstantInteger.h
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeFunctionPrototype.cpp
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeFunctionPrototype.h
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeFunction.cpp
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeFunction.h
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeOperationBinary.cpp
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeOperationBinary.h
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementFunctionCall.cpp

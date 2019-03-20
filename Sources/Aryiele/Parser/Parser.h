@@ -7,7 +7,7 @@
 #include <Aryiele/AST/Nodes/Node.h>
 #include <Aryiele/Lexer/LexerToken.h>
 #include <Aryiele/Parser/ParserPrecedence.h>
-#include <Aryiele/AST/Nodes/NodeFunctionPrototype.h>
+#include <Aryiele/AST/Nodes/NodeFunction.h>
 #include <Aryiele/Parser/ParserInformation.h>
 
 namespace Aryiele
@@ -34,7 +34,7 @@ namespace Aryiele
         std::shared_ptr<Node> ParseBinaryOperationRight(int expressionPrecedence, std::shared_ptr<Node> leftExpression);
         std::shared_ptr<Node> ParseExpression();
 
-        std::shared_ptr<NodeFunctionPrototype> ParseFunction();
+        std::shared_ptr<NodeFunction> ParseFunction();
 
         std::vector<std::shared_ptr<Node>> m_nodes;
         std::vector<ParserToken> m_tokens;
