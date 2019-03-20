@@ -5,7 +5,7 @@
 #include <Vanir/CommandLineUtils.h>
 #include <Aryiele/Lexer/Lexer.h>
 #include <Aryiele/Parser/Parser.h>
-#include <arc/BuildType.h>
+#include <arc/BuildTypes.h>
 
 #define ARC_VERSION "0.0.1"
 //#define FINAL_RELEASE // ONLY use for final releases.
@@ -86,7 +86,7 @@ namespace ARC
         static std::string m_tempArgv;
         static bool m_verboseMode;
         static bool m_keepAllFiles;
-        static BuildType m_buildType;
+        static BuildTypes m_buildType;
     };
 
 } /* Namespace ARC. */

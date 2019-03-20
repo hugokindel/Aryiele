@@ -33,9 +33,9 @@ namespace ARC
 #endif
     bool ARC::m_keepAllFiles;
 #ifndef FINAL_RELEASE
-    BuildType ARC::m_buildType = BuildType_IR;
+    BuildTypes ARC::m_buildType = BuildTypes_IR;
 #else
-    BuildType ARC::m_buildType = BuildType_Executable;
+    BuildType ARC::m_buildType = BuildTypes_Executable;
 #endif
 
     int ARC::Run(const int argc, char *argv[])
@@ -187,14 +187,14 @@ namespace ARC
 
                 DoCodeGeneratorPass(parserPass);
 
-                if (m_buildType == BuildType_Object || m_buildType == BuildType_Executable)
+                if (m_buildType == BuildTypes_Object || m_buildType == BuildTypes_Executable)
                 {
                     DoObjectGeneratorPass();
 
                     if (!m_keepAllFiles)
                         remove(m_tempIRFilepath.c_str());
                 }
-                if (m_buildType == BuildType_Executable)
+                if (m_buildType == BuildTypes_Executable)
                 {
                     DoExecutableGeneratorPass();
 
@@ -299,7 +299,7 @@ namespace ARC
             {
                 switch (m_buildType)
                 {
-                    case BuildType_IR:
+                    case BuildTypes_IR:
                         m_tempIRFilepath = m_outputFilepath;
                         break;
                     default:
@@ -329,7 +329,7 @@ namespace ARC
         {
             switch (m_buildType)
             {
-                case BuildType_Object:
+                case BuildTypes_Object:
                     m_tempOBJFilepath = m_outputFilepath;
                     break;
                 default:
@@ -361,7 +361,7 @@ namespace ARC
         {
             switch (m_buildType)
             {
-                case BuildType_Executable:
+                case BuildTypes_Executable:
                     m_tempEXEFilepath = m_outputFilepath;
                     break;
                 default:
@@ -465,15 +465,15 @@ namespace ARC
         {
             if (result == "ir")
             {
-                m_buildType = BuildType_IR;
+                m_buildType = BuildTypes_IR;
             }
             else if (result == "obj")
             {
-                m_buildType = BuildType_Object;
+                m_buildType = BuildTypes_Object;
             }
             else if (result == "exe")
             {
-                m_buildType = BuildType_Executable;
+                m_buildType = BuildTypes_Executable;
             }
             else
             {
