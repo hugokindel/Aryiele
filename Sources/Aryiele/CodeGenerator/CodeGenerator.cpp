@@ -3,11 +3,15 @@
 #include <Aryiele/AST/Nodes/Node.h>
 #include <llvm/Transforms/Scalar/SimplifyCFG.h>
 #include <llvm/Transforms/Scalar/Reassociate.h>
-#include "CodeGenerator.h"
-
 
 namespace Aryiele
 {
+    /*extern "C" int print(int value)
+    {
+        fprintf(stderr, "%i\n", value);
+        return 0;
+    }*/
+
     void CodeGenerator::Create()
     {
         m_module = std::make_shared<llvm::Module>("Aryiele", m_context);
@@ -138,8 +142,15 @@ namespace Aryiele
 
         m_namedValues.clear();
 
-        for (auto &Arg : function->args())
-            m_namedValues[Arg.getName()] = &Arg;
+        for (auto &argument : function->args())
+        {
+            llvm::AllocaInst *allocationInstance = CreateEntryBlockAllocation(function, argument.getName(), argument.getType());
+
+            m_builder.CreateStore(&argument, allocationInstance);
+
+            m_namedValues[argument.getName()] = allocationInstance;
+
+        }
 
         if (llvm::Value *returnValue = GenerateCode(node->Body[0]))
         {
@@ -159,27 +170,59 @@ namespace Aryiele
 
     llvm::Value *CodeGenerator::GenerateCode(NodeOperationBinary* node)
     {
-        llvm::Value *leftValue = GenerateCode(node->LHS);
-        llvm::Value *rightValue = GenerateCode(node->RHS);
+        if (node->OperationType == ParserTokens_Operator_Equal)
+        {
+            auto lhs = std::static_pointer_cast<NodeVariable>(node->LHS);
 
-        if (!leftValue || !rightValue)
+            if (!lhs)
+            {
+                LOG_ERROR("error generating a binary operation: lhs: expecting a variable");
+
+                return nullptr;
+            }
+
+            llvm::Value *rhsValue = GenerateCode(node->RHS);
+
+            if (!rhsValue)
+            {
+                LOG_ERROR("error generating a binary operation: rhs: generation failed");
+
+                return nullptr;
+            }
+
+            llvm::Value *variable = m_namedValues[lhs->Identifier];
+
+            if (!variable)
+            {
+                LOG_ERROR("error generating a binary operation: lhs: unknown variable");
+
+                return nullptr;
+            }
+
+            m_builder.CreateStore(rhsValue, variable);
+        }
+
+        llvm::Value *lhsValue = GenerateCode(node->LHS);
+        llvm::Value *rhsValue = GenerateCode(node->RHS);
+
+        if (!lhsValue || !rhsValue)
             return nullptr;
 
-        // TODO: Only support floatant (double) for now
+        // TODO: Only support integers for now
         switch (node->OperationType)
         {
             case ParserTokens_Operator_Arithmetic_Plus:
-                return CodeGenerator::GetInstance()->m_builder.CreateAdd(leftValue, rightValue, "add");
+                return CodeGenerator::GetInstance()->m_builder.CreateAdd(lhsValue, rhsValue, "add");
             case ParserTokens_Operator_Arithmetic_Minus:
-                return CodeGenerator::GetInstance()->m_builder.CreateSub(leftValue, rightValue, "sub");
+                return CodeGenerator::GetInstance()->m_builder.CreateSub(lhsValue, rhsValue, "sub");
             case ParserTokens_Operator_Arithmetic_Multiply:
-                return CodeGenerator::GetInstance()->m_builder.CreateMul(leftValue, rightValue, "mul");
+                return CodeGenerator::GetInstance()->m_builder.CreateMul(lhsValue, rhsValue, "mul");
             case ParserTokens_Operator_Arithmetic_Divide:
-                return CodeGenerator::GetInstance()->m_builder.CreateSDiv(leftValue, rightValue, "sdiv");
+                return CodeGenerator::GetInstance()->m_builder.CreateSDiv(lhsValue, rhsValue, "sdiv");
             case ParserTokens_Operator_Comparison_LessThan:
-                return CodeGenerator::GetInstance()->m_builder.CreateICmpULT(leftValue, rightValue, "icmpulttmp");
+                return CodeGenerator::GetInstance()->m_builder.CreateICmpULT(lhsValue, rhsValue, "icmpulttmp");
             case ParserTokens_Operator_Comparison_LessThanOrEqual:
-                return CodeGenerator::GetInstance()->m_builder.CreateICmpULE(leftValue, rightValue, "icmpuletmp");
+                return CodeGenerator::GetInstance()->m_builder.CreateICmpULE(lhsValue, rhsValue, "icmpuletmp");
             default:
             {
                 LOG_ERROR("unknown binary operator: ", Parser::GetTokenName(node->OperationType));

@@ -41,7 +41,8 @@ namespace Aryiele
 
     private:
         llvm::Value* CastType(llvm::Value *value, llvm::Type *returnType);
-        llvm::AllocaInst *CreateEntryBlockAllocation(llvm::Function *function, const std::string &identifier, llvm::Type *type);
+        llvm::AllocaInst *CreateEntryBlockAllocation(
+            llvm::Function *function, const std::string &identifier, llvm::Type *type = nullptr);
         llvm::Value* GenerateCode(std::shared_ptr<Node> node);
         llvm::Value* GenerateCode(NodeConstantDouble* node);
         llvm::Value* GenerateCode(NodeConstantInteger* node);
@@ -56,7 +57,7 @@ namespace Aryiele
         llvm::IRBuilder<> m_builder = llvm::IRBuilder<>(m_context);
         std::shared_ptr<llvm::DataLayout> m_dataLayout;
         std::shared_ptr<llvm::Module> m_module;
-        std::map<std::string, llvm::Value*> m_namedValues;
+        std::map<std::string, llvm::AllocaInst*> m_namedValues;
     };
 
 } /* Namespace Aryiele. */
