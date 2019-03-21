@@ -53,10 +53,10 @@ endif()
 add_definitions(${LLVM_DEFINITIONS})
 
 add_executable(arc
-        ${PROJECT_SOURCE_DIR}/Main.cpp
         ${PROJECT_SOURCE_DIR}/ARC.cpp
         ${PROJECT_SOURCE_DIR}/ARC.h
-        ${PROJECT_SOURCE_DIR}/BuildType.h)
+        ${PROJECT_SOURCE_DIR}/BuildTypes.h
+        ${PROJECT_SOURCE_DIR}/Main.cpp)
         
 
 target_include_directories(arc PUBLIC ${ARC_INCLUDES})

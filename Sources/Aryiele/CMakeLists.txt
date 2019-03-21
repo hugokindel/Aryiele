@@ -80,6 +80,8 @@ add_library(Aryiele
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeFunction.h
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeOperationBinary.cpp
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeOperationBinary.h
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementBlock.cpp
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementBlock.h
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementFunctionCall.cpp
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementFunctionCall.h
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementIf.cpp

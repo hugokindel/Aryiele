@@ -12,6 +12,7 @@ namespace Aryiele
 
         Nodes_Operation_Binary,
 
+        Nodes_Statement_Block,
         Nodes_Statement_FunctionCall,
         Nodes_Statement_If,
         Nodes_Statement_Return,
