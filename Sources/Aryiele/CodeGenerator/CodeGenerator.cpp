@@ -114,16 +114,10 @@ namespace Aryiele
 
             for (const auto &argument : node->Arguments)
             {
-                if (argument.Type == "double")
-                    arguments.emplace_back(llvm::Type::getDoubleTy(m_context));
-                else if (argument.Type == "int")
-                    arguments.emplace_back(llvm::Type::getInt32Ty(m_context));
+                arguments.emplace_back(llvm::Type::getInt32Ty(m_context));
             }
 
-            if (node->Type == "int")
-                functionTypeValue = llvm::Type::getInt32Ty(m_context);
-            else if (node->Type == "double")
-                functionTypeValue = llvm::Type::getDoubleTy(m_context);
+            functionTypeValue = llvm::Type::getInt32Ty(m_context);
 
             llvm::FunctionType *functionType = llvm::FunctionType::get(functionTypeValue, arguments, false);
 
@@ -152,20 +146,23 @@ namespace Aryiele
 
         }
 
-        if (llvm::Value *returnValue = GenerateCode(node->Body[0]))
+        for (auto& statement : node->Body)
         {
-            m_builder.CreateRet(returnValue);
+            auto value = GenerateCode(statement);
 
-            verifyFunction(*function);
+            if (!value)
+            {
+                function->eraseFromParent();
 
-            return function;
+                LOG_ERROR("error generating code for the body of a function: ", node->Identifier);
+
+                return nullptr;
+            }
         }
 
-        function->eraseFromParent();
+        verifyFunction(*function);
 
-        LOG_ERROR("error generating code for the body of a function: ", node->Identifier);
-
-        return nullptr;
+        return function;
     }
 
     llvm::Value *CodeGenerator::GenerateCode(NodeOperationBinary* node)
@@ -200,6 +197,8 @@ namespace Aryiele
             }
 
             m_builder.CreateStore(rhsValue, variable);
+
+            return rhsValue;
         }
 
         llvm::Value *lhsValue = GenerateCode(node->LHS);
@@ -212,17 +211,17 @@ namespace Aryiele
         switch (node->OperationType)
         {
             case ParserTokens_Operator_Arithmetic_Plus:
-                return CodeGenerator::GetInstance()->m_builder.CreateAdd(lhsValue, rhsValue, "add");
+                return m_builder.CreateAdd(lhsValue, rhsValue, "add");
             case ParserTokens_Operator_Arithmetic_Minus:
-                return CodeGenerator::GetInstance()->m_builder.CreateSub(lhsValue, rhsValue, "sub");
+                return m_builder.CreateSub(lhsValue, rhsValue, "sub");
             case ParserTokens_Operator_Arithmetic_Multiply:
-                return CodeGenerator::GetInstance()->m_builder.CreateMul(lhsValue, rhsValue, "mul");
+                return m_builder.CreateMul(lhsValue, rhsValue, "mul");
             case ParserTokens_Operator_Arithmetic_Divide:
-                return CodeGenerator::GetInstance()->m_builder.CreateSDiv(lhsValue, rhsValue, "sdiv");
+                return m_builder.CreateSDiv(lhsValue, rhsValue, "sdiv");
             case ParserTokens_Operator_Comparison_LessThan:
-                return CodeGenerator::GetInstance()->m_builder.CreateICmpULT(lhsValue, rhsValue, "icmpulttmp");
+                return m_builder.CreateICmpULT(lhsValue, rhsValue, "icmpulttmp");
             case ParserTokens_Operator_Comparison_LessThanOrEqual:
-                return CodeGenerator::GetInstance()->m_builder.CreateICmpULE(lhsValue, rhsValue, "icmpuletmp");
+                return m_builder.CreateICmpULE(lhsValue, rhsValue, "icmpuletmp");
             default:
             {
                 LOG_ERROR("unknown binary operator: ", Parser::GetTokenName(node->OperationType));
@@ -234,7 +233,7 @@ namespace Aryiele
 
     llvm::Value *CodeGenerator::GenerateCode(NodeStatementFunctionCall* node)
     {
-        llvm::Function *calledFunction = CodeGenerator::GetInstance()->m_module->getFunction(node->Identifier);
+        llvm::Function *calledFunction = m_module->getFunction(node->Identifier);
 
         if (!calledFunction)
         {
@@ -246,7 +245,7 @@ namespace Aryiele
         if (calledFunction->arg_size() != node->Arguments.size())
         {
             LOG_ERROR("incorrect number of argument passed: ",
-                calledFunction->arg_size(), " while expecting ", node->Arguments.size());
+                      calledFunction->arg_size(), " while expecting ", node->Arguments.size());
 
             return nullptr;
         }
@@ -261,7 +260,7 @@ namespace Aryiele
                 return nullptr;
         }
 
-        return CodeGenerator::GetInstance()->m_builder.CreateCall(calledFunction, argumentsValues, "calltmp");
+        return m_builder.CreateCall(calledFunction, argumentsValues, "calltmp");
     }
 
     llvm::Value *CodeGenerator::GenerateCode(NodeStatementIf* node)
@@ -271,40 +270,40 @@ namespace Aryiele
         if (!conditionValue)
             return nullptr;
 
-        //conditionValue = CodeGenerator::GetInstance()->m_builder.CreateICmpNE(conditionValue,
-        //    llvm::ConstantInt::get(CodeGenerator::GetInstance()->m_context, llvm::APInt(1, static_cast<uint64_t>(0))), "ifcond");
+        //conditionValue = m_builder.CreateICmpNE(conditionValue,
+        //    llvm::ConstantInt::get(m_context, llvm::APInt(1, static_cast<uint64_t>(0))), "ifcond");
 
-        llvm::Function *function = CodeGenerator::GetInstance()->m_builder.GetInsertBlock()->getParent();
+        llvm::Function *function = m_builder.GetInsertBlock()->getParent();
 
-        llvm::BasicBlock *thenBasicBlock = llvm::BasicBlock::Create(CodeGenerator::GetInstance()->m_context, "then", function);
-        llvm::BasicBlock *elseBasicBlock = llvm::BasicBlock::Create(CodeGenerator::GetInstance()->m_context, "else");
-        llvm::BasicBlock *mergeBasicBlock = llvm::BasicBlock::Create(CodeGenerator::GetInstance()->m_context, "ifcont");
+        llvm::BasicBlock *thenBasicBlock = llvm::BasicBlock::Create(m_context, "then", function);
+        llvm::BasicBlock *elseBasicBlock = llvm::BasicBlock::Create(m_context, "else");
+        llvm::BasicBlock *mergeBasicBlock = llvm::BasicBlock::Create(m_context, "ifcont");
 
-        CodeGenerator::GetInstance()->m_builder.CreateCondBr(conditionValue, thenBasicBlock, elseBasicBlock);
+        m_builder.CreateCondBr(conditionValue, thenBasicBlock, elseBasicBlock);
 
-        CodeGenerator::GetInstance()->m_builder.SetInsertPoint(thenBasicBlock);
+        m_builder.SetInsertPoint(thenBasicBlock);
 
         llvm::Value *ThenV = GenerateCode(node->IfBody[0]); // TODO: All
         if (!ThenV)
             return nullptr;
 
-        CodeGenerator::GetInstance()->m_builder.CreateBr(mergeBasicBlock);
-        thenBasicBlock = CodeGenerator::GetInstance()->m_builder.GetInsertBlock();
+        m_builder.CreateBr(mergeBasicBlock);
+        thenBasicBlock = m_builder.GetInsertBlock();
 
         function->getBasicBlockList().push_back(elseBasicBlock);
-        CodeGenerator::GetInstance()->m_builder.SetInsertPoint(elseBasicBlock);
+        m_builder.SetInsertPoint(elseBasicBlock);
 
         // TODO: Support for no else
         llvm::Value *ElseV = GenerateCode(node->ElseBody[0]); // TODO: All
         if (!ElseV)
             return nullptr;
 
-        CodeGenerator::GetInstance()->m_builder.CreateBr(mergeBasicBlock);
-        elseBasicBlock = CodeGenerator::GetInstance()->m_builder.GetInsertBlock();
+        m_builder.CreateBr(mergeBasicBlock);
+        elseBasicBlock = m_builder.GetInsertBlock();
 
         function->getBasicBlockList().push_back(mergeBasicBlock);
-        CodeGenerator::GetInstance()->m_builder.SetInsertPoint(mergeBasicBlock);
-        llvm::PHINode *PN = CodeGenerator::GetInstance()->m_builder.CreatePHI(llvm::Type::getInt32Ty(CodeGenerator::GetInstance()->m_context), 2, "iftmp");
+        m_builder.SetInsertPoint(mergeBasicBlock);
+        llvm::PHINode *PN = m_builder.CreatePHI(llvm::Type::getInt32Ty(m_context), 2, "iftmp");
 
         PN->addIncoming(ThenV, thenBasicBlock);
         PN->addIncoming(ElseV, elseBasicBlock);
@@ -314,12 +313,23 @@ namespace Aryiele
 
     llvm::Value *CodeGenerator::GenerateCode(NodeStatementReturn* node)
     {
-        return GenerateCode(node->Expression);
+        auto value = GenerateCode(node->Expression);
+
+        if (!value)
+        {
+            LOG_ERROR("cannot generate return value");
+
+            return nullptr;
+        }
+
+        m_builder.CreateRet(value);
+
+        return value;
     }
 
     llvm::Value *CodeGenerator::GenerateCode(NodeVariable* node)
     {
-        llvm::Value *value = CodeGenerator::GetInstance()->m_namedValues[node->Identifier];
+        llvm::Value *value = m_namedValues[node->Identifier];
 
         if (!value)
         {
