@@ -40,7 +40,6 @@ set(ARYIELE_INCLUDES
         ${PROJECT_SOURCE_DIR}/../
         ${PROJECT_SOURCE_DIR}/../Dependencies/
         ${PROJECT_SOURCE_DIR}/../Dependencies/LLVM/include/
-        ${PROJECT_SOURCE_DIR}/../Dependencies/JSON/include/
         ${PROJECT_SOURCE_DIR}/../../Build/Include/
         ${PROJECT_SOURCE_DIR}/../../Build/.Temps/CMake/${CMAKE_CXX_COMPILER_ID}_${CMAKE_SIZEOF_VOID_P}_${CMAKE_BUILD_TYPE}/Sources/Dependencies/LLVM/include/)
 if(UNIX AND NOT APPLE)

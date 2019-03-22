@@ -111,7 +111,7 @@ namespace Aryiele
                     if (token.Content == "true" || token.Content == "false")
                         tokens.emplace_back(token.Content, ParserTokens_LiteralValue_Boolean);
                     // Keywords
-                    else if (token.Content == "function")
+                    else if (token.Content == "func")
                         tokens.emplace_back(token.Content, ParserTokens_Keyword_TopLevel_Function);
                     else if (token.Content == "var")
                         tokens.emplace_back(token.Content, ParserTokens_Keyword_Var);

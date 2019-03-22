@@ -8,7 +8,7 @@
 #include <arc/BuildTypes.h>
 
 #define ARC_VERSION "0.0.1"
-//#define FINAL_RELEASE // ONLY use for final releases.
+#define FINAL_RELEASE // ONLY use for final releases.
 
 #define ALOG(...) VANIR_LOG("arc: ", __VA_ARGS__);
 #define ALOG_VERBOSE(...) VANIR_LOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Bright_Blue), "verbose: ", Vanir::LoggerColor(), __VA_ARGS__);
@@ -52,6 +52,13 @@
 #define AULOG_WARNING(...) ALOG_WARNING(__VA_ARGS__);
 #define AULOG_ERROR(...) ALOG_ERROR(__VA_ARGS__);
 #endif
+
+#define ARC_RUN_CHECKERRORS() \
+{ \
+    if (::Vanir::Logger::ErrorCount > 0) \
+        return 0; \
+    LOG_RESETCOUNTERS(); \
+}
 
 namespace ARC
 {

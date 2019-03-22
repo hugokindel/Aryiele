@@ -6,13 +6,6 @@
 
 namespace Aryiele
 {
-    // TODO: Remove (in a long time).
-    extern int print(int value)
-    {
-        fprintf(stderr, "%i\n", value);
-        return 0;
-    }
-
     void CodeGenerator::Create()
     {
         m_module = std::make_shared<llvm::Module>("Aryiele", m_context);
@@ -170,7 +163,7 @@ namespace Aryiele
             {
                 function->eraseFromParent();
 
-                LOG_ERROR("error generating code for the body of a function: ", node->Identifier);
+                LOG_ERROR("cannot generate the body of a function: ", node->Identifier);
 
                 return nullptr;
             }
@@ -189,7 +182,7 @@ namespace Aryiele
 
             if (!lhs)
             {
-                LOG_ERROR("error generating a binary operation: lhs: expecting a variable");
+                LOG_ERROR("cannot generate a binary operation: lhs: expecting a variable");
 
                 return nullptr;
             }
@@ -198,7 +191,7 @@ namespace Aryiele
 
             if (!rhsValue)
             {
-                LOG_ERROR("error generating a binary operation: rhs: generation failed");
+                LOG_ERROR("cannot generate a binary operation: rhs: generation failed");
 
                 return nullptr;
             }
@@ -207,7 +200,7 @@ namespace Aryiele
 
             if (!variable)
             {
-                LOG_ERROR("error generating a binary operation: lhs: unknown variable");
+                LOG_ERROR("cannot generate a binary operation: lhs: unknown variable '" + lhs->Identifier + "'");
 
                 return nullptr;
             }

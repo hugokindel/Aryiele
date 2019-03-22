@@ -28,10 +28,12 @@ namespace ARC
     std::string ARC::m_tempArgv;
 #ifndef FINAL_RELEASE
     bool ARC::m_verboseMode = true;
+    bool ARC::m_keepAllFiles = true;
 #else
     bool ARC::m_verboseMode;
-#endif
     bool ARC::m_keepAllFiles;
+#endif
+
 #ifndef FINAL_RELEASE
     BuildTypes ARC::m_buildType = BuildTypes_Executable; // TODO: Put IR sometimes
 #else
@@ -46,7 +48,7 @@ namespace ARC
 #endif
 
 #ifndef FINAL_RELEASE
-        Vanir::Logger::Start("data/logs.log");
+        Vanir::Logger::StartNoLog();
 #endif
 
         m_options.emplace_back(
@@ -170,7 +172,7 @@ namespace ARC
 
 #ifndef FINAL_RELEASE
         if (m_inputFilepath.empty())
-            m_inputFilepath = "../debug.ac";
+            m_inputFilepath = "../../debug.ac";
 #endif
 
         if (!m_inputFilepath.empty())
@@ -182,20 +184,32 @@ namespace ARC
             }
             else
             {
+                LOG_RESETCOUNTERS();
+
                 auto lexerPass = DoLexerPass(m_inputFilepath);
+
+                ARC_RUN_CHECKERRORS();
+
                 auto parserPass = DoParserPass(lexerPass);
+
+                ARC_RUN_CHECKERRORS();
 
                 DoCodeGeneratorPass(parserPass);
 
                 if (m_buildType == BuildTypes_Object || m_buildType == BuildTypes_Executable)
                 {
+                    ARC_RUN_CHECKERRORS();
+
                     DoObjectGeneratorPass();
 
                     if (!m_keepAllFiles)
                         remove(m_tempIRFilepath.c_str());
                 }
+
                 if (m_buildType == BuildTypes_Executable)
                 {
+                    ARC_RUN_CHECKERRORS();
+
                     DoExecutableGeneratorPass();
 
                     if (!m_keepAllFiles)
@@ -276,15 +290,11 @@ namespace ARC
 
         codeGenerator->Create();
 
-        LOG_RESETCOUNTERS();
-
         codeGenerator->GenerateCode(std::move(astNodes));
 
         if (::Vanir::Logger::ErrorCount > 0)
         {
             ALOG_ERROR("ir code generation failed with ", ::Vanir::Logger::ErrorCount, " errors");
-
-            LOG_RESETCOUNTERS();
         }
         else
         {
@@ -372,7 +382,7 @@ namespace ARC
 
         int errorCode;
 
-        if(!(errorCode = system(("gcc " + m_tempOBJFilepath + " -o " + m_tempEXEFilepath).c_str())))
+        if(!(errorCode = system(("gcc " + m_tempOBJFilepath + " -lSTD -o " + m_tempEXEFilepath).c_str())))
         {
             if (m_verboseMode)
             {
