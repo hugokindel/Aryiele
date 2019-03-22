@@ -33,9 +33,9 @@ namespace ARC
 #endif
     bool ARC::m_keepAllFiles;
 #ifndef FINAL_RELEASE
-    BuildTypes ARC::m_buildType = BuildTypes_IR;
+    BuildTypes ARC::m_buildType = BuildTypes_Executable; // TODO: Put IR sometimes
 #else
-    BuildType ARC::m_buildType = BuildTypes_Executable;
+    BuildTypes ARC::m_buildType = BuildTypes_Executable;
 #endif
 
     int ARC::Run(const int argc, char *argv[])

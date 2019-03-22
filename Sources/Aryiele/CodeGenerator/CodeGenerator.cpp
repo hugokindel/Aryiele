@@ -6,11 +6,12 @@
 
 namespace Aryiele
 {
-    /*extern "C" int print(int value)
+    // TODO: Remove (in a long time).
+    extern int print(int value)
     {
         fprintf(stderr, "%i\n", value);
         return 0;
-    }*/
+    }
 
     void CodeGenerator::Create()
     {
@@ -20,6 +21,21 @@ namespace Aryiele
 
     void CodeGenerator::GenerateCode(std::vector<std::shared_ptr<Node>> nodes)
     {
+        // PRINTF
+        std::vector<llvm::Type *> Doubles(1, llvm::Type::getInt32Ty(m_context));
+        llvm::FunctionType *FT =
+            llvm::FunctionType::get(llvm::Type::getInt32Ty(m_context), Doubles, false);
+
+        llvm::Function *F =
+            llvm::Function::Create(FT, llvm::Function::ExternalLinkage, "print", m_module.get());
+        // --
+
+        // Set names for all arguments.
+        unsigned Idx = 0;
+        for (auto &Arg : F->args())
+            Arg.setName("value");
+
+
         for (auto& node : nodes)
             GenerateCode(node);
     }
@@ -336,7 +352,7 @@ namespace Aryiele
             LOG_ERROR("unknown variable: ", node->Identifier);
         }
 
-        return value;
+        return m_builder.CreateLoad(value, node->Identifier.c_str());
     }
 
 } /* Namespace Aryiele. */
