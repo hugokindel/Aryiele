@@ -10,6 +10,7 @@
 #include <Aryiele/AST/Nodes/NodeStatementIf.h>
 #include <Aryiele/AST/Nodes/NodeStatementReturn.h>
 #include <Aryiele/AST/Nodes/NodeVariable.h>
+#include <Aryiele/CodeGenerator/BlockStack.h>
 #include <llvm/ADT/APFloat.h>
 #include <llvm/ADT/STLExtras.h>
 #include <llvm/IR/BasicBlock.h>
@@ -58,6 +59,7 @@ namespace Aryiele
         std::shared_ptr<llvm::DataLayout> m_dataLayout;
         std::shared_ptr<llvm::Module> m_module;
         std::map<std::string, llvm::AllocaInst*> m_namedValues;
+        std::shared_ptr<BlockStack> m_blockStack;
     };
 
 } /* Namespace Aryiele. */

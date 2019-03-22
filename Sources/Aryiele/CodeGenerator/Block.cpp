@@ -1,6 +1,4 @@
 #include <Aryiele/CodeGenerator/Block.h>
-#include "Block.h"
-
 
 namespace Aryiele
 {

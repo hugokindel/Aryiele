@@ -3,6 +3,6 @@
 
 #include <cstdio>
 
-extern "C" __attribute__((visibility("default"))) int print(int value);
+extern "C" int print(int value);
 
 #endif /* STD_PRINT_H. */

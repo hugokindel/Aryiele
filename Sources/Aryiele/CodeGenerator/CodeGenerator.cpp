@@ -10,11 +10,12 @@ namespace Aryiele
     {
         m_module = std::make_shared<llvm::Module>("Aryiele", m_context);
         m_dataLayout = std::make_shared<llvm::DataLayout>(m_module.get());
+        m_blockStack = std::make_shared<BlockStack>();
     }
 
     void CodeGenerator::GenerateCode(std::vector<std::shared_ptr<Node>> nodes)
     {
-        // PRINTF
+        // PRINTF TODO: Extern
         std::vector<llvm::Type *> Doubles(1, llvm::Type::getInt32Ty(m_context));
         llvm::FunctionType *FT =
             llvm::FunctionType::get(llvm::Type::getInt32Ty(m_context), Doubles, false);
@@ -28,9 +29,12 @@ namespace Aryiele
         for (auto &Arg : F->args())
             Arg.setName("value");
 
+        m_blockStack->Create();
 
         for (auto& node : nodes)
             GenerateCode(node);
+
+        m_blockStack->EscapeCurrent();
     }
 
     std::shared_ptr<llvm::Module> CodeGenerator::GetModule()

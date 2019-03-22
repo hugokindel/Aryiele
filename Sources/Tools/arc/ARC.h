@@ -8,7 +8,7 @@
 #include <arc/BuildTypes.h>
 
 #define ARC_VERSION "0.0.1"
-#define FINAL_RELEASE // ONLY use for final releases.
+//#define FINAL_RELEASE // ONLY use for final releases.
 
 #define ALOG(...) VANIR_LOG("arc: ", __VA_ARGS__);
 #define ALOG_VERBOSE(...) VANIR_LOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Bright_Blue), "verbose: ", Vanir::LoggerColor(), __VA_ARGS__);

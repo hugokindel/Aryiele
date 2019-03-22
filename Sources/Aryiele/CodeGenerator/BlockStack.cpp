@@ -22,13 +22,11 @@ namespace Aryiele
     std::shared_ptr<Block> BlockStack::EscapeCurrent()
     {
         if (Current->Parent)
-        {
             Current = Current->Parent;
+        else
+            Current = nullptr;
 
-            return Current;
-        }
-
-        return nullptr;
+        return Current;
     }
 
     std::shared_ptr<Variable> BlockStack::FindVariable(const std::string& identifier)

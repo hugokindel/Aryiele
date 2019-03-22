@@ -382,7 +382,11 @@ namespace ARC
 
         int errorCode;
 
+#ifdef FINAL_RELEASE
         if(!(errorCode = system(("gcc " + m_tempOBJFilepath + " -lSTD -o " + m_tempEXEFilepath).c_str())))
+#else
+        if(!(errorCode = system(("gcc " + m_tempOBJFilepath + " -L../libs -lSTD -o " + m_tempEXEFilepath).c_str())))
+#endif
         {
             if (m_verboseMode)
             {

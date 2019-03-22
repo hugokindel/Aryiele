@@ -9,6 +9,8 @@ namespace Aryiele
     class BlockStack
     {
     public:
+        BlockStack() = default;
+
         std::shared_ptr<Block> Create(bool setAsCurrent = true);
         std::shared_ptr<Block> EscapeCurrent();
         std::shared_ptr<Variable> FindVariable(const std::string& identifier);
