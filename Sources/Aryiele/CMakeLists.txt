@@ -96,8 +96,10 @@ add_library(Aryiele
         ${PROJECT_SOURCE_DIR}/CodeGenerator/Block.h
         ${PROJECT_SOURCE_DIR}/CodeGenerator/BlockStack.cpp
         ${PROJECT_SOURCE_DIR}/CodeGenerator/BlockStack.h
-        ${PROJECT_SOURCE_DIR}/CodeGenerator/VariableStack.cpp
-        ${PROJECT_SOURCE_DIR}/CodeGenerator/VariableStack.h)
+        ${PROJECT_SOURCE_DIR}/CodeGenerator/Function.cpp
+        ${PROJECT_SOURCE_DIR}/CodeGenerator/Function.h
+        ${PROJECT_SOURCE_DIR}/CodeGenerator/FunctionArgument.cpp
+        ${PROJECT_SOURCE_DIR}/CodeGenerator/FunctionArgument.h CodeGenerator/Block.cpp)
 
 target_include_directories(Aryiele PUBLIC ${ARYIELE_INCLUDES})
 target_link_libraries(Aryiele ${ARYIELE_LIBRARIES})

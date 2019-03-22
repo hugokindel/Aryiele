@@ -2,7 +2,7 @@
 
 namespace Aryiele
 {
-    Variable::Variable(const std::string &identifier, llvm::Type *type, llvm::Value *value) :
+    Variable::Variable(const std::string &identifier, llvm::Type *type, llvm::AllocaInst *value) :
         Identifier(identifier), Type(type), Value(value)
     {
 

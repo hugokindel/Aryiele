@@ -2,7 +2,7 @@
 
 namespace Aryiele
 {
-    std::shared_ptr<Block> BlockStack::CreateNew()
+    std::shared_ptr<Block> BlockStack::Create(bool setAsCurrent)
     {
         auto block = std::make_shared<Block>();
 
@@ -13,7 +13,8 @@ namespace Aryiele
             Current->Children.emplace_back(block);
         }
 
-        Current = block;
+        if (setAsCurrent)
+            Current = block;
 
         return Current;
     }
@@ -33,16 +34,20 @@ namespace Aryiele
     std::shared_ptr<Variable> BlockStack::FindVariable(const std::string& identifier)
     {
         auto block = Current;
-        auto variable = Current->Variables->Get(identifier);
+        std::shared_ptr<Variable> variable = nullptr;
+
+        if (block->Variables.find(identifier) != block->Variables.end())
+            variable = Current->Variables[identifier];
 
         while (!variable)
         {
-            block = Current->Parent;
+            block = block->Parent;
 
             if (!block)
                 break;
 
-            variable = Current->Variables->Get(identifier);
+            if (block->Variables.find(identifier) != block->Variables.end())
+                variable = Current->Variables[identifier];
         }
 
         return variable;
