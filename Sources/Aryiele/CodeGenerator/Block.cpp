@@ -2,7 +2,7 @@
 
 namespace Aryiele
 {
-    Block::Block(std::shared_ptr<Block> parent, std::map<std::string, std::shared_ptr<Variable>> variables,
+    Block::Block(std::shared_ptr<Block> parent, std::map<std::string, llvm::AllocaInst*> variables,
                  std::vector<std::shared_ptr<Block>> children) :
         Parent(parent), Variables(variables), Children(children)
     {

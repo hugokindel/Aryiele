@@ -2,18 +2,18 @@
 #define ARYIELE_BLOCK_H
 
 #include <Aryiele/Core/Includes.h>
-#include <Aryiele/CodeGenerator/Variable.h>
+#include <llvm/IR/Instructions.h>
 
 namespace Aryiele
 {
     struct Block
     {
         Block(std::shared_ptr<Block> parent = nullptr,
-              std::map<std::string, std::shared_ptr<Variable>> variables = std::map<std::string, std::shared_ptr<Variable>>(),
+              std::map<std::string, llvm::AllocaInst*> variables = std::map<std::string, llvm::AllocaInst*>(),
               std::vector<std::shared_ptr<Block>> children = std::vector<std::shared_ptr<Block>>());
 
         std::shared_ptr<Block> Parent = nullptr;
-        std::map<std::string, std::shared_ptr<Variable>> Variables;
+        std::map<std::string, llvm::AllocaInst*> Variables;
         std::vector<std::shared_ptr<Block>> Children;
     };
 

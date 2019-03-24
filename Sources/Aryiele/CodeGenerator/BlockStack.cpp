@@ -29,10 +29,10 @@ namespace Aryiele
         return Current;
     }
 
-    std::shared_ptr<Variable> BlockStack::FindVariable(const std::string& identifier)
+    llvm::AllocaInst* BlockStack::FindVariable(const std::string& identifier)
     {
-        auto block = Current;
-        std::shared_ptr<Variable> variable = nullptr;
+        auto block = Current;<
+        llvm::AllocaInst* variable = nullptr;
 
         if (block->Variables.find(identifier) != block->Variables.end())
             variable = Current->Variables[identifier];

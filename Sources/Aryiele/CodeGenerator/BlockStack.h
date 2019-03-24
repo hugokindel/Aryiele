@@ -13,7 +13,7 @@ namespace Aryiele
 
         std::shared_ptr<Block> Create(bool setAsCurrent = true);
         std::shared_ptr<Block> EscapeCurrent();
-        std::shared_ptr<Variable> FindVariable(const std::string& identifier);
+        llvm::AllocaInst* FindVariable(const std::string& identifier);
 
         std::shared_ptr<Block> Current = nullptr;
     };

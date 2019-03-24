@@ -22,12 +22,12 @@ namespace Aryiele
 
         llvm::Function *F =
             llvm::Function::Create(FT, llvm::Function::ExternalLinkage, "print", m_module.get());
-        // --
 
         // Set names for all arguments.
         unsigned Idx = 0;
         for (auto &Arg : F->args())
             Arg.setName("value");
+        // --
 
         m_blockStack->Create();
 
@@ -143,11 +143,11 @@ namespace Aryiele
                 Arg.setName(node->Arguments[i++].Identifier);
         }
 
+        m_blockStack->Create();
+
         llvm::BasicBlock *basicBlock = llvm::BasicBlock::Create(m_context, "entry", function);
 
         m_builder.SetInsertPoint(basicBlock);
-
-        m_namedValues.clear();
 
         for (auto &argument : function->args())
         {
@@ -155,7 +155,7 @@ namespace Aryiele
 
             m_builder.CreateStore(&argument, allocationInstance);
 
-            m_namedValues[argument.getName()] = allocationInstance;
+            m_blockStack->Current->Variables[argument.getName()] = allocationInstance;
 
         }
 
@@ -172,6 +172,8 @@ namespace Aryiele
                 return nullptr;
             }
         }
+
+        m_blockStack->EscapeCurrent();
 
         verifyFunction(*function);
 
@@ -200,7 +202,7 @@ namespace Aryiele
                 return nullptr;
             }
 
-            llvm::Value *variable = m_namedValues[lhs->Identifier];
+            llvm::Value *variable = m_blockStack->FindVariable(lhs->Identifier);
 
             if (!variable)
             {
@@ -342,7 +344,7 @@ namespace Aryiele
 
     llvm::Value *CodeGenerator::GenerateCode(NodeVariable* node)
     {
-        llvm::Value *value = m_namedValues[node->Identifier];
+        llvm::Value *value = m_blockStack->FindVariable(node->Identifier);
 
         if (!value)
         {

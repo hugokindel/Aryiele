@@ -58,7 +58,6 @@ namespace Aryiele
         llvm::IRBuilder<> m_builder = llvm::IRBuilder<>(m_context);
         std::shared_ptr<llvm::DataLayout> m_dataLayout;
         std::shared_ptr<llvm::Module> m_module;
-        std::map<std::string, llvm::AllocaInst*> m_namedValues;
         std::shared_ptr<BlockStack> m_blockStack;
     };
 
