@@ -2,8 +2,8 @@
 
 namespace Aryiele
 {
-    NodeStatementBlock::NodeStatementBlock(std::vector<std::shared_ptr<Node>> block) :
-        Block(block)
+    NodeStatementBlock::NodeStatementBlock(std::vector<std::shared_ptr<Node>> body) :
+        Body(body)
     {
 
     }
@@ -13,7 +13,7 @@ namespace Aryiele
         auto node = std::make_shared<ParserInformation>(parentNode, "Block");
         auto body = std::make_shared<ParserInformation>(node, "Body:");
 
-        for (auto& statement : Block)
+        for (auto& statement : Body)
             statement->DumpInformations(body);
 
         node->Children.emplace_back(body);

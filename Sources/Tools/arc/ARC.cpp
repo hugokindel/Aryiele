@@ -172,7 +172,7 @@ namespace ARC
 
 #ifndef FINAL_RELEASE
         if (m_inputFilepath.empty())
-            m_inputFilepath = "../../debug.ac";
+            m_inputFilepath = "../../../../Examples/example-1.ac";
 #endif
 
         if (!m_inputFilepath.empty())

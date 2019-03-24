@@ -6,6 +6,7 @@
 #include <Aryiele/AST/Nodes/NodeConstantInteger.h>
 #include <Aryiele/AST/Nodes/NodeFunction.h>
 #include <Aryiele/AST/Nodes/NodeOperationBinary.h>
+#include <Aryiele/AST/Nodes/NodeStatementBlock.h>
 #include <Aryiele/AST/Nodes/NodeStatementFunctionCall.h>
 #include <Aryiele/AST/Nodes/NodeStatementIf.h>
 #include <Aryiele/AST/Nodes/NodeStatementReturn.h>
@@ -45,14 +46,15 @@ namespace Aryiele
         llvm::AllocaInst *CreateEntryBlockAllocation(
             llvm::Function *function, const std::string &identifier, llvm::Type *type = nullptr);
         llvm::Value* GenerateCode(std::shared_ptr<Node> node);
-        llvm::Value* GenerateCode(NodeConstantDouble* node);
-        llvm::Value* GenerateCode(NodeConstantInteger* node);
         llvm::Value* GenerateCode(NodeFunction* node);
         llvm::Value* GenerateCode(NodeOperationBinary* node);
+        llvm::Value* GenerateCode(NodeConstantDouble* node);
+        llvm::Value* GenerateCode(NodeConstantInteger* node);
+        llvm::Value* GenerateCode(NodeVariable* node);
         llvm::Value* GenerateCode(NodeStatementFunctionCall* node);
         llvm::Value* GenerateCode(NodeStatementIf* node);
         llvm::Value* GenerateCode(NodeStatementReturn* node);
-        llvm::Value* GenerateCode(NodeVariable* node);
+        llvm::Value* GenerateCode(NodeStatementBlock* node);
 
         llvm::LLVMContext m_context;
         llvm::IRBuilder<> m_builder = llvm::IRBuilder<>(m_context);

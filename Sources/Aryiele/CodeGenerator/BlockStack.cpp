@@ -31,7 +31,7 @@ namespace Aryiele
 
     llvm::AllocaInst* BlockStack::FindVariable(const std::string& identifier)
     {
-        auto block = Current;<
+        auto block = Current;
         llvm::AllocaInst* variable = nullptr;
 
         if (block->Variables.find(identifier) != block->Variables.end())

@@ -2,10 +2,11 @@
 #include <Aryiele/AST/Nodes/NodeConstantDouble.h>
 #include <Aryiele/AST/Nodes/NodeConstantInteger.h>
 #include <Aryiele/AST/Nodes/NodeOperationBinary.h>
-#include <Aryiele/AST/Nodes/NodeStatementReturn.h>
+#include <Aryiele/AST/Nodes/NodeStatementBlock.h>
 #include <Aryiele/AST/Nodes/NodeStatementFunctionCall.h>
-#include <Aryiele/AST/Nodes/NodeVariable.h>
 #include <Aryiele/AST/Nodes/NodeStatementIf.h>
+#include <Aryiele/AST/Nodes/NodeStatementReturn.h>
+#include <Aryiele/AST/Nodes/NodeVariable.h>
 #include <Vanir/StringUtils.h>
 #include <llvm/ADT/STLExtras.h>
 #include <iostream>
@@ -257,6 +258,152 @@ namespace Aryiele
         return m_currentToken;
     }
 
+    std::shared_ptr<NodeFunction> Parser::ParseFunction()
+    {
+        std::string name;
+        std::string type;
+        std::vector<Argument> arguments;
+
+        GetNextToken();
+
+        if (m_currentToken.Type == ParserTokens_Identifier)
+            name = m_currentToken.Content;
+        else
+        {
+            LOG_ERROR("Expected an identifier.");
+
+            return nullptr;
+        }
+
+        GetNextToken();
+
+        if (m_currentToken.Type != ParserTokens_Separator_RoundBracket_Open)
+        {
+            LOG_ERROR("Expected an opened round bracket.");
+
+            return nullptr;
+        }
+
+        while (true)
+        {
+            GetNextToken();
+
+            if (m_currentToken.Type == ParserTokens_Separator_RoundBracket_Closed)
+                break;
+            else if (m_currentToken.Type == ParserTokens_Identifier)
+            {
+                auto identifier = m_currentToken.Content;
+
+                GetNextToken();
+                PARSER_CHECKTOKEN(ParserTokens_Separator_Colon);
+
+                GetNextToken();
+                PARSER_CHECKTOKEN(ParserTokens_Identifier);
+
+                arguments.emplace_back(Argument(identifier, m_currentToken.Content));
+            }
+            else if (m_currentToken.Type == ParserTokens_Separator_Comma)
+            {
+                continue;
+            }
+            else
+            {
+                LOG_ERROR("Expected either a closed round bracket or a variable.");
+
+                return nullptr;
+            }
+        }
+
+        GetNextToken();
+
+        PARSER_CHECKTOKEN(ParserTokens_Separator_Colon);
+
+        GetNextToken();
+
+        if (m_currentToken.Type == ParserTokens_Identifier)
+            type = m_currentToken.Content;
+        else
+        {
+            LOG_ERROR("Expected a type name.");
+
+            return nullptr;
+        }
+
+        GetNextToken();
+
+        PARSER_CHECKTOKEN(ParserTokens_Separator_CurlyBracket_Open);
+
+        auto expressions = ParseBody();
+
+        return std::make_shared<NodeFunction>(name, type, arguments, expressions);
+    }
+
+    std::shared_ptr<Node> Parser::ParsePrimary()
+    {
+        switch (m_currentToken.Type)
+        {
+            case ParserTokens_LiteralValue_Integer:
+                return ParseInteger();
+            case ParserTokens_LiteralValue_Decimal:
+                return ParseDouble();
+            case ParserTokens_Separator_RoundBracket_Open:
+                return ParseParenthese();
+            case ParserTokens_Keyword_Return:
+                return ParseReturn();
+            case ParserTokens_Keyword_If:
+                return ParseIf();
+            case ParserTokens_Identifier:
+                return ParseIdentifier();
+            case ParserTokens_Separator_CurlyBracket_Open:
+                return ParseBlock();
+
+            default:
+                return nullptr;
+        }
+    }
+
+    std::shared_ptr<Node> Parser::ParseExpression()
+    {
+        auto leftExpression = ParsePrimary();
+
+        if (!leftExpression)
+            return nullptr;
+
+        return ParseBinaryOperation(0, leftExpression);
+    }
+
+    std::shared_ptr<Node> Parser::ParseBinaryOperation(int expressionPrecedence, std::shared_ptr<Node> leftExpression)
+    {
+        while (true)
+        {
+            int tokenPrecedence = ParserPrecedence::GetInstance()->GetPrecedence(m_currentToken.Content);
+
+            if (tokenPrecedence < expressionPrecedence)
+                return leftExpression;
+
+            auto operationType = m_currentToken.Type;
+
+            GetNextToken();
+
+            auto rightExpression = ParsePrimary();
+
+            if (!rightExpression)
+                return nullptr;
+
+            int nextPrecedence = ParserPrecedence::GetInstance()->GetPrecedence(m_currentToken.Content);
+
+            if (tokenPrecedence < nextPrecedence)
+            {
+                rightExpression = ParseBinaryOperation(tokenPrecedence + 1, std::move(rightExpression));
+
+                if (!rightExpression)
+                    return nullptr;
+            }
+
+            leftExpression = std::make_shared<NodeOperationBinary>(operationType, std::move(leftExpression), rightExpression);
+        }
+    }
+
     std::vector<std::shared_ptr<Node>> Parser::ParseBody()
     {
         std::vector<std::shared_ptr<Node>> expressions;
@@ -270,10 +417,8 @@ namespace Aryiele
 
             auto expression = ParseExpression();
 
-            if (expression != nullptr)
-            {
+            if (expression)
                 expressions.emplace_back(expression);
-            }
         }
 
         return expressions;
@@ -399,147 +544,13 @@ namespace Aryiele
         return std::make_shared<NodeStatementIf>(condition, if_body, else_body);
     }
 
-    std::shared_ptr<Node> Parser::ParseBinaryOperationLeft()
+    std::shared_ptr<Node> Parser::ParseBlock()
     {
-        switch (m_currentToken.Type)
-        {
-            case ParserTokens_LiteralValue_Integer:
-                return ParseInteger();
-            case ParserTokens_LiteralValue_Decimal:
-                return ParseDouble();
-            case ParserTokens_Separator_RoundBracket_Open:
-                return ParseParenthese();
-            case ParserTokens_Keyword_Return:
-                return ParseReturn();
-            case ParserTokens_Keyword_If:
-                return ParseIf();
-            case ParserTokens_Identifier:
-                return ParseIdentifier();
-            default:
-                return nullptr;
-        }
-    }
+        auto block = std::make_shared<NodeStatementBlock>();
 
-    std::shared_ptr<Node> Parser::ParseBinaryOperationRight(int expressionPrecedence, std::shared_ptr<Node> leftExpression)
-    {
-        while (true)
-        {
-            int tokenPrecedence = ParserPrecedence::GetInstance()->GetPrecedence(m_currentToken.Content);
+        block->Body = ParseBody();
 
-            if (tokenPrecedence < expressionPrecedence)
-                return leftExpression;
-
-            auto operationType = m_currentToken.Type;
-
-            GetNextToken();
-
-            auto rightExpression = ParseBinaryOperationLeft();
-
-            if (!rightExpression)
-                return nullptr;
-
-            int nextPrecedence = ParserPrecedence::GetInstance()->GetPrecedence(m_currentToken.Content);
-
-            if (tokenPrecedence < nextPrecedence)
-            {
-                rightExpression = ParseBinaryOperationRight(tokenPrecedence + 1, std::move(rightExpression));
-
-                if (!rightExpression)
-                    return nullptr;
-            }
-
-            leftExpression = std::make_shared<NodeOperationBinary>(operationType, std::move(leftExpression), rightExpression);
-        }
-    }
-
-    std::shared_ptr<Node> Parser::ParseExpression()
-    {
-        auto leftExpression = ParseBinaryOperationLeft();
-
-        if (!leftExpression)
-            return nullptr;
-
-        return ParseBinaryOperationRight(0, leftExpression);
-    }
-
-    std::shared_ptr<NodeFunction> Parser::ParseFunction()
-    {
-        std::string name;
-        std::string type;
-        std::vector<Argument> arguments;
-
-        GetNextToken();
-
-        if (m_currentToken.Type == ParserTokens_Identifier)
-            name = m_currentToken.Content;
-        else
-        {
-            LOG_ERROR("Expected an identifier.");
-
-            return nullptr;
-        }
-
-        GetNextToken();
-
-        if (m_currentToken.Type != ParserTokens_Separator_RoundBracket_Open)
-        {
-            LOG_ERROR("Expected an opened round bracket.");
-
-            return nullptr;
-        }
-
-        while (true)
-        {
-            GetNextToken();
-
-            if (m_currentToken.Type == ParserTokens_Separator_RoundBracket_Closed)
-                break;
-            else if (m_currentToken.Type == ParserTokens_Identifier)
-            {
-                auto identifier = m_currentToken.Content;
-
-                GetNextToken();
-                PARSER_CHECKTOKEN(ParserTokens_Separator_Colon);
-
-                GetNextToken();
-                PARSER_CHECKTOKEN(ParserTokens_Identifier);
-
-                arguments.emplace_back(Argument(identifier, m_currentToken.Content));
-            }
-            else if (m_currentToken.Type == ParserTokens_Separator_Comma)
-            {
-                continue;
-            }
-            else
-            {
-                LOG_ERROR("Expected either a closed round bracket or a variable.");
-
-                return nullptr;
-            }
-        }
-
-        GetNextToken();
-
-        PARSER_CHECKTOKEN(ParserTokens_Separator_Colon);
-
-        GetNextToken();
-
-        if (m_currentToken.Type == ParserTokens_Identifier)
-            type = m_currentToken.Content;
-        else
-        {
-            LOG_ERROR("Expected a type name.");
-
-            return nullptr;
-        }
-
-        GetNextToken();
-
-        PARSER_CHECKTOKEN(ParserTokens_Separator_CurlyBracket_Open);
-
-        auto expressions = ParseBody();
-
-        return std::make_shared<NodeFunction>(name, type, arguments, expressions);
+        return block;
     }
 
 } /* Namespace Aryiele. */

@@ -20,7 +20,7 @@ namespace Aryiele
     {
         auto node = std::make_shared<ParserInformation>(parentNode, "Binary Operation");
         auto operationType = std::make_shared<ParserInformation>(
-            node, "Operation Type: " + Parser::GetTokenName(OperationType));
+            node, "Type: " + Parser::GetTokenName(OperationType));
         auto lhs = std::make_shared<ParserInformation>(node, "LHS:");
         auto rhs = std::make_shared<ParserInformation>(node, "RHS:");
 

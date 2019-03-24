@@ -3,11 +3,11 @@
 
 #include <vector>
 #include <Aryiele/Core/Includes.h>
-#include <Aryiele/Parser/ParserToken.h>
-#include <Aryiele/AST/Nodes/Node.h>
 #include <Aryiele/Lexer/LexerToken.h>
-#include <Aryiele/Parser/ParserPrecedence.h>
+#include <Aryiele/AST/Nodes/Node.h>
 #include <Aryiele/AST/Nodes/NodeFunction.h>
+#include <Aryiele/Parser/ParserToken.h>
+#include <Aryiele/Parser/ParserPrecedence.h>
 #include <Aryiele/Parser/ParserInformation.h>
 
 namespace Aryiele
@@ -23,6 +23,10 @@ namespace Aryiele
     private:
         ParserToken GetNextToken();
         ParserToken GetPreviousToken();
+        std::shared_ptr<NodeFunction> ParseFunction();
+        std::shared_ptr<Node> ParsePrimary();
+        std::shared_ptr<Node> ParseExpression();
+        std::shared_ptr<Node> ParseBinaryOperation(int expressionPrecedence, std::shared_ptr<Node> leftExpression);
         std::vector<std::shared_ptr<Node>> ParseBody();
         std::shared_ptr<Node> ParseInteger();
         std::shared_ptr<Node> ParseDouble();
@@ -30,11 +34,7 @@ namespace Aryiele
         std::shared_ptr<Node> ParseParenthese();
         std::shared_ptr<Node> ParseReturn();
         std::shared_ptr<Node> ParseIf();
-        std::shared_ptr<Node> ParseBinaryOperationLeft();
-        std::shared_ptr<Node> ParseBinaryOperationRight(int expressionPrecedence, std::shared_ptr<Node> leftExpression);
-        std::shared_ptr<Node> ParseExpression();
-
-        std::shared_ptr<NodeFunction> ParseFunction();
+        std::shared_ptr<Node> ParseBlock();
 
         std::vector<std::shared_ptr<Node>> m_nodes;
         std::vector<ParserToken> m_tokens;

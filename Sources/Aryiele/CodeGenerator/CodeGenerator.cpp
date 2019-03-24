@@ -3,6 +3,8 @@
 #include <Aryiele/AST/Nodes/Node.h>
 #include <llvm/Transforms/Scalar/SimplifyCFG.h>
 #include <llvm/Transforms/Scalar/Reassociate.h>
+#include "CodeGenerator.h"
+
 
 namespace Aryiele
 {
@@ -83,12 +85,14 @@ namespace Aryiele
 
         switch (node->GetType())
         {
+            case Nodes_Function_Prototype:
+                return GenerateCode((NodeFunction*)nodePtr);
             case Nodes_Constant_Double:
                 return GenerateCode((NodeConstantDouble*)nodePtr);
             case Nodes_Constant_Integer:
                 return GenerateCode((NodeConstantInteger*)nodePtr);
-            case Nodes_Function_Prototype:
-                return GenerateCode((NodeFunction*)nodePtr);
+            case Nodes_Variable:
+                return GenerateCode((NodeVariable*)nodePtr);
             case Nodes_Operation_Binary:
                 return GenerateCode((NodeOperationBinary*)nodePtr);
             case Nodes_Statement_FunctionCall:
@@ -97,22 +101,12 @@ namespace Aryiele
                 return GenerateCode((NodeStatementIf*)nodePtr);
             case Nodes_Statement_Return:
                 return GenerateCode((NodeStatementReturn*)nodePtr);
-            case Nodes_Variable:
-                return GenerateCode((NodeVariable*)nodePtr);
+            case Nodes_Statement_Block:
+                return GenerateCode((NodeStatementBlock*)nodePtr);
 
             default:
                 return nullptr;
         }
-    }
-
-    llvm::Value *CodeGenerator::GenerateCode(NodeConstantDouble* node)
-    {
-        return llvm::ConstantFP::get(m_context, llvm::APFloat(node->Value));
-    }
-
-    llvm::Value *CodeGenerator::GenerateCode(NodeConstantInteger* node)
-    {
-        return llvm::ConstantInt::get(m_context, llvm::APInt(32, node->Value));
     }
 
     // TODO: Return + Types
@@ -135,7 +129,7 @@ namespace Aryiele
             llvm::FunctionType *functionType = llvm::FunctionType::get(functionTypeValue, arguments, false);
 
             function = llvm::Function::Create(
-                functionType, llvm::Function::ExternalLinkage, node->Identifier, m_module.get());
+                    functionType, llvm::Function::ExternalLinkage, node->Identifier, m_module.get());
 
             unsigned i = 0;
 
@@ -163,7 +157,7 @@ namespace Aryiele
         {
             auto value = GenerateCode(statement);
 
-            if (!value)
+            if (!value && statement->GetType() != Nodes_Statement_Block)
             {
                 function->eraseFromParent();
 
@@ -245,6 +239,29 @@ namespace Aryiele
             }
         }
     }
+
+    llvm::Value *CodeGenerator::GenerateCode(NodeConstantDouble* node)
+    {
+        return llvm::ConstantFP::get(m_context, llvm::APFloat(node->Value));
+    }
+
+    llvm::Value *CodeGenerator::GenerateCode(NodeConstantInteger* node)
+    {
+        return llvm::ConstantInt::get(m_context, llvm::APInt(32, node->Value));
+    }
+
+    llvm::Value *CodeGenerator::GenerateCode(NodeVariable* node)
+    {
+        llvm::Value *value = m_blockStack->FindVariable(node->Identifier);
+
+        if (!value)
+        {
+            LOG_ERROR("unknown variable: ", node->Identifier);
+        }
+
+        return m_builder.CreateLoad(value, node->Identifier.c_str());
+    }
+
 
     llvm::Value *CodeGenerator::GenerateCode(NodeStatementFunctionCall* node)
     {
@@ -342,16 +359,20 @@ namespace Aryiele
         return value;
     }
 
-    llvm::Value *CodeGenerator::GenerateCode(NodeVariable* node)
+    llvm::Value *CodeGenerator::GenerateCode(NodeStatementBlock *node)
     {
-        llvm::Value *value = m_blockStack->FindVariable(node->Identifier);
+        m_blockStack->Create();
 
-        if (!value)
+        for (auto &statement : node->Body)
         {
-            LOG_ERROR("unknown variable: ", node->Identifier);
+            GenerateCode(statement);
+
+            // TODO: Check errors
         }
 
-        return m_builder.CreateLoad(value, node->Identifier.c_str());
+        m_blockStack->EscapeCurrent();
+
+        return nullptr;
     }
 
 } /* Namespace Aryiele. */
