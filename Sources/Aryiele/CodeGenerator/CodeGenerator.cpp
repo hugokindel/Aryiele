@@ -103,6 +103,8 @@ namespace Aryiele
                 return GenerateCode((NodeStatementReturn*)nodePtr);
             case Nodes_Statement_Block:
                 return GenerateCode((NodeStatementBlock*)nodePtr);
+            case Nodes_Statement_VariableDeclaration:
+                return GenerateCode((NodeStatementVariableDeclaration*)nodePtr);
 
             default:
                 return nullptr;
@@ -150,7 +152,6 @@ namespace Aryiele
             m_builder.CreateStore(&argument, allocationInstance);
 
             m_blockStack->Current->Variables[argument.getName()] = allocationInstance;
-
         }
 
         for (auto& statement : node->Body)
@@ -365,14 +366,48 @@ namespace Aryiele
 
         for (auto &statement : node->Body)
         {
-            GenerateCode(statement);
+            auto value = GenerateCode(statement);
 
-            // TODO: Check errors
+            if (!value && statement->GetType() != Nodes_Statement_Block)
+            {
+                LOG_ERROR("cannot generate the body of a block in function");
+            }
         }
 
         m_blockStack->EscapeCurrent();
 
         return nullptr;
+    }
+
+    // TODO: CODEGENERATOR: Support other variable types (for now only int32).
+    llvm::Value *CodeGenerator::GenerateCode(NodeStatementVariableDeclaration *node)
+    {
+        llvm::Function *function = m_builder.GetInsertBlock()->getParent();
+        llvm::Value *value = nullptr;
+
+        if (node->Expression)
+        {
+            value = GenerateCode(node->Expression);
+
+            if (!value)
+            {
+                LOG_ERROR("cannot generate declaration of a variable");
+
+                return nullptr;
+            }
+        }
+        else
+        {
+            value = llvm::ConstantInt::get(m_context, llvm::APInt(32, 0));
+        }
+
+        llvm::AllocaInst *allocationInstance = CreateEntryBlockAllocation(function, node->Identifier);
+
+        m_builder.CreateStore(value, allocationInstance);
+
+        m_blockStack->Current->Variables[node->Identifier] = allocationInstance;
+
+        return value;
     }
 
 } /* Namespace Aryiele. */

@@ -35,6 +35,7 @@ namespace Aryiele
         std::shared_ptr<Node> ParseReturn();
         std::shared_ptr<Node> ParseIf();
         std::shared_ptr<Node> ParseBlock();
+        std::shared_ptr<Node> ParseVariableDeclaration();
 
         std::vector<std::shared_ptr<Node>> m_nodes;
         std::vector<ParserToken> m_tokens;
@@ -49,6 +50,12 @@ if (Parser::GetInstance()->GetCurrentToken().Type != EXPECTEDTOKENTYPE) \
 { \
     LOG_ERROR("wrong token, got '", Parser::GetTokenName(m_currentToken.Type), "' but expected '", Parser::GetTokenName(EXPECTEDTOKENTYPE), "'"); \
     return nullptr; \
+}
+
+#define PARSER_CHECKNEXTTOKEN(EXPECTEDTOKENTYPE) \
+{ \
+    GetNextToken(); \
+    PARSER_CHECKTOKEN(EXPECTEDTOKENTYPE); \
 }
 
 #endif /* ARYIELE_PARSER_H. */

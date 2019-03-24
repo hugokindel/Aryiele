@@ -98,7 +98,7 @@ add_library(Aryiele
         ${PROJECT_SOURCE_DIR}/CodeGenerator/Function.cpp
         ${PROJECT_SOURCE_DIR}/CodeGenerator/Function.h
         ${PROJECT_SOURCE_DIR}/CodeGenerator/FunctionArgument.cpp
-        ${PROJECT_SOURCE_DIR}/CodeGenerator/FunctionArgument.h)
+        ${PROJECT_SOURCE_DIR}/CodeGenerator/FunctionArgument.h AST/Nodes/NodeStatementVariableDeclaration.cpp AST/Nodes/NodeStatementVariableDeclaration.h)
 
 target_include_directories(Aryiele PUBLIC ${ARYIELE_INCLUDES})
 target_link_libraries(Aryiele ${ARYIELE_LIBRARIES})

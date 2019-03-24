@@ -10,6 +10,7 @@
 #include <Aryiele/AST/Nodes/NodeStatementFunctionCall.h>
 #include <Aryiele/AST/Nodes/NodeStatementIf.h>
 #include <Aryiele/AST/Nodes/NodeStatementReturn.h>
+#include <Aryiele/AST/Nodes/NodeStatementVariableDeclaration.h>
 #include <Aryiele/AST/Nodes/NodeVariable.h>
 #include <Aryiele/CodeGenerator/BlockStack.h>
 #include <llvm/ADT/APFloat.h>
@@ -55,6 +56,7 @@ namespace Aryiele
         llvm::Value* GenerateCode(NodeStatementIf* node);
         llvm::Value* GenerateCode(NodeStatementReturn* node);
         llvm::Value* GenerateCode(NodeStatementBlock* node);
+        llvm::Value* GenerateCode(NodeStatementVariableDeclaration* node);
 
         llvm::LLVMContext m_context;
         llvm::IRBuilder<> m_builder = llvm::IRBuilder<>(m_context);

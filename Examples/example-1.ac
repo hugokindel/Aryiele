@@ -1,7 +1,12 @@
 func main(): int
 {
-	{
-		return 5;
-	}
-	return 12;
+	var test: int = 2;
+
+	print(test);
+
+	test = test * 2;
+
+	print(test);
+
+	return test;
 }

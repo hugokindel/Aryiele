@@ -16,6 +16,7 @@ namespace Aryiele
         Nodes_Statement_FunctionCall,
         Nodes_Statement_If,
         Nodes_Statement_Return,
+        Nodes_Statement_VariableDeclaration,
 
         Nodes_Variable
     };

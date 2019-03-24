@@ -14,7 +14,7 @@ namespace Aryiele
         void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
         Nodes GetType() override;
 
-        std::shared_ptr<Node> Expression; // TODO: All (block statement ?)
+        std::shared_ptr<Node> Expression;
     };
 
 } /* Namespace Aryiele. */

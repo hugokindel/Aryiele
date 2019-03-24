@@ -6,12 +6,15 @@
 #include <Aryiele/AST/Nodes/NodeStatementFunctionCall.h>
 #include <Aryiele/AST/Nodes/NodeStatementIf.h>
 #include <Aryiele/AST/Nodes/NodeStatementReturn.h>
+#include <Aryiele/AST/Nodes/NodeStatementVariableDeclaration.h>
 #include <Aryiele/AST/Nodes/NodeVariable.h>
 #include <Vanir/StringUtils.h>
 #include <llvm/ADT/STLExtras.h>
 #include <iostream>
 #include <fcntl.h>
 #include <utility>
+#include "Parser.h"
+
 
 namespace Aryiele
 {
@@ -356,6 +359,8 @@ namespace Aryiele
                 return ParseIdentifier();
             case ParserTokens_Separator_CurlyBracket_Open:
                 return ParseBlock();
+            case ParserTokens_Keyword_Var:
+                return ParseVariableDeclaration();
 
             default:
                 return nullptr;
@@ -551,6 +556,28 @@ namespace Aryiele
         block->Body = ParseBody();
 
         return block;
+    }
+
+    // TODO: PARSER: Define a variable with no default value (eg: var x: int;).
+    // TODO: PARSER: Define multiples variables at once (eg: var x: int = 0, y: int, z: int = 2, w: int = z;).
+    std::shared_ptr<Node> Parser::ParseVariableDeclaration()
+    {
+        PARSER_CHECKNEXTTOKEN(ParserTokens_Identifier);
+
+        auto identifier = m_currentToken.Content;
+
+        PARSER_CHECKNEXTTOKEN(ParserTokens_Separator_Colon);
+        PARSER_CHECKNEXTTOKEN(ParserTokens_Identifier);
+
+        auto type = m_currentToken.Content;
+
+        PARSER_CHECKNEXTTOKEN(ParserTokens_Operator_Equal);
+
+        GetNextToken();
+
+        auto value = ParseExpression();
+
+        return std::make_shared<NodeStatementVariableDeclaration>(identifier, type, value);
     }
 
 } /* Namespace Aryiele. */
