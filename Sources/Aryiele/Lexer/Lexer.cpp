@@ -192,7 +192,7 @@ namespace Aryiele
         {
             return LexerTokens_Number;
         }
-        else if (isalpha(currentCharacter))
+        else if (isalpha(currentCharacter) || currentCharacter == '_')
         {
             return LexerTokens_Identifier;
         }

@@ -13,6 +13,7 @@
 #include <Aryiele/AST/Nodes/NodeStatementVariableDeclaration.h>
 #include <Aryiele/AST/Nodes/NodeVariable.h>
 #include <Aryiele/CodeGenerator/BlockStack.h>
+#include <Aryiele/CodeGenerator/GenerationError.h>
 #include <llvm/ADT/APFloat.h>
 #include <llvm/ADT/STLExtras.h>
 #include <llvm/IR/BasicBlock.h>
@@ -46,17 +47,17 @@ namespace Aryiele
         llvm::Value* CastType(llvm::Value *value, llvm::Type *returnType);
         llvm::AllocaInst *CreateEntryBlockAllocation(
             llvm::Function *function, const std::string &identifier, llvm::Type *type = nullptr);
-        llvm::Value* GenerateCode(std::shared_ptr<Node> node);
-        llvm::Value* GenerateCode(NodeFunction* node);
-        llvm::Value* GenerateCode(NodeOperationBinary* node);
-        llvm::Value* GenerateCode(NodeConstantDouble* node);
-        llvm::Value* GenerateCode(NodeConstantInteger* node);
-        llvm::Value* GenerateCode(NodeVariable* node);
-        llvm::Value* GenerateCode(NodeStatementFunctionCall* node);
-        llvm::Value* GenerateCode(NodeStatementIf* node);
-        llvm::Value* GenerateCode(NodeStatementReturn* node);
-        llvm::Value* GenerateCode(NodeStatementBlock* node);
-        llvm::Value* GenerateCode(NodeStatementVariableDeclaration* node);
+        GenerationError GenerateCode(std::shared_ptr<Node> node);
+        GenerationError GenerateCode(NodeFunction* node);
+        GenerationError GenerateCode(NodeOperationBinary* node);
+        GenerationError GenerateCode(NodeConstantDouble* node);
+        GenerationError GenerateCode(NodeConstantInteger* node);
+        GenerationError GenerateCode(NodeVariable* node);
+        GenerationError GenerateCode(NodeStatementFunctionCall* node);
+        GenerationError GenerateCode(NodeStatementIf* node);
+        GenerationError GenerateCode(NodeStatementReturn* node);
+        GenerationError GenerateCode(NodeStatementBlock* node);
+        GenerationError GenerateCode(NodeStatementVariableDeclaration* node);
 
         llvm::LLVMContext m_context;
         llvm::IRBuilder<> m_builder = llvm::IRBuilder<>(m_context);

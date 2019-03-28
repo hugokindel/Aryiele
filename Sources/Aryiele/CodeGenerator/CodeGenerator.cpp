@@ -69,7 +69,7 @@ namespace Aryiele
 
         return m_builder.CreateTruncOrBitCast(value, returnType);
     }
-
+    /* qsd */
     // Definition code from https://llvm.org/docs/tutorial/LangImpl07.html
     llvm::AllocaInst *
     CodeGenerator::CreateEntryBlockAllocation(llvm::Function *function, const std::string &identifier, llvm::Type *type)
@@ -79,7 +79,7 @@ namespace Aryiele
         return TmpB.CreateAlloca(type == nullptr ? llvm::Type::getInt32Ty(m_context) : type, nullptr, identifier);
     }
 
-    llvm::Value *CodeGenerator::GenerateCode(std::shared_ptr<Node> node)
+    GenerationError CodeGenerator::GenerateCode(std::shared_ptr<Node> node)
     {
         auto nodePtr = node.get();
 
@@ -107,12 +107,12 @@ namespace Aryiele
                 return GenerateCode((NodeStatementVariableDeclaration*)nodePtr);
 
             default:
-                return nullptr;
+                return GenerationError();
         }
     }
 
     // TODO: Return + Types
-    llvm::Value *CodeGenerator::GenerateCode(NodeFunction* node)
+    GenerationError CodeGenerator::GenerateCode(NodeFunction* node)
     {
         llvm::Function *function = m_module->getFunction(node->Identifier);
 
@@ -156,15 +156,15 @@ namespace Aryiele
 
         for (auto& statement : node->Body)
         {
-            auto value = GenerateCode(statement);
+            auto error = GenerateCode(statement);
 
-            if (!value && statement->GetType() != Nodes_Statement_Block)
+            if (!error.Success)
             {
                 function->eraseFromParent();
 
                 LOG_ERROR("cannot generate the body of a function: ", node->Identifier);
 
-                return nullptr;
+                return GenerationError();
             }
         }
 
@@ -172,10 +172,10 @@ namespace Aryiele
 
         verifyFunction(*function);
 
-        return function;
+        return GenerationError(true, function);
     }
 
-    llvm::Value *CodeGenerator::GenerateCode(NodeOperationBinary* node)
+    GenerationError CodeGenerator::GenerateCode(NodeOperationBinary* node)
     {
         if (node->OperationType == ParserTokens_Operator_Equal)
         {
@@ -185,16 +185,16 @@ namespace Aryiele
             {
                 LOG_ERROR("cannot generate a binary operation: lhs: expecting a variable");
 
-                return nullptr;
+                return GenerationError();
             }
 
-            llvm::Value *rhsValue = GenerateCode(node->RHS);
+            auto rhsValue = GenerateCode(node->RHS);
 
-            if (!rhsValue)
+            if (!rhsValue.Success)
             {
                 LOG_ERROR("cannot generate a binary operation: rhs: generation failed");
 
-                return nullptr;
+                return GenerationError();
             }
 
             llvm::Value *variable = m_blockStack->FindVariable(lhs->Identifier);
@@ -203,55 +203,65 @@ namespace Aryiele
             {
                 LOG_ERROR("cannot generate a binary operation: lhs: unknown variable '" + lhs->Identifier + "'");
 
-                return nullptr;
+                return GenerationError();
             }
 
-            m_builder.CreateStore(rhsValue, variable);
+            m_builder.CreateStore(rhsValue.Value, variable);
 
-            return rhsValue;
+            return GenerationError(true, rhsValue.Value);
         }
 
-        llvm::Value *lhsValue = GenerateCode(node->LHS);
-        llvm::Value *rhsValue = GenerateCode(node->RHS);
+        auto lhsValue = GenerateCode(node->LHS);
+        auto rhsValue = GenerateCode(node->RHS);
 
-        if (!lhsValue || !rhsValue)
-            return nullptr;
+        if (!lhsValue.Success || !rhsValue.Success)
+            return GenerationError();
+
+        llvm::Value *value = nullptr;
 
         // TODO: Only support integers for now
         switch (node->OperationType)
         {
             case ParserTokens_Operator_Arithmetic_Plus:
-                return m_builder.CreateAdd(lhsValue, rhsValue, "add");
+                value = m_builder.CreateAdd(lhsValue.Value, rhsValue.Value, "add");
+                break;
             case ParserTokens_Operator_Arithmetic_Minus:
-                return m_builder.CreateSub(lhsValue, rhsValue, "sub");
+                value = m_builder.CreateSub(lhsValue.Value, rhsValue.Value, "sub");
+                break;
             case ParserTokens_Operator_Arithmetic_Multiply:
-                return m_builder.CreateMul(lhsValue, rhsValue, "mul");
+                value = m_builder.CreateMul(lhsValue.Value, rhsValue.Value, "mul");
+                break;
             case ParserTokens_Operator_Arithmetic_Divide:
-                return m_builder.CreateSDiv(lhsValue, rhsValue, "sdiv");
+                value = m_builder.CreateSDiv(lhsValue.Value, rhsValue.Value, "sdiv");
+                break;
             case ParserTokens_Operator_Comparison_LessThan:
-                return m_builder.CreateICmpULT(lhsValue, rhsValue, "icmpulttmp");
+                value = m_builder.CreateICmpULT(lhsValue.Value, rhsValue.Value, "icmpulttmp");
+                break;
             case ParserTokens_Operator_Comparison_LessThanOrEqual:
-                return m_builder.CreateICmpULE(lhsValue, rhsValue, "icmpuletmp");
+                value = m_builder.CreateICmpULE(lhsValue.Value, rhsValue.Value, "icmpuletmp");
+                break;
             default:
             {
                 LOG_ERROR("unknown binary operator: ", Parser::GetTokenName(node->OperationType));
 
-                return nullptr;
+                return GenerationError();
             }
         }
+
+        return GenerationError(true, value);
     }
 
-    llvm::Value *CodeGenerator::GenerateCode(NodeConstantDouble* node)
+    GenerationError CodeGenerator::GenerateCode(NodeConstantDouble* node)
     {
-        return llvm::ConstantFP::get(m_context, llvm::APFloat(node->Value));
+        return GenerationError(true, llvm::ConstantFP::get(m_context, llvm::APFloat(node->Value)));
     }
 
-    llvm::Value *CodeGenerator::GenerateCode(NodeConstantInteger* node)
+    GenerationError CodeGenerator::GenerateCode(NodeConstantInteger* node)
     {
-        return llvm::ConstantInt::get(m_context, llvm::APInt(32, node->Value));
+        return GenerationError(true, llvm::ConstantInt::get(m_context, llvm::APInt(32, node->Value)));
     }
 
-    llvm::Value *CodeGenerator::GenerateCode(NodeVariable* node)
+    GenerationError CodeGenerator::GenerateCode(NodeVariable* node)
     {
         llvm::Value *value = m_blockStack->FindVariable(node->Identifier);
 
@@ -260,11 +270,11 @@ namespace Aryiele
             LOG_ERROR("unknown variable: ", node->Identifier);
         }
 
-        return m_builder.CreateLoad(value, node->Identifier.c_str());
+        return GenerationError(true, m_builder.CreateLoad(value, node->Identifier.c_str()));
     }
 
 
-    llvm::Value *CodeGenerator::GenerateCode(NodeStatementFunctionCall* node)
+    GenerationError CodeGenerator::GenerateCode(NodeStatementFunctionCall* node)
     {
         llvm::Function *calledFunction = m_module->getFunction(node->Identifier);
 
@@ -272,36 +282,38 @@ namespace Aryiele
         {
             LOG_ERROR("unknown function referenced: ", node->Identifier);
 
-            return nullptr;
+            return GenerationError();
         }
 
         if (calledFunction->arg_size() != node->Arguments.size())
         {
             LOG_ERROR("incorrect number of argument passed: ",
-                      calledFunction->arg_size(), " while expecting ", node->Arguments.size());
+                      node->Arguments.size(), " while expecting ", calledFunction->arg_size());
 
-            return nullptr;
+            return GenerationError();
         }
 
         std::vector<llvm::Value*> argumentsValues;
 
         for (unsigned i = 0, e = static_cast<unsigned int>(node->Arguments.size()); i != e; ++i)
         {
-            argumentsValues.push_back(GenerateCode(node->Arguments[i]));
+            auto error = GenerateCode(node->Arguments[i]);
 
-            if (!argumentsValues.back())
-                return nullptr;
+            if (!error.Success)
+                return GenerationError();
+
+            argumentsValues.push_back(error.Value);
         }
 
-        return m_builder.CreateCall(calledFunction, argumentsValues, "calltmp");
+        return GenerationError(true, m_builder.CreateCall(calledFunction, argumentsValues, "calltmp"));
     }
 
-    llvm::Value *CodeGenerator::GenerateCode(NodeStatementIf* node)
+    GenerationError CodeGenerator::GenerateCode(NodeStatementIf* node)
     {
-        llvm::Value *conditionValue = GenerateCode(node->Condition);
+        auto conditionValue = GenerateCode(node->Condition);
 
-        if (!conditionValue)
-            return nullptr;
+        if (!conditionValue.Success)
+            return GenerationError();
 
         //conditionValue = m_builder.CreateICmpNE(conditionValue,
         //    llvm::ConstantInt::get(m_context, llvm::APInt(1, static_cast<uint64_t>(0))), "ifcond");
@@ -312,13 +324,14 @@ namespace Aryiele
         llvm::BasicBlock *elseBasicBlock = llvm::BasicBlock::Create(m_context, "else");
         llvm::BasicBlock *mergeBasicBlock = llvm::BasicBlock::Create(m_context, "ifcont");
 
-        m_builder.CreateCondBr(conditionValue, thenBasicBlock, elseBasicBlock);
+        m_builder.CreateCondBr(conditionValue.Value, thenBasicBlock, elseBasicBlock);
 
         m_builder.SetInsertPoint(thenBasicBlock);
 
-        llvm::Value *ThenV = GenerateCode(node->IfBody[0]); // TODO: All
-        if (!ThenV)
-            return nullptr;
+        auto ThenV = GenerateCode(node->IfBody[0]); // TODO: All
+
+        if (!ThenV.Success)
+            return GenerationError();
 
         m_builder.CreateBr(mergeBasicBlock);
         thenBasicBlock = m_builder.GetInsertBlock();
@@ -327,9 +340,10 @@ namespace Aryiele
         m_builder.SetInsertPoint(elseBasicBlock);
 
         // TODO: Support for no else
-        llvm::Value *ElseV = GenerateCode(node->ElseBody[0]); // TODO: All
-        if (!ElseV)
-            return nullptr;
+        auto ElseV = GenerateCode(node->ElseBody[0]); // TODO: All
+
+        if (!ElseV.Success)
+            return GenerationError();
 
         m_builder.CreateBr(mergeBasicBlock);
         elseBasicBlock = m_builder.GetInsertBlock();
@@ -338,37 +352,37 @@ namespace Aryiele
         m_builder.SetInsertPoint(mergeBasicBlock);
         llvm::PHINode *PN = m_builder.CreatePHI(llvm::Type::getInt32Ty(m_context), 2, "iftmp");
 
-        PN->addIncoming(ThenV, thenBasicBlock);
-        PN->addIncoming(ElseV, elseBasicBlock);
+        PN->addIncoming(ThenV.Value, thenBasicBlock);
+        PN->addIncoming(ElseV.Value, elseBasicBlock);
 
-        return PN;
+        return GenerationError(true, PN);
     }
 
-    llvm::Value *CodeGenerator::GenerateCode(NodeStatementReturn* node)
+    GenerationError CodeGenerator::GenerateCode(NodeStatementReturn* node)
     {
-        auto value = GenerateCode(node->Expression);
+        auto error = GenerateCode(node->Expression);
 
-        if (!value)
+        if (!error.Success)
         {
             LOG_ERROR("cannot generate return value");
 
-            return nullptr;
+            return GenerationError();
         }
 
-        m_builder.CreateRet(value);
+        m_builder.CreateRet(error.Value);
 
-        return value;
+        return GenerationError(true, error.Value);
     }
 
-    llvm::Value *CodeGenerator::GenerateCode(NodeStatementBlock *node)
+    GenerationError CodeGenerator::GenerateCode(NodeStatementBlock *node)
     {
         m_blockStack->Create();
 
         for (auto &statement : node->Body)
         {
-            auto value = GenerateCode(statement);
+            auto error = GenerateCode(statement);
 
-            if (!value && statement->GetType() != Nodes_Statement_Block)
+            if (!error.Success)
             {
                 LOG_ERROR("cannot generate the body of a block in function");
             }
@@ -376,38 +390,42 @@ namespace Aryiele
 
         m_blockStack->EscapeCurrent();
 
-        return nullptr;
+        return GenerationError(true);
     }
 
     // TODO: CODEGENERATOR: Support other variable types (for now only int32).
-    llvm::Value *CodeGenerator::GenerateCode(NodeStatementVariableDeclaration *node)
+    GenerationError CodeGenerator::GenerateCode(NodeStatementVariableDeclaration *node)
     {
         llvm::Function *function = m_builder.GetInsertBlock()->getParent();
-        llvm::Value *value = nullptr;
 
-        if (node->Expression)
+        for (auto &variable : node->Variables)
         {
-            value = GenerateCode(node->Expression);
+            GenerationError error;
 
-            if (!value)
+            if (variable->Expression)
             {
-                LOG_ERROR("cannot generate declaration of a variable");
+                error = GenerateCode(variable->Expression);
 
-                return nullptr;
+                if (!error.Success)
+                {
+                    LOG_ERROR("cannot generate declaration of a variable");
+
+                    return GenerationError();
+                }
             }
+            else
+            {
+                error.Value = llvm::ConstantInt::get(m_context, llvm::APInt(32, 0));
+            }
+
+            llvm::AllocaInst *allocationInstance = CreateEntryBlockAllocation(function, variable->Identifier);
+
+            m_builder.CreateStore(error.Value, allocationInstance);
+
+            m_blockStack->Current->Variables[variable->Identifier] = allocationInstance;
         }
-        else
-        {
-            value = llvm::ConstantInt::get(m_context, llvm::APInt(32, 0));
-        }
 
-        llvm::AllocaInst *allocationInstance = CreateEntryBlockAllocation(function, node->Identifier);
-
-        m_builder.CreateStore(value, allocationInstance);
-
-        m_blockStack->Current->Variables[node->Identifier] = allocationInstance;
-
-        return value;
+        return GenerationError(true);
     }
 
 } /* Namespace Aryiele. */

@@ -69,6 +69,8 @@ add_library(Aryiele
         ${PROJECT_SOURCE_DIR}/Parser/ParserInformation.h
         ${PROJECT_SOURCE_DIR}/AST/Argument.cpp
         ${PROJECT_SOURCE_DIR}/AST/Argument.h
+        ${PROJECT_SOURCE_DIR}/AST/Variable.cpp
+        ${PROJECT_SOURCE_DIR}/AST/Variable.h
         ${PROJECT_SOURCE_DIR}/AST/Nodes.h
         ${PROJECT_SOURCE_DIR}/AST/Nodes/Node.h
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeConstantDouble.cpp
@@ -89,6 +91,8 @@ add_library(Aryiele
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementReturn.h
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeVariable.cpp
         ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeVariable.h
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementVariableDeclaration.cpp
+        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementVariableDeclaration.h
         ${PROJECT_SOURCE_DIR}/CodeGenerator/CodeGenerator.h
         ${PROJECT_SOURCE_DIR}/CodeGenerator/CodeGenerator.cpp
         ${PROJECT_SOURCE_DIR}/CodeGenerator/Block.cpp
@@ -98,7 +102,9 @@ add_library(Aryiele
         ${PROJECT_SOURCE_DIR}/CodeGenerator/Function.cpp
         ${PROJECT_SOURCE_DIR}/CodeGenerator/Function.h
         ${PROJECT_SOURCE_DIR}/CodeGenerator/FunctionArgument.cpp
-        ${PROJECT_SOURCE_DIR}/CodeGenerator/FunctionArgument.h AST/Nodes/NodeStatementVariableDeclaration.cpp AST/Nodes/NodeStatementVariableDeclaration.h)
+        ${PROJECT_SOURCE_DIR}/CodeGenerator/FunctionArgument.h
+        ${PROJECT_SOURCE_DIR}/CodeGenerator/GenerationError.cpp
+        ${PROJECT_SOURCE_DIR}/CodeGenerator/GenerationError.h)
 
 target_include_directories(Aryiele PUBLIC ${ARYIELE_INCLUDES})
 target_link_libraries(Aryiele ${ARYIELE_LIBRARIES})

@@ -187,17 +187,17 @@ namespace Aryiele
             case ParserTokens_Operator_Logical_Not:
                 return "Operator_Logical_Not";
             case ParserTokens_Separator_RoundBracket_Open:
-                return "Scope_RoundBracket_Open";
+                return "Separator_RoundBracket_Open";
             case ParserTokens_Separator_RoundBracket_Closed:
-                return "Scope_RoundBracket_Closed";
+                return "Separator_RoundBracket_Closed";
             case ParserTokens_Separator_SquareBracket_Open:
-                return "Scope_SquareBracket_Open";
+                return "Separator_SquareBracket_Open";
             case ParserTokens_Separator_SquareBracket_Closed:
-                return "Scope_SquareBracket_Closed";
+                return "Separator_SquareBracket_Closed";
             case ParserTokens_Separator_CurlyBracket_Open:
-                return "Scope_CurlyBracket_Open";
+                return "Separator_CurlyBracket_Open";
             case ParserTokens_Separator_CurlyBracket_Closed:
-                return "Scope_CurlyBracket_Closed";
+                return "Separator_CurlyBracket_Closed";
             case ParserTokens_Separator_Colon:
                 return "Separator_Colon";
             case ParserTokens_Separator_Comma:
@@ -562,22 +562,37 @@ namespace Aryiele
     // TODO: PARSER: Define multiples variables at once (eg: var x: int = 0, y: int, z: int = 2, w: int = z;).
     std::shared_ptr<Node> Parser::ParseVariableDeclaration()
     {
-        PARSER_CHECKNEXTTOKEN(ParserTokens_Identifier);
+        std::vector<std::shared_ptr<Variable>> variables;
 
-        auto identifier = m_currentToken.Content;
+        while (true)
+        {
+            PARSER_CHECKNEXTTOKEN(ParserTokens_Identifier);
 
-        PARSER_CHECKNEXTTOKEN(ParserTokens_Separator_Colon);
-        PARSER_CHECKNEXTTOKEN(ParserTokens_Identifier);
+            auto identifier = m_currentToken.Content;
 
-        auto type = m_currentToken.Content;
+            PARSER_CHECKNEXTTOKEN(ParserTokens_Separator_Colon);
+            PARSER_CHECKNEXTTOKEN(ParserTokens_Identifier);
 
-        PARSER_CHECKNEXTTOKEN(ParserTokens_Operator_Equal);
+            auto type = m_currentToken.Content;
 
-        GetNextToken();
+            GetNextToken();
 
-        auto value = ParseExpression();
+            std::shared_ptr<Node> value = nullptr;
 
-        return std::make_shared<NodeStatementVariableDeclaration>(identifier, type, value);
+            if (m_currentToken.Type == ParserTokens_Operator_Equal)
+            {
+                GetNextToken();
+
+                value = ParseExpression();
+            }
+
+            variables.emplace_back(std::make_shared<Variable>(identifier, type, value));
+
+            if (m_currentToken.Type != ParserTokens_Separator_Comma)
+                break;
+        }
+
+        return std::make_shared<NodeStatementVariableDeclaration>(variables);
     }
 
 } /* Namespace Aryiele. */

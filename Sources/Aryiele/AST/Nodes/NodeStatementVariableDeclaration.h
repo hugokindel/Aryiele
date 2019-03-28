@@ -2,6 +2,7 @@
 #define ARYIELE_NODESTATEMENTVARIABLEDECLARATION_H
 
 #include <Aryiele/Core/Includes.h>
+#include <Aryiele/AST/Variable.h>
 #include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele
@@ -9,16 +10,13 @@ namespace Aryiele
     class NodeStatementVariableDeclaration : public Node
     {
     public:
-        NodeStatementVariableDeclaration(const std::string &identifier,
-                                         const std::string &type,
-                                         std::shared_ptr<Node> expression = nullptr);
+        NodeStatementVariableDeclaration(
+                std::vector<std::shared_ptr<Variable>> variables = std::vector<std::shared_ptr<Variable>>());
 
         void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
         Nodes GetType() override;
 
-        std::string Identifier;
-        std::string Type;
-        std::shared_ptr<Node> Expression;
+        std::vector<std::shared_ptr<Variable>> Variables;
     };
 
 } /* Namespace Aryiele. */

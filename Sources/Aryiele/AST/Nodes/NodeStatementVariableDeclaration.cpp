@@ -2,10 +2,9 @@
 
 namespace Aryiele
 {
-    NodeStatementVariableDeclaration::NodeStatementVariableDeclaration(const std::string &identifier,
-                                                                       const std::string &type,
-                                                                       std::shared_ptr<Node> expression) :
-        Identifier(identifier), Type(type), Expression(expression)
+    NodeStatementVariableDeclaration::NodeStatementVariableDeclaration(
+            std::vector<std::shared_ptr<Variable>> variables) :
+        Variables(variables)
     {
 
     }
@@ -13,13 +12,28 @@ namespace Aryiele
     void NodeStatementVariableDeclaration::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
     {
         auto node = std::make_shared<ParserInformation>(parentNode, "Variable Declaration");
-        auto valueNode = std::make_shared<ParserInformation>(node, "Expression:");
 
-        Expression->DumpInformations(valueNode);
+        auto i = 0;
 
-        node->Children.emplace_back(std::make_shared<ParserInformation>(node, "Identifier: " + Identifier));
-        node->Children.emplace_back(std::make_shared<ParserInformation>(node, "Type: " + Type));
-        node->Children.emplace_back(valueNode);
+        for (auto &variable : Variables)
+        {
+            auto variableNode = std::make_shared<ParserInformation>(node, std::to_string(i));
+
+            variableNode->Children.emplace_back(std::make_shared<ParserInformation>(
+                    variableNode, "Identifier: " + variable->Identifier));
+            variableNode->Children.emplace_back(std::make_shared<ParserInformation>(variableNode, "Type: " + variable->Type));
+
+            if (variable->Expression)
+            {
+                auto valueNode = std::make_shared<ParserInformation>(variableNode, "Expression:");
+                variable->Expression->DumpInformations(valueNode);
+                variableNode->Children.emplace_back(valueNode);
+            }
+
+            node->Children.emplace_back(variableNode);
+
+            i++;
+        }
 
         parentNode->Children.emplace_back(node);
     }

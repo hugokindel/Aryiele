@@ -1,12 +1,12 @@
-func main(): int
+func main(): i32
 {
-	var test: int = 2;
+	var x: i32 = 0, y: i32, z: i32 = 2, w: i32 = z;
 
-	print(test);
+	print(x);
 
-	test = test * 2;
+	x = w * 2;
+		
+	print(x);
 
-	print(test);
-
-	return test;
+	return x;
 }
