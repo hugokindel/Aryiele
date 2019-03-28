@@ -9,7 +9,6 @@ namespace Aryiele
         if (Current)
         {
             block->Parent = Current;
-
             Current->Children.emplace_back(block);
         }
 
@@ -45,7 +44,7 @@ namespace Aryiele
                 break;
 
             if (block->Variables.find(identifier) != block->Variables.end())
-                variable = Current->Variables[identifier];
+                variable = block->Variables[identifier];
         }
 
         return variable;

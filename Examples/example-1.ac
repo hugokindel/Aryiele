@@ -1,12 +1,25 @@
 func main(): i32
 {
-	var x: i32 = 0, y: i32, z: i32 = 2, w: i32 = z;
+	var x: i32 = 1;
+	var y: i32 = 2;
 
-	print(x);
+	if (x < 5)
+	{
+		x = 2;
+	}
+	else
+	{
+		x = 5;
+	}
 
-	x = w * 2;
-		
-	print(x);
+	if (x < 5)
+	{
+		x = 2;
+	}
+	else
+	{
+		x = 5;
+	}
 
-	return x;
+	return y;
 }

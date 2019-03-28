@@ -4,7 +4,7 @@
 #include <llvm/Transforms/Scalar/SimplifyCFG.h>
 #include <llvm/Transforms/Scalar/Reassociate.h>
 #include "CodeGenerator.h"
-
+#include <llvm/Transforms/Utils/BasicBlockUtils.h>
 
 namespace Aryiele
 {
@@ -219,7 +219,8 @@ namespace Aryiele
 
         llvm::Value *value = nullptr;
 
-        // TODO: Only support integers for now
+        // TODO: CODEGENERATOR: Only support integers for now
+        // TODO: CODEGENERATOR: Only support signed numbers for now
         switch (node->OperationType)
         {
             case ParserTokens_Operator_Arithmetic_Plus:
@@ -235,10 +236,22 @@ namespace Aryiele
                 value = m_builder.CreateSDiv(lhsValue.Value, rhsValue.Value, "sdiv");
                 break;
             case ParserTokens_Operator_Comparison_LessThan:
-                value = m_builder.CreateICmpULT(lhsValue.Value, rhsValue.Value, "icmpulttmp");
+                value = m_builder.CreateICmpULT(lhsValue.Value, rhsValue.Value, "icmpult");
                 break;
             case ParserTokens_Operator_Comparison_LessThanOrEqual:
-                value = m_builder.CreateICmpULE(lhsValue.Value, rhsValue.Value, "icmpuletmp");
+                value = m_builder.CreateICmpULE(lhsValue.Value, rhsValue.Value, "icmpule");
+                break;
+            case ParserTokens_Operator_Comparison_GreaterThan:
+                value = m_builder.CreateICmpUGT(lhsValue.Value, rhsValue.Value, "icmpugt");
+                break;
+            case ParserTokens_Operator_Comparison_GreaterThanOrEqual:
+                value = m_builder.CreateICmpUGE(lhsValue.Value, rhsValue.Value, "icmpuge");
+                break;
+            case ParserTokens_Operator_Comparison_Equal:
+                value = m_builder.CreateICmpEQ(lhsValue.Value, rhsValue.Value, "icmpeq");
+                break;
+            case ParserTokens_Operator_Comparison_NotEqual:
+                value = m_builder.CreateICmpNE(lhsValue.Value, rhsValue.Value, "icmpeq");
                 break;
             default:
             {
@@ -308,6 +321,7 @@ namespace Aryiele
         return GenerationError(true, m_builder.CreateCall(calledFunction, argumentsValues, "calltmp"));
     }
 
+    // TODO: CODEGENERATOR: Support for no "Else" statement
     GenerationError CodeGenerator::GenerateCode(NodeStatementIf* node)
     {
         auto conditionValue = GenerateCode(node->Condition);
@@ -315,47 +329,42 @@ namespace Aryiele
         if (!conditionValue.Success)
             return GenerationError();
 
-        //conditionValue = m_builder.CreateICmpNE(conditionValue,
-        //    llvm::ConstantInt::get(m_context, llvm::APInt(1, static_cast<uint64_t>(0))), "ifcond");
-
         llvm::Function *function = m_builder.GetInsertBlock()->getParent();
 
-        llvm::BasicBlock *thenBasicBlock = llvm::BasicBlock::Create(m_context, "then", function);
-        llvm::BasicBlock *elseBasicBlock = llvm::BasicBlock::Create(m_context, "else");
-        llvm::BasicBlock *mergeBasicBlock = llvm::BasicBlock::Create(m_context, "ifcont");
+        llvm::BasicBlock *ifBasicBlock = llvm::BasicBlock::Create(m_context, "if", function);
+        llvm::BasicBlock *elseBasicBlock = llvm::BasicBlock::Create(m_context, "else", function);
+        llvm::BasicBlock *mergeBasicBlock = llvm::BasicBlock::Create(m_context, "merge", function);
 
-        m_builder.CreateCondBr(conditionValue.Value, thenBasicBlock, elseBasicBlock);
+        m_builder.CreateCondBr(conditionValue.Value, ifBasicBlock, elseBasicBlock);
+        m_builder.SetInsertPoint(ifBasicBlock);
+        m_blockStack->Create();
 
-        m_builder.SetInsertPoint(thenBasicBlock);
+        for (auto &statement : node->IfBody)
+        {
+            auto generatedCode = GenerateCode(statement);
 
-        auto ThenV = GenerateCode(node->IfBody[0]); // TODO: All
+            if (!generatedCode.Success)
+                return GenerationError();
+        }
 
-        if (!ThenV.Success)
-            return GenerationError();
-
+        m_blockStack->EscapeCurrent();
         m_builder.CreateBr(mergeBasicBlock);
-        thenBasicBlock = m_builder.GetInsertBlock();
-
-        function->getBasicBlockList().push_back(elseBasicBlock);
         m_builder.SetInsertPoint(elseBasicBlock);
+        m_blockStack->Create();
 
-        // TODO: Support for no else
-        auto ElseV = GenerateCode(node->ElseBody[0]); // TODO: All
+        for (auto &statement : node->ElseBody)
+        {
+            auto generatedCode = GenerateCode(statement);
 
-        if (!ElseV.Success)
-            return GenerationError();
+            if (!generatedCode.Success)
+                return GenerationError();
+        }
 
+        m_blockStack->EscapeCurrent();
         m_builder.CreateBr(mergeBasicBlock);
-        elseBasicBlock = m_builder.GetInsertBlock();
-
-        function->getBasicBlockList().push_back(mergeBasicBlock);
         m_builder.SetInsertPoint(mergeBasicBlock);
-        llvm::PHINode *PN = m_builder.CreatePHI(llvm::Type::getInt32Ty(m_context), 2, "iftmp");
 
-        PN->addIncoming(ThenV.Value, thenBasicBlock);
-        PN->addIncoming(ElseV.Value, elseBasicBlock);
-
-        return GenerationError(true, PN);
+        return GenerationError(true);
     }
 
     GenerationError CodeGenerator::GenerateCode(NodeStatementReturn* node)
