@@ -7,5 +7,3 @@ Work-in-progress small toy language.
 
 ### License
 This software is distributed under [The MIT License](http://opensource.org/licenses/MIT).
-
-    Copyright (c) 2019 Hugo Kindel
