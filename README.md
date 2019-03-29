@@ -8,7 +8,7 @@ Work-in-progress small toy language.
 ### License
 This software is distributed under [The MIT License](http://opensource.org/licenses/MIT) if not specified in a source file.
 
-    Copyright (c) 2018-2019 Hugo Kindel
+    Copyright (c) 2019 Hugo Kindel
 
 This software uses [LLVM](http://llvm.org/), which is licensed by [University of Illinois/NCSA Open Source License](http://opensource.org/licenses/UoI-NCSA.php).
 
