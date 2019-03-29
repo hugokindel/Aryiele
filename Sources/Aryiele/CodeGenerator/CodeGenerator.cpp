@@ -350,17 +350,22 @@ namespace Aryiele
         m_blockStack->EscapeCurrent();
         m_builder.CreateBr(mergeBasicBlock);
         m_builder.SetInsertPoint(elseBasicBlock);
-        m_blockStack->Create();
 
-        for (auto &statement : node->ElseBody)
+        if (!node->ElseBody.empty())
         {
-            auto generatedCode = GenerateCode(statement);
+            m_blockStack->Create();
 
-            if (!generatedCode.Success)
-                return GenerationError();
+            for (auto &statement : node->ElseBody)
+            {
+                auto generatedCode = GenerateCode(statement);
+
+                if (!generatedCode.Success)
+                    return GenerationError();
+            }
+
+            m_blockStack->EscapeCurrent();
         }
 
-        m_blockStack->EscapeCurrent();
         m_builder.CreateBr(mergeBasicBlock);
         m_builder.SetInsertPoint(mergeBasicBlock);
 

@@ -523,11 +523,11 @@ namespace Aryiele
 
         PARSER_CHECKTOKEN(ParserTokens_Separator_CurlyBracket_Open);
 
-        auto if_body = ParseBody();
+        auto ifBody = ParseBody();
 
         PARSER_CHECKTOKEN(ParserTokens_Separator_CurlyBracket_Closed);
 
-        std::vector<std::shared_ptr<Node>> else_body;
+        std::vector<std::shared_ptr<Node>> elseBody;
 
         GetNextToken();
 
@@ -535,18 +535,27 @@ namespace Aryiele
         {
             GetNextToken();
 
-            PARSER_CHECKTOKEN(ParserTokens_Separator_CurlyBracket_Open);
+            if (m_currentToken.Type == ParserTokens_Keyword_If)
+            {
+                elseBody.emplace_back(ParseIf());
 
-            else_body = ParseBody();
+                PARSER_CHECKTOKEN(ParserTokens_Separator_CurlyBracket_Closed);
+            }
+            else
+            {
+                PARSER_CHECKTOKEN(ParserTokens_Separator_CurlyBracket_Open);
 
-            PARSER_CHECKTOKEN(ParserTokens_Separator_CurlyBracket_Closed);
+                elseBody = ParseBody();
+
+                PARSER_CHECKTOKEN(ParserTokens_Separator_CurlyBracket_Closed);
+            }
         }
         else
         {
             GetPreviousToken();
         }
 
-        return std::make_shared<NodeStatementIf>(condition, if_body, else_body);
+        return std::make_shared<NodeStatementIf>(condition, ifBody, elseBody);
     }
 
     std::shared_ptr<Node> Parser::ParseBlock()

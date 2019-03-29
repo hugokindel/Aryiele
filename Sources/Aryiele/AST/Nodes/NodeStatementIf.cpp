@@ -5,9 +5,10 @@
 namespace Aryiele
 {
     NodeStatementIf::NodeStatementIf(std::shared_ptr<Node> condition,
-                                       std::vector<std::shared_ptr<Node>> ifBody,
-                                       std::vector<std::shared_ptr<Node>> elseBody) :
-        Condition(condition), IfBody(ifBody), ElseBody(elseBody)
+                                     std::vector<std::shared_ptr<Node>> ifBody,
+                                     std::vector<std::shared_ptr<Node>> elseBody,
+                                     std::vector<std::vector<std::shared_ptr<Node>>> elseIfBody) :
+        Condition(condition), IfBody(ifBody), ElseBody(elseBody), ElseIfBody(elseIfBody)
     {
 
     }
@@ -28,6 +29,18 @@ namespace Aryiele
         ifNode->Children.emplace_back(ifCondition);
         ifNode->Children.emplace_back(ifBody);
         node->Children.emplace_back(ifNode);
+
+        for (auto elseIfBody : ElseIfBody)
+        {
+            auto elseNode = std::make_shared<ParserInformation>(node, "Else If");
+            auto elseBody = std::make_shared<ParserInformation>(elseNode, "Body:");
+
+            for (auto& i : elseIfBody)
+                i->DumpInformations(elseBody);
+
+            elseNode->Children.emplace_back(elseBody);
+            node->Children.emplace_back(elseNode);
+        }
 
         if (!ElseBody.empty())
         {
