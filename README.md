@@ -6,7 +6,7 @@ Work-in-progress small toy language.
 - LLVM (7.0.1): https://llvm.org/
 
 ### License
-This software is disributed under [The MIT License](http://opensource.org/licenses/MIT) if not specified in a source file.
+This software is distributed under [The MIT License](http://opensource.org/licenses/MIT) if not specified in a source file.
 
     Copyright (c) 2018-2019 Hugo Kindel
 
