@@ -38,10 +38,12 @@ set(ARYIELE_LIBRARIES ${ARYIELE_LIBRARIES}
         ${X11_LIBRARIES})
 set(ARYIELE_INCLUDES
         ${PROJECT_SOURCE_DIR}/../
+        ${PROJECT_SOURCE_DIR}/../Vanir/Include/
         ${PROJECT_SOURCE_DIR}/../Dependencies/
         ${PROJECT_SOURCE_DIR}/../Dependencies/LLVM/include/
         ${PROJECT_SOURCE_DIR}/../../Build/Include/
-        ${PROJECT_SOURCE_DIR}/../../Build/.Temps/CMake/${CMAKE_CXX_COMPILER_ID}_${CMAKE_SIZEOF_VOID_P}_${CMAKE_BUILD_TYPE}/Sources/Dependencies/LLVM/include/)
+        ${CMAKE_CURRENT_BINARY_DIR}/../Dependencies/LLVM/include/)
+
 if(UNIX AND NOT APPLE)
     set(ARYIELE_LIBRARIES ${ARYIELE_LIBRARIES}
             stdc++fs)
@@ -63,8 +65,6 @@ add_library(Aryiele
         ${PROJECT_SOURCE_DIR}/Parser/ParserToken.cpp
         ${PROJECT_SOURCE_DIR}/Parser/ParserToken.h
         ${PROJECT_SOURCE_DIR}/Parser/ParserTokens.h
-        ${PROJECT_SOURCE_DIR}/Parser/ParserPrecedence.cpp
-        ${PROJECT_SOURCE_DIR}/Parser/ParserPrecedence.h
         ${PROJECT_SOURCE_DIR}/Parser/ParserInformation.cpp
         ${PROJECT_SOURCE_DIR}/Parser/ParserInformation.h
         ${PROJECT_SOURCE_DIR}/AST/Argument.cpp

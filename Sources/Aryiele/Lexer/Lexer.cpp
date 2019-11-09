@@ -230,5 +230,9 @@ namespace Aryiele
                 return "Error";
         }
     }
+    
+    Lexer &GetLexer() {
+        return Lexer::GetInstance();
+    }
 
 } /* Namespace Aryiele. */

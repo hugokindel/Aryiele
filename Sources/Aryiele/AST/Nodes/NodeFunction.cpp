@@ -1,5 +1,4 @@
 #include <Aryiele/AST/Nodes/NodeFunction.h>
-#include <Vanir/StringUtils.h>
 #include "NodeFunction.h"
 
 

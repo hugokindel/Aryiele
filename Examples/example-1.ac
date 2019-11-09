@@ -1,13 +1,8 @@
 func main(): i32
 {
-	var x: i32;
+	var x: i32 = 2;
 
-	if (x > 1)
-	{
-		x = 1;
-	}
-
-	print(x);
+	print((5 * 5 + (5 + 5)) * x);
 
 	return x;
 }

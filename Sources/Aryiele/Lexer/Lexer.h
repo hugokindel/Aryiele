@@ -2,12 +2,13 @@
 #define ARYIELE_LEXER_H
 
 #include <vector>
+#include <Vanir/Module/Module.h>
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/Lexer/LexerToken.h>
 
 namespace Aryiele
 {
-    class Lexer : public Vanir::Singleton<Lexer>
+class Lexer : public Vanir::Module<Lexer>
     {
     public:
         std::vector<LexerToken> Tokenize(const std::string& filepath);
@@ -24,6 +25,8 @@ namespace Aryiele
 
         std::vector<LexerToken> m_tokens;
     };
+
+    Lexer &GetLexer();
 
 } /* Namespace Aryiele. */
 

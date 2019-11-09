@@ -1,6 +1,7 @@
 #ifndef ARYIELE_CODEGENERATOR_H
 #define ARYIELE_CODEGENERATOR_H
 
+#include <Vanir/Module/Module.h>
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/AST/Nodes/NodeConstantDouble.h>
 #include <Aryiele/AST/Nodes/NodeConstantInteger.h>
@@ -36,10 +37,10 @@ namespace Aryiele
 {
     class Node;
 
-    class CodeGenerator : public Vanir::Singleton<CodeGenerator>
+    class CodeGenerator : public Vanir::Module<CodeGenerator>
     {
     public:
-        void Create();
+        CodeGenerator();
         void GenerateCode(std::vector<std::shared_ptr<Node>> nodes);
         std::shared_ptr<llvm::Module> GetModule();
 
@@ -65,6 +66,8 @@ namespace Aryiele
         std::shared_ptr<llvm::Module> m_module;
         std::shared_ptr<BlockStack> m_blockStack;
     };
+    
+    CodeGenerator &GetCodeGenerator();
 
 } /* Namespace Aryiele. */
 

@@ -8,8 +8,7 @@
 
 namespace Aryiele
 {
-    void CodeGenerator::Create()
-    {
+    CodeGenerator::CodeGenerator() {
         m_module = std::make_shared<llvm::Module>("Aryiele", m_context);
         m_dataLayout = std::make_shared<llvm::DataLayout>(m_module.get());
         m_blockStack = std::make_shared<BlockStack>();
@@ -440,6 +439,10 @@ namespace Aryiele
         }
 
         return GenerationError(true);
+    }
+    
+    CodeGenerator &GetCodeGenerator() {
+        return CodeGenerator::GetInstance();
     }
 
 } /* Namespace Aryiele. */

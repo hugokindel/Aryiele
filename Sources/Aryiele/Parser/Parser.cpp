@@ -8,16 +8,41 @@
 #include <Aryiele/AST/Nodes/NodeStatementReturn.h>
 #include <Aryiele/AST/Nodes/NodeStatementVariableDeclaration.h>
 #include <Aryiele/AST/Nodes/NodeVariable.h>
-#include <Vanir/StringUtils.h>
 #include <llvm/ADT/STLExtras.h>
 #include <iostream>
 #include <fcntl.h>
 #include <utility>
 #include "Parser.h"
 
-
 namespace Aryiele
 {
+    /* TODO: Add operators:
+ * Bitwise operator ?
+ * Ternary operator ?
+ * Negative logical operator ? */
+    Parser::Parser() {
+        m_binaryOperatorPrecedence[";"] = -1;
+    
+        m_binaryOperatorPrecedence["="] = 10;
+    
+        m_binaryOperatorPrecedence["&&"] = 20;
+        m_binaryOperatorPrecedence["||"] = 20;
+    
+        m_binaryOperatorPrecedence["<"] = 30;
+        m_binaryOperatorPrecedence[">"] = 30;
+        m_binaryOperatorPrecedence["<="] = 30;
+        m_binaryOperatorPrecedence[">="] = 30;
+        m_binaryOperatorPrecedence["=="] = 30;
+        m_binaryOperatorPrecedence["!="] = 30;
+    
+        m_binaryOperatorPrecedence["+"] = 40;
+        m_binaryOperatorPrecedence["-"] = 40;
+    
+        m_binaryOperatorPrecedence["%"] = 50;
+        m_binaryOperatorPrecedence["*"] = 50;
+        m_binaryOperatorPrecedence["/"] = 50;
+    }
+    
     std::vector<ParserToken> Parser::ConvertTokens(std::vector<LexerToken> LexerTokens)
     {
         auto tokens = std::vector<ParserToken>();
@@ -260,6 +285,13 @@ namespace Aryiele
 
         return m_currentToken;
     }
+    
+    int Parser::GetOperatorPrecedence(const std::string &binaryOperator) {
+        if(m_binaryOperatorPrecedence.find(binaryOperator) == m_binaryOperatorPrecedence.end())
+            return -1;
+        else
+            return m_binaryOperatorPrecedence[binaryOperator] <= 0 ? -1 : m_binaryOperatorPrecedence[binaryOperator];
+    }
 
     std::shared_ptr<NodeFunction> Parser::ParseFunction()
     {
@@ -381,7 +413,7 @@ namespace Aryiele
     {
         while (true)
         {
-            int tokenPrecedence = ParserPrecedence::GetInstance()->GetPrecedence(m_currentToken.Content);
+            int tokenPrecedence = GetOperatorPrecedence(m_currentToken.Content);
 
             if (tokenPrecedence < expressionPrecedence)
                 return leftExpression;
@@ -395,7 +427,7 @@ namespace Aryiele
             if (!rightExpression)
                 return nullptr;
 
-            int nextPrecedence = ParserPrecedence::GetInstance()->GetPrecedence(m_currentToken.Content);
+            int nextPrecedence = GetOperatorPrecedence(m_currentToken.Content);
 
             if (tokenPrecedence < nextPrecedence)
             {
@@ -603,5 +635,9 @@ namespace Aryiele
 
         return std::make_shared<NodeStatementVariableDeclaration>(variables);
     }
-
+    
+    Parser &GetParser() {
+        return Parser::GetInstance();
+    }
+    
 } /* Namespace Aryiele. */

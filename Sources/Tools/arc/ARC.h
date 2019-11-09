@@ -2,15 +2,15 @@
 #define ARYIELE_ARC_H
 
 #include <Aryiele/Core/Includes.h>
-#include <Vanir/CommandLineUtils.h>
+#include <Vanir/CLI/CLI.h>
 #include <Aryiele/Lexer/Lexer.h>
 #include <Aryiele/Parser/Parser.h>
 #include <arc/BuildTypes.h>
 
 #define ARC_VERSION "0.0.1"
-//#define FINAL_RELEASE // ONLY use for final releases.
+#define FINAL_RELEASE // ONLY use for final releases.
 
-#define ALOG(...) VANIR_LOG("arc: ", __VA_ARGS__);
+/*#define ALOG(...) VANIR_LOG("arc: ", __VA_ARGS__);
 #define ALOG_VERBOSE(...) VANIR_LOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Bright_Blue), "verbose: ", Vanir::LoggerColor(), __VA_ARGS__);
 #define ALOG_INFO(...) \
 { \
@@ -51,13 +51,13 @@
 #define AULOG_VERBOSE(...) ALOG_VERBOSE(__VA_ARGS__);
 #define AULOG_WARNING(...) ALOG_WARNING(__VA_ARGS__);
 #define AULOG_ERROR(...) ALOG_ERROR(__VA_ARGS__);
-#endif
+#endif*/
 
 #define ARC_RUN_CHECKERRORS() \
 { \
     if (::Vanir::Logger::ErrorCount > 0) \
         return 0; \
-    LOG_RESETCOUNTERS(); \
+    Vanir::Logger::ResetCounters(); \
 }
 
 namespace ARC
@@ -73,18 +73,18 @@ namespace ARC
         static void DoObjectGeneratorPass();
         static void DoExecutableGeneratorPass();
         static void DumpASTInformations(const std::shared_ptr<Aryiele::ParserInformation>& node, std::string indent = "");
-        static void CommandShowHelp();
-        static void CommandShowVersion();
-        static void CommandDefineInputFilepath();
-        static void CommandDefineOutputFilepath();
-        static void CommandActivateVerboseMode();
-        static void CommandKeepAllFiles();
-        static void CommandDefineBuildType();
-        static void CommandOptionNotFound();
+        static void CommandShowHelp(const std::string& s = "");
+        static void CommandShowVersion(const std::string& s = "");
+        static void CommandDefineInputFilepath(const std::string& s = "");
+        static void CommandDefineOutputFilepath(const std::string& s = "");
+        static void CommandActivateVerboseMode(const std::string& s = "");
+        static void CommandKeepAllFiles(const std::string& s = "");
+        static void CommandDefineBuildType(const std::string& s = "");
+        static void CommandOptionNotFound(const std::string& s = "");
         static std::string GetOptionValue(const std::string& option);
 
     private:
-        static std::vector<Vanir::CommandLineOption> m_options;
+        static std::vector<Vanir::Argument> m_options;
         static std::string m_inputFilepath;
         static std::string m_outputFilepath;
         static std::string m_tempIRFilepath;

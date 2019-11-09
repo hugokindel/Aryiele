@@ -2,19 +2,21 @@
 #define ARYIELE_PARSER_H
 
 #include <vector>
+#include <Vanir/Module/Module.h>
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/Lexer/LexerToken.h>
 #include <Aryiele/AST/Nodes/Node.h>
 #include <Aryiele/AST/Nodes/NodeFunction.h>
 #include <Aryiele/Parser/ParserToken.h>
-#include <Aryiele/Parser/ParserPrecedence.h>
 #include <Aryiele/Parser/ParserInformation.h>
 
 namespace Aryiele
 {
-    class Parser : public Vanir::Singleton<Parser>
+class Parser : public Vanir::Module<Parser>
     {
     public:
+        Parser();
+        
         std::vector<ParserToken> ConvertTokens(std::vector<LexerToken> tokenizerTokens);
         static std::string GetTokenName(ParserTokens tokenType);
         std::vector<std::shared_ptr<Node>> Parse(std::vector<ParserToken> tokens);
@@ -23,6 +25,7 @@ namespace Aryiele
     private:
         ParserToken GetNextToken();
         ParserToken GetPreviousToken();
+    int GetOperatorPrecedence(const std::string& binaryOperator);
         std::shared_ptr<NodeFunction> ParseFunction();
         std::shared_ptr<Node> ParsePrimary();
         std::shared_ptr<Node> ParseExpression();
@@ -36,17 +39,20 @@ namespace Aryiele
         std::shared_ptr<Node> ParseIf();
         std::shared_ptr<Node> ParseBlock();
         std::shared_ptr<Node> ParseVariableDeclaration();
-
+    
+        std::map<std::string, int> m_binaryOperatorPrecedence;
         std::vector<std::shared_ptr<Node>> m_nodes;
         std::vector<ParserToken> m_tokens;
         ParserToken m_currentToken;
         int m_currentTokenIndex = -1;
     };
+    
+    Parser &GetParser();
 
 } /* Namespace Aryiele. */
 
 #define PARSER_CHECKTOKEN(EXPECTEDTOKENTYPE) \
-if (Parser::GetInstance()->GetCurrentToken().Type != EXPECTEDTOKENTYPE) \
+if (GetParser().GetCurrentToken().Type != EXPECTEDTOKENTYPE) \
 { \
     LOG_ERROR("wrong token, got '", Parser::GetTokenName(m_currentToken.Type), "' but expected '", Parser::GetTokenName(EXPECTEDTOKENTYPE), "'"); \
     return nullptr; \
