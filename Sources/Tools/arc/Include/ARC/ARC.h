@@ -32,53 +32,63 @@
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/Lexer/Lexer.h>
 #include <Aryiele/Parser/Parser.h>
-#include <arc/BuildTypes.h>
+#include <ARC/BuildTypes.h>
 
 #define ARC_VERSION "0.0.1"
 #define FINAL_RELEASE // ONLY use for final releases.
 
-/*#define ALOG(...) VANIR_LOG("arc: ", __VA_ARGS__);
-#define ALOG_VERBOSE(...) VANIR_LOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Bright_Blue), "verbose: ", Vanir::LoggerColor(), __VA_ARGS__);
-#define ALOG_INFO(...) \
+#include <Vanir/Logger/Logger.h>
+
+#define LOG(...) ::Vanir::Logger::Log(__VA_ARGS__);
+#define LOG_INFO(...) \
 { \
-    VANIR_LOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Blue), "info: ", Vanir::LoggerColor(), __VA_ARGS__); \
-    VANIR_LOG_INCREASECOUNTER(::Vanir::LoggerTypes::LoggerTypes_Info); \
+    ::Vanir::Logger::Log("arc: ", __VA_ARGS__); \
+    ::Vanir::Logger::InfoCount += 1; \
 }
-#define ALOG_WARNING(...) \
+#define LOG_VERBOSE(...) \
 { \
-    VANIR_LOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Yellow), "warning: ", __VA_ARGS__, Vanir::LoggerColor()); \
-    VANIR_LOG_INCREASECOUNTER(::Vanir::LoggerTypes::LoggerTypes_Warning); \
+    ::Vanir::Logger::Log("arc: ", ::Vanir::LogColor(::Vanir::TerminalColor_Bright_Blue), "verbose: ", ::Vanir::LogColor(), __VA_ARGS__); \
+    ::Vanir::Logger::WarningCount += 1; \
 }
-#define ALOG_ERROR(...) \
+#define LOG_WARNING(...) \
 { \
-    VANIR_LOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Red), "error: ", __VA_ARGS__, Vanir::LoggerColor()); \
-    VANIR_LOG_INCREASECOUNTER(::Vanir::LoggerTypes::LoggerTypes_Error); \
+    ::Vanir::Logger::Log("arc: ", ::Vanir::LogColor(::Vanir::TerminalColor_Yellow), "warning: ", ::Vanir::LogColor(), __VA_ARGS__); \
+    ::Vanir::Logger::WarningCount += 1; \
 }
-#ifdef PLATFORM_WINDOWS
-#define AULOG(...) VANIR_ULOG("arc: ", __VA_ARGS__);
-#define AULOG_VERBOSE(...) VANIR_ULOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Bright_Blue), "verbose: ", Vanir::LoggerColor(), __VA_ARGS__);
-#define AULOG_INFO(...) \
+#define LOG_ERROR(...) \
 { \
-    VANIR_ULOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Blue), "info: ", Vanir::LoggerColor(), __VA_ARGS__); \
-    VANIR_LOG_INCREASECOUNTER(::Vanir::LoggerTypes::LoggerTypes_Info); \
+    ::Vanir::Logger::Log("arc: ", ::Vanir::LogColor(::Vanir::TerminalColor_Red), "error: ", ::Vanir::LogColor(), __VA_ARGS__); \
+    ::Vanir::Logger::ErrorCount += 1; \
 }
-#define AULOG_WARNING(...) \
+
+#ifdef _WIN32
+#define ULOG(...) ::Vanir::Logger::ULog(__VA_ARGS__);
+#define ULOG_INFO(...) \
 { \
-    VANIR_ULOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Yellow), "warning: ", __VA_ARGS__, Vanir::LoggerColor()); \
-    VANIR_LOG_INCREASECOUNTER(::Vanir::LoggerTypes::LoggerTypes_Warning); \
+    ::Vanir::Logger::ULog("arc: ", __VA_ARGS__); \
+    ::Vanir::Logger::InfoCount += 1; \
 }
-#define AULOG_ERROR(...) \
+#define ULOG_VERBOSE(...) \
 { \
-    VANIR_ULOG("arc: ", Vanir::LoggerColor(Vanir::LoggerColors_Red), "error: ", __VA_ARGS__, Vanir::LoggerColor()); \
-    VANIR_LOG_INCREASECOUNTER(::Vanir::LoggerTypes::LoggerTypes_Error); \
+    ::Vanir::Logger::ULog("arc: ", ::Vanir::LogColor(::Vanir::TerminalColor_Bright_Blue), "verbose: ", ::Vanir::LogColor(), __VA_ARGS__); \
+    ::Vanir::Logger::WarningCount += 1; \
+}
+#define ULOG_WARNING(...) \
+{ \
+    ::Vanir::Logger::ULog("arc: ", ::Vanir::LogColor(::Vanir::TerminalColor_Yellow), "warning: ", ::Vanir::LogColor(), __VA_ARGS__); \
+    ::Vanir::Logger::WarningCount += 1; \
+}
+#define ULOG_ERROR(...) \
+{ \
+    ::Vanir::Logger::ULog("arc: ", ::Vanir::LogColor(::Vanir::TerminalColor_Red), "error: ", ::Vanir::LogColor(), __VA_ARGS__); \
+    ::Vanir::Logger::ErrorCount += 1; \
 }
 #else
-#define AULOG(...) ALOG(__VA_ARGS__);
-#define AULOG_INFO(...) ALOG_INFO(__VA_ARGS__);
-#define AULOG_VERBOSE(...) ALOG_VERBOSE(__VA_ARGS__);
-#define AULOG_WARNING(...) ALOG_WARNING(__VA_ARGS__);
-#define AULOG_ERROR(...) ALOG_ERROR(__VA_ARGS__);
-#endif*/
+#define ULOG(...) LOG(__VA_ARGS__)
+#define ULOG_INFO(...) LOG_INFO(__VA_ARGS__)
+#define ULOG_WARNING(...) LOG_WARNING(__VA_ARGS__)
+#define ULOG_ERROR(...) LOG_ERROR(__VA_ARGS__)
+#endif
 
 #define ARC_RUN_CHECKERRORS() \
 { \

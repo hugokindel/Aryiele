@@ -194,9 +194,9 @@ namespace ARC
             if (!found)
             {
                 if (std::string(argv[i]).rfind('-', 0) == 0)
-                    CommandOptionNotFound("");
+                    CommandOptionNotFound();
                 else
-                    CommandDefineInputFilepath("");
+                    CommandDefineInputFilepath();
             }
         }
 
@@ -269,7 +269,7 @@ namespace ARC
         {
             if (m_verboseMode)
             {
-                //LOG_VERBOSE("lexer: ", token.Content, " => ", lexer->GetTokenName(token));
+                LOG_VERBOSE("lexer: ", token.Content, " => ", lexer->GetTokenName(token));
             }
 
             if (token.Type == Aryiele::LexerTokens_Unknown)
@@ -291,7 +291,7 @@ namespace ARC
         {
             if (m_verboseMode)
             {
-                //LOG_VERBOSE("parser: ", token.Content, " => ", parser->GetTokenName(token.Type));
+                LOG_VERBOSE("parser: ", token.Content, " => ", parser->GetTokenName(token.Type));
             }
 
             if (token.Type == Aryiele::ParserTokens_Unknown)
@@ -332,7 +332,7 @@ namespace ARC
         {
             if (m_verboseMode)
             {
-                //LOG_VERBOSE("ir code generated with success");
+                LOG_VERBOSE("ir code generated with success");
             }
 
             m_tempIRFilepath = Vanir::FileSystem::GetPathWithoutExtension(m_inputFilepath) + ".ll";
@@ -358,7 +358,7 @@ namespace ARC
 
             if (m_verboseMode)
             {
-                //LOG_VERBOSE("ir code file generated with success");
+                LOG_VERBOSE("ir code file generated with success");
             }
         }
     }
@@ -386,7 +386,7 @@ namespace ARC
         {
             if (m_verboseMode)
             {
-                //LOG_VERBOSE("object file generated with success");
+                LOG_VERBOSE("object file generated with success");
             }
         }
         else
@@ -414,16 +414,11 @@ namespace ARC
 
         int errorCode;
 
-#ifdef FINAL_RELEASE
-        //if(!(errorCode = system(("gcc " + m_tempOBJFilepath + " -lSTD -o " + m_tempEXEFilepath).c_str())))
         if(!(errorCode = system(("gcc " + m_tempOBJFilepath + " -L../libs -lSTD -o " + m_tempEXEFilepath).c_str())))
-#else
-        if(!(errorCode = system(("gcc " + m_tempOBJFilepath + " -L../libs -lSTD -o " + m_tempEXEFilepath).c_str())))
-#endif
         {
             if (m_verboseMode)
             {
-                //LOG_VERBOSE("executable file generated with success");
+                LOG_VERBOSE("executable file generated with success");
             }
         }
         else
@@ -449,11 +444,11 @@ namespace ARC
 
         if (isRoot)
         {
-            //ULOG_VERBOSE("ast: ", node->Name);
+            ULOG_VERBOSE("ast: ", node->Name);
         }
         else
         {
-            //ULOG_VERBOSE("ast:", indent + (isLastSibling ? "└╴" : "├╴"), node->Name);
+            ULOG_VERBOSE("ast:", indent + (isLastSibling ? "└╴" : "├╴"), node->Name);
             indent += isLastSibling ? "  " : "│ ";
         }
 

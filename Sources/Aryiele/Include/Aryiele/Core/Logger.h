@@ -43,12 +43,12 @@
 }
 #define LOG_WARNING(...) \
 { \
-    ::Vanir::Logger::Log("aryiele: ", ::Vanir::LogColor(::Vanir::TerminalColor_Yellow), "warning: ", __VA_ARGS__, ::Vanir::LogColor()); \
+    ::Vanir::Logger::Log("aryiele: ", ::Vanir::LogColor(::Vanir::TerminalColor_Yellow), "warning: ", ::Vanir::LogColor(), __VA_ARGS__); \
     ::Vanir::Logger::WarningCount += 1; \
 }
 #define LOG_ERROR(...) \
 { \
-    ::Vanir::Logger::Log("aryiele: ", ::Vanir::LogColor(::Vanir::TerminalColor_Red), "error: ", __VA_ARGS__, ::Vanir::LogColor()); \
+    ::Vanir::Logger::Log("aryiele: ", ::Vanir::LogColor(::Vanir::TerminalColor_Red), "error: ", ::Vanir::LogColor(), __VA_ARGS__); \
     ::Vanir::Logger::ErrorCount += 1; \
 }
 
@@ -66,12 +66,12 @@
 }
 #define ULOG_WARNING(...) \
 { \
-    ::Vanir::Logger::ULog("aryiele: ", ::Vanir::LogColor(::Vanir::TerminalColor_Yellow), "warning: ", __VA_ARGS__, ::Vanir::LogColor()); \
+    ::Vanir::Logger::ULog("aryiele: ", ::Vanir::LogColor(::Vanir::TerminalColor_Yellow), "warning: ", ::Vanir::LogColor(), __VA_ARGS__); \
     ::Vanir::Logger::WarningCount += 1; \
 }
 #define ULOG_ERROR(...) \
 { \
-    ::Vanir::Logger::ULog("aryiele: ", ::Vanir::LogColor(::Vanir::TerminalColor_Red), "error: ", __VA_ARGS__, ::Vanir::LogColor()); \
+    ::Vanir::Logger::ULog("aryiele: ", ::Vanir::LogColor(::Vanir::TerminalColor_Red), "error: ", ::Vanir::LogColor(), __VA_ARGS__); \
     ::Vanir::Logger::ErrorCount += 1; \
 }
 #else
