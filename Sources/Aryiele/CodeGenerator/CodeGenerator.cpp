@@ -68,7 +68,7 @@ namespace Aryiele
 
         return m_builder.CreateTruncOrBitCast(value, returnType);
     }
-    /* qsd */
+    
     // Definition code from https://llvm.org/docs/tutorial/LangImpl07.html
     llvm::AllocaInst *
     CodeGenerator::CreateEntryBlockAllocation(llvm::Function *function, const std::string &identifier, llvm::Type *type)
