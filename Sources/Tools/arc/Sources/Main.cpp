@@ -1,0 +1,43 @@
+﻿//==================================================================================//
+//                                                                                  //
+//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                       //
+//                                                                                  //
+//  This file is part of the Aryiele project.                                       //
+//  Licensed under MIT License:                                                     //
+//                                                                                  //
+//  Permission is hereby granted, free of charge, to any person obtaining           //
+//  a copy of this software and associated documentation files (the "Software"),    //
+//  to deal in the Software without restriction, including without limitation       //
+//  the rights to use, copy, modify, merge, publish, distribute, sublicense,        //
+//  and/or sell copies of the Software, and to permit persons to whom the           //
+//  Software is furnished to do so, subject to the following conditions:            //
+//                                                                                  //
+//  The above copyright notice and this permission notice shall be included in      //
+//  all copies or substantial portions of the Software.                             //
+//                                                                                  //
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR      //
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,        //
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE     //
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER          //
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,   //
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE   //
+//  SOFTWARE.                                                                       //
+//                                                                                  //
+//===----- Ariyele Compiler -----------------------------------------------------===//
+//																				    //
+// This project is a tool of the Aryiele language. Its main purpose is to           //
+// compile Aryiele to LLVM Intermediate Representation using the Aryiele            //
+// library and Vanir. But it can also serve to translate this code directly         //
+// to assembly for a specified architecture (using LLC), AND also generate a        //
+// native executable using a native assembler/linker (GCC, Clang, MSVC, ...).       //
+// 																				    //
+//===----------------------------------------------------------------------------===//
+
+#include <arc/ARC.h>
+
+int main(const int argc, char *argv[])
+{
+    auto arc = std::make_shared<ARC::ARC>();
+
+    return arc->Run(argc, argv);
+}

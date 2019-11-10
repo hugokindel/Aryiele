@@ -1,6 +1,30 @@
-# ----------------------------------------------------------------
-# CMake build file for Aryiele.
-# ----------------------------------------------------------------
+#==================================================================================#
+#                                                                                  #
+#  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                       #
+#                                                                                  #
+#  This file is part of the Aryiele project.                                       #
+#  Licensed under MIT License:                                                     #
+#                                                                                  #
+#  Permission is hereby granted, free of charge, to any person obtaining           #
+#  a copy of this software and associated documentation files (the "Software"),    #
+#  to deal in the Software without restriction, including without limitation       #
+#  the rights to use, copy, modify, merge, publish, distribute, sublicense,        #
+#  and/or sell copies of the Software, and to permit persons to whom the           #
+#  Software is furnished to do so, subject to the following conditions:            #
+#                                                                                  #
+#  The above copyright notice and this permission notice shall be included in      #
+#  all copies or substantial portions of the Software.                             #
+#                                                                                  #
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR      #
+#  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,        #
+#  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE     #
+#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER          #
+#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,   #
+#  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE   #
+#  SOFTWARE.                                                                       #
+#                                                                                  #
+#==================================================================================#
+
 cmake_minimum_required(VERSION 3.12)
 project("Aryiele")
 
@@ -37,12 +61,13 @@ set(ARYIELE_LIBRARIES ${ARYIELE_LIBRARIES}
         LLVMPasses
         ${X11_LIBRARIES})
 set(ARYIELE_INCLUDES
+        ${PROJECT_SOURCE_DIR}/Include/
         ${PROJECT_SOURCE_DIR}/../
         ${PROJECT_SOURCE_DIR}/../Vanir/Include/
         ${PROJECT_SOURCE_DIR}/../Dependencies/
-        ${PROJECT_SOURCE_DIR}/../Dependencies/LLVM/include/
+        ${PROJECT_SOURCE_DIR}/../Dependencies/LLVM/Include/
         ${PROJECT_SOURCE_DIR}/../../Build/Include/
-        ${CMAKE_CURRENT_BINARY_DIR}/../Dependencies/LLVM/include/)
+        ${CMAKE_CURRENT_BINARY_DIR}/../Dependencies/LLVM/Include/)
 
 if(UNIX AND NOT APPLE)
     set(ARYIELE_LIBRARIES ${ARYIELE_LIBRARIES}
@@ -52,59 +77,59 @@ endif()
 add_definitions(${LLVM_DEFINITIONS})
 
 add_library(Aryiele
-        ${PROJECT_SOURCE_DIR}/Core/Includes.h
-        ${PROJECT_SOURCE_DIR}/Core/Logger.h
-        ${PROJECT_SOURCE_DIR}/Lexer/Lexer.cpp
-        ${PROJECT_SOURCE_DIR}/Lexer/Lexer.h
-        ${PROJECT_SOURCE_DIR}/Lexer/LexerToken.cpp
-        ${PROJECT_SOURCE_DIR}/Lexer/LexerToken.h
-        ${PROJECT_SOURCE_DIR}/Lexer/LexerTokens.h
-        ${PROJECT_SOURCE_DIR}/Lexer/LexerTable.h
-        ${PROJECT_SOURCE_DIR}/Parser/Parser.cpp
-        ${PROJECT_SOURCE_DIR}/Parser/Parser.h
-        ${PROJECT_SOURCE_DIR}/Parser/ParserToken.cpp
-        ${PROJECT_SOURCE_DIR}/Parser/ParserToken.h
-        ${PROJECT_SOURCE_DIR}/Parser/ParserTokens.h
-        ${PROJECT_SOURCE_DIR}/Parser/ParserInformation.cpp
-        ${PROJECT_SOURCE_DIR}/Parser/ParserInformation.h
-        ${PROJECT_SOURCE_DIR}/AST/Argument.cpp
-        ${PROJECT_SOURCE_DIR}/AST/Argument.h
-        ${PROJECT_SOURCE_DIR}/AST/Variable.cpp
-        ${PROJECT_SOURCE_DIR}/AST/Variable.h
-        ${PROJECT_SOURCE_DIR}/AST/Nodes.h
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/Node.h
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeConstantDouble.cpp
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeConstantDouble.h
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeConstantInteger.cpp
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeConstantInteger.h
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeFunction.cpp
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeFunction.h
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeOperationBinary.cpp
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeOperationBinary.h
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementBlock.cpp
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementBlock.h
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementFunctionCall.cpp
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementFunctionCall.h
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementIf.cpp
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementIf.h
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementReturn.cpp
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementReturn.h
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeVariable.cpp
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeVariable.h
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementVariableDeclaration.cpp
-        ${PROJECT_SOURCE_DIR}/AST/Nodes/NodeStatementVariableDeclaration.h
-        ${PROJECT_SOURCE_DIR}/CodeGenerator/CodeGenerator.h
-        ${PROJECT_SOURCE_DIR}/CodeGenerator/CodeGenerator.cpp
-        ${PROJECT_SOURCE_DIR}/CodeGenerator/Block.cpp
-        ${PROJECT_SOURCE_DIR}/CodeGenerator/Block.h
-        ${PROJECT_SOURCE_DIR}/CodeGenerator/BlockStack.cpp
-        ${PROJECT_SOURCE_DIR}/CodeGenerator/BlockStack.h
-        ${PROJECT_SOURCE_DIR}/CodeGenerator/Function.cpp
-        ${PROJECT_SOURCE_DIR}/CodeGenerator/Function.h
-        ${PROJECT_SOURCE_DIR}/CodeGenerator/FunctionArgument.cpp
-        ${PROJECT_SOURCE_DIR}/CodeGenerator/FunctionArgument.h
-        ${PROJECT_SOURCE_DIR}/CodeGenerator/GenerationError.cpp
-        ${PROJECT_SOURCE_DIR}/CodeGenerator/GenerationError.h)
+        Include/Aryiele/Core/Includes.h
+        Include/Aryiele/Core/Logger.h
+        Include/Aryiele/Lexer/Lexer.h
+        Include/Aryiele/Lexer/LexerToken.h
+        Include/Aryiele/Lexer/LexerTokens.h
+        Include/Aryiele/Lexer/LexerTable.h
+        Include/Aryiele/Parser/Parser.h
+        Include/Aryiele/Parser/ParserToken.h
+        Include/Aryiele/Parser/ParserTokens.h
+        Include/Aryiele/Parser/ParserInformation.h
+        Include/Aryiele/AST/Argument.h
+        Include/Aryiele/AST/Variable.h
+        Include/Aryiele/AST/Nodes.h
+        Include/Aryiele/AST/Nodes/Node.h
+        Include/Aryiele/AST/Nodes/NodeConstantDouble.h
+        Include/Aryiele/AST/Nodes/NodeConstantInteger.h
+        Include/Aryiele/AST/Nodes/NodeFunction.h
+        Include/Aryiele/AST/Nodes/NodeOperationBinary.h
+        Include/Aryiele/AST/Nodes/NodeStatementBlock.h
+        Include/Aryiele/AST/Nodes/NodeStatementFunctionCall.h
+        Include/Aryiele/AST/Nodes/NodeStatementIf.h
+        Include/Aryiele/AST/Nodes/NodeStatementReturn.h
+        Include/Aryiele/AST/Nodes/NodeVariable.h
+        Include/Aryiele/AST/Nodes/NodeStatementVariableDeclaration.h
+        Include/Aryiele/CodeGenerator/CodeGenerator.h
+        Include/Aryiele/CodeGenerator/Block.h
+        Include/Aryiele/CodeGenerator/BlockStack.h
+        Include/Aryiele/CodeGenerator/Function.h
+        Include/Aryiele/CodeGenerator/FunctionArgument.h
+        Include/Aryiele/CodeGenerator/GenerationError.h
+        Sources/Lexer/Lexer.cpp
+        Sources/Lexer/LexerToken.cpp
+        Sources/Parser/Parser.cpp
+        Sources/Parser/ParserToken.cpp
+        Sources/Parser/ParserInformation.cpp
+        Sources/AST/Argument.cpp
+        Sources/AST/Variable.cpp
+        Sources/AST/Nodes/NodeConstantDouble.cpp
+        Sources/AST/Nodes/NodeConstantInteger.cpp
+        Sources/AST/Nodes/NodeFunction.cpp
+        Sources/AST/Nodes/NodeOperationBinary.cpp
+        Sources/AST/Nodes/NodeStatementBlock.cpp
+        Sources/AST/Nodes/NodeStatementFunctionCall.cpp
+        Sources/AST/Nodes/NodeStatementIf.cpp
+        Sources/AST/Nodes/NodeStatementReturn.cpp
+        Sources/AST/Nodes/NodeVariable.cpp
+        Sources/AST/Nodes/NodeStatementVariableDeclaration.cpp
+        Sources/CodeGenerator/CodeGenerator.cpp
+        Sources/CodeGenerator/Block.cpp
+        Sources/CodeGenerator/BlockStack.cpp
+        Sources/CodeGenerator/Function.cpp
+        Sources/CodeGenerator/FunctionArgument.cpp
+        Sources/CodeGenerator/GenerationError.cpp)
 
 target_include_directories(Aryiele PUBLIC ${ARYIELE_INCLUDES})
 target_link_libraries(Aryiele ${ARYIELE_LIBRARIES})
