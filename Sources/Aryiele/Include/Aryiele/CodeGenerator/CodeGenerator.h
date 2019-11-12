@@ -60,12 +60,10 @@
 #include <Aryiele/CodeGenerator/BlockStack.h>
 #include <Aryiele/CodeGenerator/GenerationError.h>
 
-namespace Aryiele
-{
+namespace Aryiele {
     class Node;
 
-    class CodeGenerator : public Vanir::Module<CodeGenerator>
-    {
+    class CodeGenerator : public Vanir::Module<CodeGenerator> {
     public:
         CodeGenerator();
         void GenerateCode(std::vector<std::shared_ptr<Node>> nodes);

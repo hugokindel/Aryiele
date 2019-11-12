@@ -31,10 +31,8 @@
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/AST/Nodes/Node.h>
 
-namespace Aryiele
-{
-    class NodeVariable : public Node
-    {
+namespace Aryiele {
+    class NodeVariable : public Node {
     public:
         explicit NodeVariable(const std::string& identifier);
 

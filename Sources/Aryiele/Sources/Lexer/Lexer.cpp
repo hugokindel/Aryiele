@@ -28,10 +28,8 @@
 #include <Aryiele/Lexer/Lexer.h>
 #include <Aryiele/Lexer/LexerTable.h>
 
-namespace Aryiele
-{
-    std::vector<LexerToken> Lexer::Tokenize(const std::string& filepath)
-    {
+namespace Aryiele {
+    std::vector<LexerToken> Lexer::Tokenize(const std::string& filepath) {
         std::ifstream file;
         std::string expression;
 
@@ -49,31 +47,27 @@ namespace Aryiele
         return m_tokens;
     }
 
-    void Lexer::UseFiniteStateMachine(std::string expression)
-    {
+    void Lexer::UseFiniteStateMachine(std::string expression) {
         LexerToken currentToken;
         std::vector<LexerToken> tokens;
         auto currentTransitionState = LexerTokens_Reject;
         auto previousTransitionState = LexerTokens_Reject;
         std::string currentTokenExpression;
 
-        for (unsigned x = 0; x < expression.length();)
-        {
+        for (unsigned x = 0; x < expression.length();) {
             const auto currentCharacter = expression[x];
             const auto column = GetTransitionTableColumn(currentCharacter);
 
             currentTransitionState = static_cast<LexerTokens>(LexerTable[currentTransitionState][column]);
 
-            if (currentTransitionState == LexerTokens_Reject)
-            {
+            if (currentTransitionState == LexerTokens_Reject) {
                 currentToken.Content = currentTokenExpression;
                 currentToken.Type = previousTransitionState;
                 currentTokenExpression = "";
 
                 tokens.push_back(currentToken);
             }
-            else
-            {
+            else {
                 currentTokenExpression += currentCharacter;
                 ++x;
             }
@@ -81,8 +75,7 @@ namespace Aryiele
             previousTransitionState = currentTransitionState;
         }
 
-        if (!currentTokenExpression.empty())
-        {
+        if (!currentTokenExpression.empty()) {
             currentToken.Content = currentTokenExpression;
             currentToken.Type = currentTransitionState;
 
@@ -97,38 +90,31 @@ namespace Aryiele
         m_tokens.insert(m_tokens.end(), tokens.begin(), tokens.end());
     }
 
-    void Lexer::RemoveComments()
-    {
+    void Lexer::RemoveComments() {
         LexerToken currentToken;
         std::vector<LexerToken> tokens;
         auto isInCommentSingleLine = false;
         auto isInCommentMultiLine = false;
 
-        for (auto& token : m_tokens)
-        {
+        for (auto& token : m_tokens) {
             const auto lastToken = currentToken;
             currentToken = token;
 
-            if (isInCommentSingleLine)
-            {
+            if (isInCommentSingleLine) {
                 if (currentToken.Type == LexerTokens_Newline)
                     isInCommentSingleLine = false;
             }
-            else if (isInCommentMultiLine)
-            {
+            else if (isInCommentMultiLine) {
                 if (currentToken.Content == "*/")
                     isInCommentMultiLine = false;
             }
-            else if (currentToken.Content == "//")
-            {
+            else if (currentToken.Content == "//") {
                 isInCommentSingleLine = true;
             }
-            else if (currentToken.Content == "/*")
-            {
+            else if (currentToken.Content == "/*") {
                 isInCommentMultiLine = true;
             }
-            else
-            {
+            else {
                 tokens.emplace_back(currentToken);
             }
         }
@@ -138,16 +124,14 @@ namespace Aryiele
         m_tokens = tokens;
     }
 
-    void Lexer::DetailTokens()
-    {
+    void Lexer::DetailTokens() {
         LexerToken currentToken;
         std::vector<LexerToken> tokens;
         std::string inTextQuote;
         std::string currentText;
         auto isInText = false;
 
-        for (auto& token : m_tokens)
-        {
+        for (auto& token : m_tokens) {
             const auto lastToken = currentToken;
             currentToken = token;
 
@@ -156,10 +140,8 @@ namespace Aryiele
             if (currentToken.Type == LexerTokens_Space && !isInText)
                 continue;
 
-            if (isInText)
-            {
-                if (currentToken.Type == LexerTokens_StringQuote && currentToken.Content == inTextQuote)
-                {
+            if (isInText) {
+                if (currentToken.Type == LexerTokens_StringQuote && currentToken.Content == inTextQuote) {
                     if (currentText[currentText.length() - 1] == '\\')
                     {
                         currentText.pop_back();
@@ -177,18 +159,15 @@ namespace Aryiele
                         inTextQuote = "";
                     }
                 }
-                else
-                {
+                else {
                     currentText += currentToken.Content;
                 }
             }
-            else if (currentToken.Type == LexerTokens_StringQuote)
-            {
+            else if (currentToken.Type == LexerTokens_StringQuote) {
                 inTextQuote = currentToken.Content;
                 isInText = true;
             }
-            else
-            {
+            else {
                 tokens.emplace_back(currentToken);
             }
         }
@@ -198,43 +177,34 @@ namespace Aryiele
         m_tokens = tokens;
     }
 
-    LexerTokens Lexer::GetTransitionTableColumn(char currentCharacter)
-    {
+    LexerTokens Lexer::GetTransitionTableColumn(char currentCharacter) {
         if (currentCharacter == '{' || currentCharacter == '}' ||
             currentCharacter == '[' || currentCharacter == ']' ||
             currentCharacter == '(' || currentCharacter == ')' ||
-            currentCharacter == ';' || currentCharacter == ',' || currentCharacter == ':')
-        {
+            currentCharacter == ';' || currentCharacter == ',' || currentCharacter == ':') {
             return LexerTokens_Separator;
         }
-        else if (currentCharacter == '\"' || currentCharacter == '\'')
-        {
+        else if (currentCharacter == '\"' || currentCharacter == '\'') {
             return LexerTokens_StringQuote;
         }
-        else if (isspace(currentCharacter))
-        {
+        else if (isspace(currentCharacter)) {
             return LexerTokens_Space;
         }
-        else if (isdigit(currentCharacter) || currentCharacter == '.')
-        {
+        else if (isdigit(currentCharacter) || currentCharacter == '.') {
             return LexerTokens_Number;
         }
-        else if (isalpha(currentCharacter) || currentCharacter == '_')
-        {
+        else if (isalpha(currentCharacter) || currentCharacter == '_') {
             return LexerTokens_Identifier;
         }
-        else if (ispunct(currentCharacter))
-        {
+        else if (ispunct(currentCharacter)) {
             return LexerTokens_Operator;
         }
 
         return LexerTokens_Unknown;
     }
 
-    std::string Lexer::GetTokenName(LexerToken tokenType)
-    {
-        switch (tokenType.Type)
-        {
+    std::string Lexer::GetTokenName(LexerToken tokenType) {
+        switch (tokenType.Type) {
             case LexerTokens_Number:
                 return "Number";
             case LexerTokens_String:

@@ -33,10 +33,8 @@
 #include <Aryiele/CodeGenerator/FunctionArgument.h>
 #include <Aryiele/CodeGenerator/BlockStack.h>
 
-namespace Aryiele
-{
-    struct Function
-    {
+namespace Aryiele {
+    struct Function {
         Function(const std::string &identifier, llvm::Type *returnType,
                  std::vector<std::shared_ptr<FunctionArgument>> arguments,
                  std::shared_ptr<BlockStack> blocks);

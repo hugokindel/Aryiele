@@ -32,10 +32,8 @@
 #include <Aryiele/Parser/ParserInformation.h>
 #include <Aryiele/AST/Nodes.h>
 
-namespace Aryiele
-{
-    class Node
-    {
+namespace Aryiele {
+    class Node {
     public:
         virtual ~Node() = default;
 

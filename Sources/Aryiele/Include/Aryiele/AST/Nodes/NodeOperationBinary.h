@@ -33,10 +33,8 @@
 #include <Aryiele/Parser/ParserTokens.h>
 #include <Aryiele/AST/Nodes/Node.h>
 
-namespace Aryiele
-{
-    class NodeOperationBinary : public Node
-    {
+namespace Aryiele {
+    class NodeOperationBinary : public Node {
     public:
         NodeOperationBinary(ParserTokens operationType, std::shared_ptr<Node> lhs, std::shared_ptr<Node> rhs);
 

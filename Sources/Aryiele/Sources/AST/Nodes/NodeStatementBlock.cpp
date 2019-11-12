@@ -27,16 +27,13 @@
 
 #include <Aryiele/AST/Nodes/NodeStatementBlock.h>
 
-namespace Aryiele
-{
+namespace Aryiele {
     NodeStatementBlock::NodeStatementBlock(std::vector<std::shared_ptr<Node>> body) :
-        Body(body)
-    {
+        Body(body) {
 
     }
 
-    void NodeStatementBlock::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
-    {
+    void NodeStatementBlock::DumpInformations(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Block");
         auto body = std::make_shared<ParserInformation>(node, "Body:");
 
@@ -47,8 +44,7 @@ namespace Aryiele
         parentNode->Children.emplace_back(node);
     }
 
-    Nodes NodeStatementBlock::GetType()
-    {
+    Nodes NodeStatementBlock::GetType() {
         return Nodes_Statement_Block;
     }
 

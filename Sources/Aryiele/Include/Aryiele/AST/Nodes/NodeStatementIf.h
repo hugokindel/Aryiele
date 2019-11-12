@@ -31,10 +31,8 @@
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/AST/Nodes/Node.h>
 
-namespace Aryiele
-{
-    class NodeStatementIf : public Node
-    {
+namespace Aryiele {
+    class NodeStatementIf : public Node {
     public:
         NodeStatementIf(std::shared_ptr<Node> condition,
                          std::vector<std::shared_ptr<Node>> ifBody,

@@ -27,19 +27,16 @@
 
 #include <Aryiele/AST/Nodes/NodeFunction.h>
 
-namespace Aryiele
-{
+namespace Aryiele {
     NodeFunction::NodeFunction(const std::string& identifier,
                                const std::string& type,
                                std::vector<Argument> arguments,
                                std::vector<std::shared_ptr<Node>> body) :
-        Identifier(identifier), Type(type), Arguments(arguments), Body(body)
-    {
+        Identifier(identifier), Type(type), Arguments(arguments), Body(body) {
 
     }
 
-    void NodeFunction::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
-    {
+    void NodeFunction::DumpInformations(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Function");
         auto argumentsNode = std::make_shared<ParserInformation>(node, "Arguments:");
         auto valueNode = std::make_shared<ParserInformation>(node, "Body:");
@@ -49,8 +46,7 @@ namespace Aryiele
 
         int i = 0;
 
-        for(auto& argument : Arguments)
-        {
+        for(auto& argument : Arguments) {
             auto argumentNode = std::make_shared<ParserInformation>(argumentsNode, std::to_string(i));
 
             argumentNode->Children.emplace_back(std::make_shared<ParserInformation>(
@@ -71,8 +67,7 @@ namespace Aryiele
         parentNode->Children.emplace_back(node);
     }
 
-    Nodes NodeFunction::GetType()
-    {
+    Nodes NodeFunction::GetType() {
         return Nodes_Function_Prototype;
     }
 

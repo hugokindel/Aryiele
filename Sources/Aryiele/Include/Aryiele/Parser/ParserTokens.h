@@ -28,10 +28,8 @@
 #ifndef ARYIELE_PARSERTOKENS_H
 #define ARYIELE_PARSERTOKENS_H
 
-namespace Aryiele
-{
-    enum ParserTokens
-    {
+namespace Aryiele {
+    enum ParserTokens {
         ParserTokens_LiteralValue_Integer, // A number, example: 9
         ParserTokens_LiteralValue_Decimal, // A decimal number, example: 5.5
         ParserTokens_LiteralValue_String, // A string, example: "This is a text"

@@ -31,10 +31,8 @@
 #include <llvm/IR/Value.h>
 #include <Aryiele/Core/Includes.h>
 
-namespace Aryiele
-{
-    struct GenerationError
-    {
+namespace Aryiele {
+    struct GenerationError {
         GenerationError(bool success = false, llvm::Value *value = nullptr);
 
         bool Success;

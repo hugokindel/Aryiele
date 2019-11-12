@@ -31,10 +31,8 @@
 #include <string>
 #include <Aryiele/Lexer/LexerTokens.h>
 
-namespace Aryiele
-{
-    struct LexerToken
-    {
+namespace Aryiele {
+    struct LexerToken {
         LexerToken(const std::string& content = std::string(), LexerTokens type = LexerTokens_Unknown);
 
         std::string Content;

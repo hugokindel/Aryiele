@@ -40,8 +40,7 @@
 #include <Aryiele/AST/Nodes/NodeStatementVariableDeclaration.h>
 #include <Aryiele/AST/Nodes/NodeVariable.h>
 
-namespace Aryiele
-{
+namespace Aryiele {
     /* TODO: Add operators:
  * Bitwise operator ?
  * Ternary operator ?
@@ -69,15 +68,12 @@ namespace Aryiele
         m_binaryOperatorPrecedence["/"] = 50;
     }
     
-    std::vector<ParserToken> Parser::ConvertTokens(std::vector<LexerToken> LexerTokens)
-    {
+    std::vector<ParserToken> Parser::ConvertTokens(std::vector<LexerToken> LexerTokens) {
         auto tokens = std::vector<ParserToken>();
         auto lastToken = LexerToken(std::string(), LexerTokens_Unknown);
 
-        for (auto& token : LexerTokens)
-        {
-            switch (token.Type)
-            {
+        for (auto& token : LexerTokens) {
+            switch (token.Type) {
                 case LexerTokens_Number:
                     // Numbers.
                     if (token.Content.find('.') != std::string::npos)
@@ -190,10 +186,8 @@ namespace Aryiele
         return tokens;
     }
 
-    std::string Parser::GetTokenName(ParserTokens tokenType)
-    {
-        switch (tokenType)
-        {
+    std::string Parser::GetTokenName(ParserTokens tokenType) {
+        switch (tokenType) {
 
             case ParserTokens_LiteralValue_Integer:
                 return "LiteralValue_Integer";
@@ -274,13 +268,11 @@ namespace Aryiele
         }
     }
 
-    std::vector<std::shared_ptr<Node>> Parser::Parse(std::vector<ParserToken> tokens)
-    {
+    std::vector<std::shared_ptr<Node>> Parser::Parse(std::vector<ParserToken> tokens) {
         m_tokens = std::move(tokens);
         m_tokens.emplace_back("", ParserTokens_EOF);
 
-        while (true)
-        {
+        while (true) {
             GetNextToken();
 
             if (m_currentToken.Type == ParserTokens_EOF)
@@ -292,20 +284,17 @@ namespace Aryiele
         return m_nodes;
     }
 
-    ParserToken Parser::GetCurrentToken()
-    {
+    ParserToken Parser::GetCurrentToken() {
         return m_currentToken;
     }
 
-    ParserToken Parser::GetNextToken()
-    {
+    ParserToken Parser::GetNextToken() {
         m_currentToken = m_tokens[++m_currentTokenIndex];
 
         return m_currentToken;
     }
 
-    ParserToken Parser::GetPreviousToken()
-    {
+    ParserToken Parser::GetPreviousToken() {
         if (m_currentTokenIndex > 0)
             m_currentToken = m_tokens[--m_currentTokenIndex];
 
@@ -319,8 +308,7 @@ namespace Aryiele
             return m_binaryOperatorPrecedence[binaryOperator] <= 0 ? -1 : m_binaryOperatorPrecedence[binaryOperator];
     }
 
-    std::shared_ptr<NodeFunction> Parser::ParseFunction()
-    {
+    std::shared_ptr<NodeFunction> Parser::ParseFunction() {
         std::string name;
         std::string type;
         std::vector<Argument> arguments;
@@ -329,8 +317,7 @@ namespace Aryiele
 
         if (m_currentToken.Type == ParserTokens_Identifier)
             name = m_currentToken.Content;
-        else
-        {
+        else {
             LOG_ERROR("Expected an identifier.");
 
             return nullptr;
@@ -338,21 +325,18 @@ namespace Aryiele
 
         GetNextToken();
 
-        if (m_currentToken.Type != ParserTokens_Separator_RoundBracket_Open)
-        {
+        if (m_currentToken.Type != ParserTokens_Separator_RoundBracket_Open) {
             LOG_ERROR("Expected an opened round bracket.");
 
             return nullptr;
         }
 
-        while (true)
-        {
+        while (true) {
             GetNextToken();
 
             if (m_currentToken.Type == ParserTokens_Separator_RoundBracket_Closed)
                 break;
-            else if (m_currentToken.Type == ParserTokens_Identifier)
-            {
+            else if (m_currentToken.Type == ParserTokens_Identifier) {
                 auto identifier = m_currentToken.Content;
 
                 GetNextToken();
@@ -363,12 +347,10 @@ namespace Aryiele
 
                 arguments.emplace_back(Argument(identifier, m_currentToken.Content));
             }
-            else if (m_currentToken.Type == ParserTokens_Separator_Comma)
-            {
+            else if (m_currentToken.Type == ParserTokens_Separator_Comma) {
                 continue;
             }
-            else
-            {
+            else {
                 LOG_ERROR("Expected either a closed round bracket or a variable.");
 
                 return nullptr;
@@ -383,8 +365,7 @@ namespace Aryiele
 
         if (m_currentToken.Type == ParserTokens_Identifier)
             type = m_currentToken.Content;
-        else
-        {
+        else {
             LOG_ERROR("Expected a type name.");
 
             return nullptr;
@@ -399,10 +380,8 @@ namespace Aryiele
         return std::make_shared<NodeFunction>(name, type, arguments, expressions);
     }
 
-    std::shared_ptr<Node> Parser::ParsePrimary()
-    {
-        switch (m_currentToken.Type)
-        {
+    std::shared_ptr<Node> Parser::ParsePrimary() {
+        switch (m_currentToken.Type) {
             case ParserTokens_LiteralValue_Integer:
                 return ParseInteger();
             case ParserTokens_LiteralValue_Decimal:
@@ -425,8 +404,7 @@ namespace Aryiele
         }
     }
 
-    std::shared_ptr<Node> Parser::ParseExpression()
-    {
+    std::shared_ptr<Node> Parser::ParseExpression() {
         auto leftExpression = ParsePrimary();
 
         if (!leftExpression)
@@ -435,10 +413,8 @@ namespace Aryiele
         return ParseBinaryOperation(0, leftExpression);
     }
 
-    std::shared_ptr<Node> Parser::ParseBinaryOperation(int expressionPrecedence, std::shared_ptr<Node> leftExpression)
-    {
-        while (true)
-        {
+    std::shared_ptr<Node> Parser::ParseBinaryOperation(int expressionPrecedence, std::shared_ptr<Node> leftExpression) {
+        while (true) {
             int tokenPrecedence = GetOperatorPrecedence(m_currentToken.Content);
 
             if (tokenPrecedence < expressionPrecedence)
@@ -455,8 +431,7 @@ namespace Aryiele
 
             int nextPrecedence = GetOperatorPrecedence(m_currentToken.Content);
 
-            if (tokenPrecedence < nextPrecedence)
-            {
+            if (tokenPrecedence < nextPrecedence) {
                 rightExpression = ParseBinaryOperation(tokenPrecedence + 1, std::move(rightExpression));
 
                 if (!rightExpression)
@@ -467,12 +442,10 @@ namespace Aryiele
         }
     }
 
-    std::vector<std::shared_ptr<Node>> Parser::ParseBody()
-    {
+    std::vector<std::shared_ptr<Node>> Parser::ParseBody() {
         std::vector<std::shared_ptr<Node>> expressions;
 
-        while (true)
-        {
+        while (true) {
             GetNextToken();
 
             if (m_currentToken.Type == ParserTokens_Separator_CurlyBracket_Closed)
@@ -487,8 +460,7 @@ namespace Aryiele
         return expressions;
     }
 
-    std::shared_ptr<Node> Parser::ParseInteger()
-    {
+    std::shared_ptr<Node> Parser::ParseInteger() {
         auto result = std::make_shared<NodeConstantInteger>(std::stoi(m_currentToken.Content));
 
         GetNextToken();
@@ -496,8 +468,7 @@ namespace Aryiele
         return result;
     }
 
-    std::shared_ptr<Node> Parser::ParseDouble()
-    {
+    std::shared_ptr<Node> Parser::ParseDouble() {
         auto result = std::make_shared<NodeConstantDouble>(std::stod(m_currentToken.Content));
 
         GetNextToken();
@@ -505,22 +476,18 @@ namespace Aryiele
         return result;
     }
 
-    std::shared_ptr<Node> Parser::ParseIdentifier()
-    {
+    std::shared_ptr<Node> Parser::ParseIdentifier() {
         auto identifier = m_currentToken.Content;
 
         GetNextToken();
 
-        if (m_currentToken.Type == ParserTokens_Separator_RoundBracket_Open)
-        {
+        if (m_currentToken.Type == ParserTokens_Separator_RoundBracket_Open) {
             GetNextToken();
 
             std::vector<std::shared_ptr<Node>> arguments;
 
-            if (m_currentToken.Type != ParserTokens_Separator_RoundBracket_Closed)
-            {
-                while (true)
-                {
+            if (m_currentToken.Type != ParserTokens_Separator_RoundBracket_Closed) {
+                while (true) {
                     if (auto arg = ParseExpression())
                         arguments.emplace_back(arg);
                     else
@@ -542,14 +509,12 @@ namespace Aryiele
 
             return std::make_shared<NodeStatementFunctionCall>(identifier, arguments);
         }
-        else
-        {
+        else {
             return std::make_shared<NodeVariable>(identifier);
         }
     }
 
-    std::shared_ptr<Node> Parser::ParseParenthese()
-    {
+    std::shared_ptr<Node> Parser::ParseParenthese() {
         GetNextToken();
 
         auto expression = ParseExpression();
@@ -559,21 +524,18 @@ namespace Aryiele
         return expression;
     }
 
-    std::shared_ptr<Node> Parser::ParseReturn()
-    {
+    std::shared_ptr<Node> Parser::ParseReturn() {
         GetNextToken();
 
         return std::make_shared<NodeStatementReturn>(ParseExpression());
     }
 
-    std::shared_ptr<Node> Parser::ParseIf()
-    {
+    std::shared_ptr<Node> Parser::ParseIf() {
         GetNextToken();
 
         auto condition = ParseParenthese();
 
-        if (!condition)
-        {
+        if (!condition) {
             LOG_ERROR("Cannot parse if condition");
 
             return nullptr;
@@ -589,18 +551,15 @@ namespace Aryiele
 
         GetNextToken();
 
-        if (m_currentToken.Type == ParserTokens_Keyword_Else)
-        {
+        if (m_currentToken.Type == ParserTokens_Keyword_Else) {
             GetNextToken();
 
-            if (m_currentToken.Type == ParserTokens_Keyword_If)
-            {
+            if (m_currentToken.Type == ParserTokens_Keyword_If) {
                 elseBody.emplace_back(ParseIf());
 
                 PARSER_CHECKTOKEN(ParserTokens_Separator_CurlyBracket_Closed);
             }
-            else
-            {
+            else {
                 PARSER_CHECKTOKEN(ParserTokens_Separator_CurlyBracket_Open);
 
                 elseBody = ParseBody();
@@ -608,16 +567,14 @@ namespace Aryiele
                 PARSER_CHECKTOKEN(ParserTokens_Separator_CurlyBracket_Closed);
             }
         }
-        else
-        {
+        else {
             GetPreviousToken();
         }
 
         return std::make_shared<NodeStatementIf>(condition, ifBody, elseBody);
     }
 
-    std::shared_ptr<Node> Parser::ParseBlock()
-    {
+    std::shared_ptr<Node> Parser::ParseBlock() {
         auto block = std::make_shared<NodeStatementBlock>();
 
         block->Body = ParseBody();
@@ -627,12 +584,10 @@ namespace Aryiele
 
     // TODO: PARSER: Define a variable with no default value (eg: var x: int;).
     // TODO: PARSER: Define multiples variables at once (eg: var x: int = 0, y: int, z: int = 2, w: int = z;).
-    std::shared_ptr<Node> Parser::ParseVariableDeclaration()
-    {
+    std::shared_ptr<Node> Parser::ParseVariableDeclaration() {
         std::vector<std::shared_ptr<Variable>> variables;
 
-        while (true)
-        {
+        while (true) {
             PARSER_CHECKNEXTTOKEN(ParserTokens_Identifier);
 
             auto identifier = m_currentToken.Content;
@@ -646,8 +601,7 @@ namespace Aryiele
 
             std::shared_ptr<Node> value = nullptr;
 
-            if (m_currentToken.Type == ParserTokens_Operator_Equal)
-            {
+            if (m_currentToken.Type == ParserTokens_Operator_Equal) {
                 GetNextToken();
 
                 value = ParseExpression();

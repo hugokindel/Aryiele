@@ -25,12 +25,11 @@
 //                                                                                  //
 //==================================================================================//
 
-#include <Aryiele/CodeGenerator/Block.h>
+#include <Aryiele/AST/Argument.h>
 
 namespace Aryiele {
-    Block::Block(std::shared_ptr<Block> parent, std::map<std::string, llvm::AllocaInst*> variables,
-                 std::vector<std::shared_ptr<Block>> children) :
-        Parent(parent), Variables(variables), Children(children) {
+    Argument::Argument(const std::string& identifier, const std::string& type) :
+        Identifier(identifier), Type(type) {
 
     }
 

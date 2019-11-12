@@ -112,7 +112,7 @@ add_library(Aryiele
         Sources/Parser/Parser.cpp
         Sources/Parser/ParserToken.cpp
         Sources/Parser/ParserInformation.cpp
-        Sources/AST/Argument.cpp
+        Sources/AST/CLIOption.cpp
         Sources/AST/Variable.cpp
         Sources/AST/Nodes/NodeConstantDouble.cpp
         Sources/AST/Nodes/NodeConstantInteger.cpp

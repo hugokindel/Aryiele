@@ -31,10 +31,8 @@
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/AST/Nodes/Node.h>
 
-namespace Aryiele
-{
-    class NodeConstantInteger : public Node
-    {
+namespace Aryiele {
+    class NodeConstantInteger : public Node {
     public:
         explicit NodeConstantInteger(int value);
 

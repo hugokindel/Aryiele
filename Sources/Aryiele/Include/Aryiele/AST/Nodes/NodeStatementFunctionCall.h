@@ -33,10 +33,8 @@
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/AST/Nodes/Node.h>
 
-namespace Aryiele
-{
-    class NodeStatementFunctionCall : public Node
-    {
+namespace Aryiele {
+    class NodeStatementFunctionCall : public Node {
     public:
         NodeStatementFunctionCall(const std::string& identifier, std::vector<std::shared_ptr<Node>> arguments);
 

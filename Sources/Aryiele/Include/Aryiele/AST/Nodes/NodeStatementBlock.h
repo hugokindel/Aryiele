@@ -31,10 +31,8 @@
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/AST/Nodes/Node.h>
 
-namespace Aryiele
-{
-    class NodeStatementBlock : public Node
-    {
+namespace Aryiele {
+    class NodeStatementBlock : public Node {
     public:
         explicit NodeStatementBlock(std::vector<std::shared_ptr<Node>> body = std::vector<std::shared_ptr<Node>>());
 

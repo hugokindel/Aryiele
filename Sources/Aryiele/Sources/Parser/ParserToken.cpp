@@ -27,11 +27,9 @@
 
 #include <Aryiele/Parser/ParserToken.h>
 
-namespace Aryiele
-{
+namespace Aryiele {
     ParserToken::ParserToken(const std::string &content, Aryiele::ParserTokens type) :
-        Content(content), Type(type)
-    {
+        Content(content), Type(type) {
 
     }
 

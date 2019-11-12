@@ -27,16 +27,13 @@
 
 #include <Aryiele/AST/Nodes/NodeVariable.h>
 
-namespace Aryiele
-{
+namespace Aryiele {
     NodeVariable::NodeVariable(const std::string& identifier) :
-            Identifier(identifier)
-    {
+            Identifier(identifier) {
 
     }
 
-    void NodeVariable::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
-    {
+    void NodeVariable::DumpInformations(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Variable");
         auto body = std::make_shared<ParserInformation>(node, "Identifier: " + Identifier);
 
@@ -44,8 +41,7 @@ namespace Aryiele
         parentNode->Children.emplace_back(node);
     }
 
-    Nodes NodeVariable::GetType()
-    {
+    Nodes NodeVariable::GetType() {
         return Nodes_Variable;
     }
 

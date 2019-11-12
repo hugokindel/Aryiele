@@ -40,46 +40,38 @@
 #include <Vanir/Logger/Logger.h>
 
 #define LOG(...) ::Vanir::Logger::Log(__VA_ARGS__);
-#define LOG_INFO(...) \
-{ \
+#define LOG_INFO(...) { \
     ::Vanir::Logger::Log("arc: ", __VA_ARGS__); \
     ::Vanir::Logger::InfoCount += 1; \
 }
-#define LOG_VERBOSE(...) \
-{ \
+#define LOG_VERBOSE(...) { \
     ::Vanir::Logger::Log("arc: ", ::Vanir::LogColor(::Vanir::TerminalColor_Bright_Blue), "verbose: ", ::Vanir::LogColor(), __VA_ARGS__); \
     ::Vanir::Logger::WarningCount += 1; \
 }
-#define LOG_WARNING(...) \
-{ \
+#define LOG_WARNING(...) { \
     ::Vanir::Logger::Log("arc: ", ::Vanir::LogColor(::Vanir::TerminalColor_Yellow), "warning: ", ::Vanir::LogColor(), __VA_ARGS__); \
     ::Vanir::Logger::WarningCount += 1; \
 }
-#define LOG_ERROR(...) \
-{ \
+#define LOG_ERROR(...) { \
     ::Vanir::Logger::Log("arc: ", ::Vanir::LogColor(::Vanir::TerminalColor_Red), "error: ", ::Vanir::LogColor(), __VA_ARGS__); \
     ::Vanir::Logger::ErrorCount += 1; \
 }
 
 #ifdef _WIN32
 #define ULOG(...) ::Vanir::Logger::ULog(__VA_ARGS__);
-#define ULOG_INFO(...) \
-{ \
+#define ULOG_INFO(...) { \
     ::Vanir::Logger::ULog("arc: ", __VA_ARGS__); \
     ::Vanir::Logger::InfoCount += 1; \
 }
-#define ULOG_VERBOSE(...) \
-{ \
+#define ULOG_VERBOSE(...) { \
     ::Vanir::Logger::ULog("arc: ", ::Vanir::LogColor(::Vanir::TerminalColor_Bright_Blue), "verbose: ", ::Vanir::LogColor(), __VA_ARGS__); \
     ::Vanir::Logger::WarningCount += 1; \
 }
-#define ULOG_WARNING(...) \
-{ \
+#define ULOG_WARNING(...) { \
     ::Vanir::Logger::ULog("arc: ", ::Vanir::LogColor(::Vanir::TerminalColor_Yellow), "warning: ", ::Vanir::LogColor(), __VA_ARGS__); \
     ::Vanir::Logger::WarningCount += 1; \
 }
-#define ULOG_ERROR(...) \
-{ \
+#define ULOG_ERROR(...) { \
     ::Vanir::Logger::ULog("arc: ", ::Vanir::LogColor(::Vanir::TerminalColor_Red), "error: ", ::Vanir::LogColor(), __VA_ARGS__); \
     ::Vanir::Logger::ErrorCount += 1; \
 }
@@ -90,18 +82,15 @@
 #define ULOG_ERROR(...) LOG_ERROR(__VA_ARGS__)
 #endif
 
-#define ARC_RUN_CHECKERRORS() \
-{ \
+#define ARC_RUN_CHECKERRORS() { \
     if (::Vanir::Logger::ErrorCount > 0) \
         return 0; \
     Vanir::Logger::ResetCounters(); \
 }
 
-namespace ARC
-{
+namespace ARC {
     // Main class of the Aryiele Compiler command line tool.
-    class ARC
-    {
+    class ARC {
     public:
         static int Run(int argc, char *argv[]);
         static std::vector<Aryiele::LexerToken> DoLexerPass(const std::string& filepath);
@@ -121,7 +110,7 @@ namespace ARC
         static std::string GetOptionValue(const std::string& option);
 
     private:
-        static std::vector<Vanir::Argument> m_options;
+        static std::vector<Vanir::CLIOption> m_options;
         static std::string m_inputFilepath;
         static std::string m_outputFilepath;
         static std::string m_tempIRFilepath;

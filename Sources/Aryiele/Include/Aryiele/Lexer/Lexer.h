@@ -33,10 +33,8 @@
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/Lexer/LexerToken.h>
 
-namespace Aryiele
-{
-class Lexer : public Vanir::Module<Lexer>
-    {
+namespace Aryiele {
+class Lexer : public Vanir::Module<Lexer> {
     public:
         std::vector<LexerToken> Tokenize(const std::string& filepath);
         std::string GetTokenName(LexerToken tokenType);

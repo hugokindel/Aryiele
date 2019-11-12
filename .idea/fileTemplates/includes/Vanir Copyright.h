@@ -1,8 +1,8 @@
 //==================================================================================//
 //                                                                                  //
-//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                       //
+//  Copyright (c) $YEAR Hugo Kindel <kindelhugo.pro@gmail.com>                      //
 //                                                                                  //
-//  This file is part of the Aryiele project.                                       //
+//  This file is part of the Vanir project.                                         //
 //  Licensed under MIT License:                                                     //
 //                                                                                  //
 //  Permission is hereby granted, free of charge, to any person obtaining           //
@@ -24,15 +24,3 @@
 //  SOFTWARE.                                                                       //
 //                                                                                  //
 //==================================================================================//
-
-#include <Aryiele/AST/Argument.h>
-
-namespace Aryiele
-{
-    Argument::Argument(const std::string& identifier, const std::string& type) :
-        Identifier(identifier), Type(type)
-    {
-
-    }
-
-} /* Namespace Aryiele. */

@@ -31,10 +31,8 @@
 #include <llvm/IR/Type.h>
 #include <Aryiele/Core/Includes.h>
 
-namespace Aryiele
-{
-    struct FunctionArgument
-    {
+namespace Aryiele {
+    struct FunctionArgument {
         FunctionArgument(const std::string& identifier, llvm::Type *type);
 
         std::string Identifier;

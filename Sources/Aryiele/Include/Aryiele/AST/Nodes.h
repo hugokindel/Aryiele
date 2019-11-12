@@ -28,10 +28,8 @@
 #ifndef ARYIELE_NODES_H
 #define ARYIELE_NODES_H
 
-namespace Aryiele
-{
-    enum Nodes
-    {
+namespace Aryiele {
+    enum Nodes {
         Nodes_Constant_Double,
         Nodes_Constant_Integer,
 

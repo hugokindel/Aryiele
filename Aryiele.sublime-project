@@ -1,0 +1,52 @@
+{
+	"folders":
+	[
+		{
+			"file_exclude_patterns":
+			[
+				".gitmodules"
+			],
+			"folder_exclude_patterns":
+			[
+				".idea",
+				".git"
+			],
+			"path": "."
+		}
+	],
+	"build_systems":
+	[
+		{
+			"name": "CMake: Configure Release",
+			"shell_cmd": "if [ ! -d \"$project_path/Build/.Temps/Release/\" ]; then mkdir -p $project_path/Build/.Temps/Release/; fi; cd $project_path/Build/.Temps/Release/ && cmake -DCMAKE_BUILD_TYPE=Release $project_path"
+		},
+		{
+			"name": "CMake: Configure Debug",
+			"shell_cmd": "if [ ! -d \"$project_path/Build/.Temps/Debug/\" ]; then mkdir -p $project_path/Build/.Temps/Debug/; fi; cd $project_path/Build/.Temps/Debug/ && cmake -DCMAKE_BUILD_TYPE=Debug $project_path"
+		},
+		{
+			"name": "CMake: Release \"arc\"",
+			"shell_cmd": "make -C $project_path/Build/.Temps/Release/ arc" 
+		},
+		{
+			"name": "CMake: Debug \"arc\"",
+			"shell_cmd": "make -C $project_path/Build/.Temps/Debug/ arc" 
+		},
+		{
+			"name": "CMake: Release \"Aryiele\"",
+			"shell_cmd": "make -C $project_path/Build/.Temps/Release/ Aryiele" 
+		},
+		{
+			"name": "CMake: Debug \"Aryiele\"",
+			"shell_cmd": "make -C $project_path/Build/.Temps/Debug/ Aryiele" 
+		},
+		{
+			"name": "CMake: Release \"Vanir\"",
+			"shell_cmd": "make -C $project_path/Build/.Temps/Release/ Vanir" 
+		},
+		{
+			"name": "CMake: Debug \"Vanir\"",
+			"shell_cmd": "make -C $project_path/Build/.Temps/Debug/ Vanir" 
+		}
+	]
+}

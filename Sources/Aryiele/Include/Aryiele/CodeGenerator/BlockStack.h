@@ -31,10 +31,8 @@
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/CodeGenerator/Block.h>
 
-namespace Aryiele
-{
-    class BlockStack
-    {
+namespace Aryiele {
+    class BlockStack {
     public:
         BlockStack() = default;
 

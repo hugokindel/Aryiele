@@ -31,10 +31,8 @@
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/AST/Nodes/Node.h>
 
-namespace Aryiele
-{
-    class NodeStatementReturn : public Node
-    {
+namespace Aryiele {
+    class NodeStatementReturn : public Node {
     public:
         NodeStatementReturn(std::shared_ptr<Node> expression);
 

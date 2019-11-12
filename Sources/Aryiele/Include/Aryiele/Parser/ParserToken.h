@@ -31,10 +31,8 @@
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/Parser/ParserTokens.h>
 
-namespace Aryiele
-{
-    struct ParserToken
-    {
+namespace Aryiele {
+    struct ParserToken {
         explicit ParserToken(const std::string& content = std::string(), ParserTokens type = ParserTokens_Unknown);
 
         std::string Content;

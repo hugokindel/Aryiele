@@ -27,11 +27,9 @@
 
 #include <Aryiele/CodeGenerator/GenerationError.h>
 
-namespace Aryiele
-{
+namespace Aryiele {
     GenerationError::GenerationError(bool success, llvm::Value *value) :
-        Success(success), Value(value)
-    {
+        Success(success), Value(value) {
 
     }
 

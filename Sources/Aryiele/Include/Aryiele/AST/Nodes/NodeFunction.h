@@ -32,10 +32,8 @@
 #include <Aryiele/AST/Nodes/Node.h>
 #include <Aryiele/AST/Argument.h>
 
-namespace Aryiele
-{
-    class NodeFunction : public Node
-    {
+namespace Aryiele {
+    class NodeFunction : public Node {
     public:
         NodeFunction(const std::string& identifier,
                      const std::string& type,

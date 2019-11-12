@@ -1,0 +1,466 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"m_r",
+				"m_resultGrid"
+			],
+			[
+				"res",
+				"m_definedResultGrid"
+			],
+			[
+				"m_",
+				"m_resultGrid"
+			],
+			[
+				"game",
+				"gameModifyGrid"
+			],
+			[
+				"isN",
+				"isNumber"
+			],
+			[
+				"ch",
+				"characterAtPos"
+			],
+			[
+				"isLea",
+				"isLeapYearGregorian"
+			],
+			[
+				"daysI",
+				"daysInMonth"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "Aryiele.sublime-project",
+			"settings":
+			{
+				"buffer_size": 1397,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Sources/Tools/arc/Include/ARC/ARC.h",
+			"settings":
+			{
+				"buffer_size": 6326,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"easy",
+				"EasyClangComplete: Settings"
+			],
+			[
+				"cmake re",
+				"Build With: CMake: Release"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"remove ",
+				"Package Control: Remove Package"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"to tab",
+				"Indentation: Convert to Tabs"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Tools",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Tools/arc",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Tools/arc/Include",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Tools/arc/Include/ARC",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Tools/arc/Sources",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources/CLI",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources/Error"
+	],
+	"file_history":
+	[
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/CMakeLists.txt",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Aryiele.sublime-project",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include/Vanir/Logger/Logger.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Tools/arc/Sources/ARC.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Tools/arc/Sources/Main.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/STD/Sources/IO/Print.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include/Vanir/CLI/CLI.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include/Vanir/CLI/CLIOption.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include/Vanir/CLI/CLIOptionType.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include/Vanir/Error/Exception.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include/Vanir/Error/FatalError.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include/Vanir/Event/ConnectionData.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include/Vanir/Event/Event.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include/Vanir/Event/EventHandle.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include/Vanir/Event/EventInternalData.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include/Vanir/Factory/Factory.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include/Vanir/FileSystem/FileSystem.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include/Vanir/JSON/JSONFile.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include/Vanir/Logger/LogColor.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include/Vanir/Logger/TerminalColor.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include/Vanir/Math/Math.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include/Vanir/Math/Random.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include/Vanir/Math/Xorshift.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include/Vanir/String/String.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include/Vanir/Utility/NonCopyable.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include/Vanir/Utility/Timer.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include/Vanir/Utility/Utils.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources/CLI/CLI.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources/CLI/CLIOption.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources/Error/Exception.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources/Error/FatalError.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources/Event/ConnectionData.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources/Event/EventHandle.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources/Event/EventInternalData.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources/FileSystem/FileSystem.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources/JSON/JSONFile.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources/Logger/LogColor.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources/Logger/Logger.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources/Math/Math.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources/Math/Random.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources/Math/Xorshift.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources/String/String.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources/Utility/Timer.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources/Utility/Utils.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Argument.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes/Node.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes/NodeConstantDouble.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes/NodeConstantInteger.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes/NodeFunction.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes/NodeOperationBinary.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes/NodeStatementBlock.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes/NodeStatementFunctionCall.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes/NodeStatementIf.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes/NodeStatementReturn.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes/NodeStatementVariableDeclaration.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes/NodeVariable.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Variable.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/CodeGenerator/Block.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/CodeGenerator/BlockStack.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/CodeGenerator/CodeGenerator.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/CodeGenerator/Function.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/CodeGenerator/FunctionArgument.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/CodeGenerator/GenerationError.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/Core/Logger.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/Lexer/Lexer.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/Lexer/LexerTable.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/Lexer/LexerToken.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/Lexer/LexerTokens.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/Parser/Parser.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/Parser/ParserInformation.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/Parser/ParserToken.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/Parser/ParserTokens.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/AST/CLIOption.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/AST/Nodes/NodeConstantDouble.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/AST/Nodes/NodeConstantInteger.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/AST/Nodes/NodeFunction.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/AST/Nodes/NodeOperationBinary.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/AST/Nodes/NodeStatementBlock.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/AST/Nodes/NodeStatementFunctionCall.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/AST/Nodes/NodeStatementIf.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/AST/Nodes/NodeStatementReturn.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/AST/Nodes/NodeStatementVariableDeclaration.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/AST/Nodes/NodeVariable.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/AST/Variable.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/CodeGenerator/Block.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/CodeGenerator/BlockStack.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/CodeGenerator/CodeGenerator.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/CodeGenerator/Function.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/CodeGenerator/FunctionArgument.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/CodeGenerator/GenerationError.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/Lexer/Lexer.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/Lexer/LexerToken.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/Parser/Parser.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/Parser/ParserInformation.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/Parser/ParserToken.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Tools/arc/Include/ARC/ARC.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Tools/arc/Include/ARC/BuildTypes.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Tools/arc/CMakeLists.txt",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Examples/example-1",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Aryiele.sublime-workspace",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/.idea/fileTemplates/includes/C File Header.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Dependencies/LLVM/cmake/modules/AddLLVM.cmake",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Dependencies/LLVM/CMakeLists.txt",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Dependencies/LLVM/cmake/modules/LLVMDistributionSupport.cmake",
+		"/Users/hugok/Desktop/Tree/Tree.java",
+		"/Users/hugok/Downloads/Navigateurs/Nega.java",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Bin/Aryiele/AppleClang_8_Release/bin/example-1.ac",
+		"/Users/hugok/Desktop/test.sh",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/STD/CMakeLists.txt",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/CMakeLists.txt",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/CMakeLists.txt",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/AST/Argument.cpp",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/STD/Include/STD/IO/Print.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/Core/Includes.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Bin/Aryiele/AppleClang_8_Release/bin/example-1.ll",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Tools/arc/ARC.h",
+		"/Users/hugok/Desktop/Test/untitled.sublime-project",
+		"/Users/hugok/Desktop/Test/CMakeLists.txt",
+		"/Users/hugok/Desktop/Test/main.cpp",
+		"/Users/hugok/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/192.7142.39/CLion.app.vmoptions",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Build/.Temps/Clang_8_Release/Sources/Dependencies/LLVM/include/llvm/Config/llvm-config.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Build/.Temps/Clang_8_Release/Sources/Dependencies/LLVM/include/llvm/Config/config.h",
+		"/Users/hugok/Desktop/Folder/main.cpp",
+		"/Users/hugok/Desktop/Folder/example.sublime-project",
+		"/Users/hugok/Desktop/Folder/CMakeLists.txt",
+		"/Users/hugok/Desktop/Folder/CMakeList.Ttxt",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Examples/example-1.ac"
+	],
+	"find":
+	{
+		"height": 43.0
+	},
+	"find_in_files":
+	{
+		"height": 113.0,
+		"where_history":
+		[
+			"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele,/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Tools/arc,/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/STD,/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			") \\ {",
+			"$project",
+			"\n        {",
+			"\n{",
+			"\n    {",
+			"\n        {"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			") {",
+			"$project_path",
+			" {"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "Aryiele.sublime-project",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1397,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								348,
+								348
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 124.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "Sources/Tools/arc/Include/ARC/ARC.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6326,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3557,
+								3557
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 781.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 31.0
+	},
+	"input":
+	{
+		"height": 43.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 226.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "CMake: Release \"arc\"",
+	"project": "Aryiele.sublime-project",
+	"replace":
+	{
+		"height": 78.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 392.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 592.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 273.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

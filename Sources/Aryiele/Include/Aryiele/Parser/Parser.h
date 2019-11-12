@@ -37,10 +37,8 @@
 #include <Aryiele/Parser/ParserToken.h>
 #include <Aryiele/Parser/ParserInformation.h>
 
-namespace Aryiele
-{
-class Parser : public Vanir::Module<Parser>
-    {
+namespace Aryiele {
+class Parser : public Vanir::Module<Parser> {
     public:
         Parser();
         
@@ -79,14 +77,12 @@ class Parser : public Vanir::Module<Parser>
 } /* Namespace Aryiele. */
 
 #define PARSER_CHECKTOKEN(EXPECTEDTOKENTYPE) \
-if (GetParser().GetCurrentToken().Type != EXPECTEDTOKENTYPE) \
-{ \
+if (GetParser().GetCurrentToken().Type != EXPECTEDTOKENTYPE) { \
     LOG_ERROR("wrong token, got '", Parser::GetTokenName(m_currentToken.Type), "' but expected '", Parser::GetTokenName(EXPECTEDTOKENTYPE), "'"); \
     return nullptr; \
 }
 
-#define PARSER_CHECKNEXTTOKEN(EXPECTEDTOKENTYPE) \
-{ \
+#define PARSER_CHECKNEXTTOKEN(EXPECTEDTOKENTYPE) { \
     GetNextToken(); \
     PARSER_CHECKTOKEN(EXPECTEDTOKENTYPE); \
 }

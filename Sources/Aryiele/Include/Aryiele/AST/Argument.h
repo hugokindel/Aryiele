@@ -30,10 +30,8 @@
 
 #include <Aryiele/Core/Includes.h>
 
-namespace Aryiele
-{
-    struct Argument
-    {
+namespace Aryiele {
+    struct Argument {
         Argument(const std::string& identifier, const std::string& type);
 
         std::string Identifier;

@@ -28,10 +28,8 @@
 #ifndef ARYIELE_LEXERTOKENS_H
 #define ARYIELE_LEXERTOKENS_H
 
-namespace Aryiele
-{
-    enum LexerTokens
-    {
+namespace Aryiele {
+    enum LexerTokens {
         LexerTokens_Reject,
 
         LexerTokens_Number,

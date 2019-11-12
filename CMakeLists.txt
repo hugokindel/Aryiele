@@ -68,6 +68,12 @@ include_directories("${CMAKE_CURRENT_BINARY_DIR}/Dependencies/LLVM/include/")
 
 set(VANIR_BUILD_JSON OFF CACHE STRING "Enable this to build the JSON utilities" FORCE)
 set(VANIR_BUILD_PROFILER OFF CACHE STRING "Enable this to build the profiling macros" FORCE)
+set(LLVM_INCLUDE_UTILS OFF CACHE STRING "" FORCE)
+set(LLVM_INCLUDE_TESTS OFF CACHE STRING "" FORCE)
+set(LLVM_INCLUDE_BENCHMARKS OFF CACHE STRING "" FORCE)
+set(LLVM_INCLUDE_DOCS OFF CACHE STRING "" FORCE)
+set(LLVM_INCLUDE_EXAMPLES OFF CACHE STRING "" FORCE)
+set(LLVM_ENABLE_IDE ON CACHE STRING "" FORCE)
 
 add_subdirectory("Sources/Dependencies/LLVM")
 add_subdirectory("Sources/Vanir")

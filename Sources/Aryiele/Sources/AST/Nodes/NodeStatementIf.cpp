@@ -27,19 +27,16 @@
 
 #include <Aryiele/AST/Nodes/NodeStatementIf.h>
 
-namespace Aryiele
-{
+namespace Aryiele {
     NodeStatementIf::NodeStatementIf(std::shared_ptr<Node> condition,
                                      std::vector<std::shared_ptr<Node>> ifBody,
                                      std::vector<std::shared_ptr<Node>> elseBody,
                                      std::vector<std::vector<std::shared_ptr<Node>>> elseIfBody) :
-        Condition(condition), IfBody(ifBody), ElseBody(elseBody), ElseIfBody(elseIfBody)
-    {
+        Condition(condition), IfBody(ifBody), ElseBody(elseBody), ElseIfBody(elseIfBody) {
 
     }
 
-    void NodeStatementIf::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
-    {
+    void NodeStatementIf::DumpInformations(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "If/Else");
 
         auto ifNode = std::make_shared<ParserInformation>(node, "If");
@@ -55,8 +52,7 @@ namespace Aryiele
         ifNode->Children.emplace_back(ifBody);
         node->Children.emplace_back(ifNode);
 
-        for (auto elseIfBody : ElseIfBody)
-        {
+        for (auto elseIfBody : ElseIfBody) {
             auto elseNode = std::make_shared<ParserInformation>(node, "Else If");
             auto elseBody = std::make_shared<ParserInformation>(elseNode, "Body:");
 
@@ -67,8 +63,7 @@ namespace Aryiele
             node->Children.emplace_back(elseNode);
         }
 
-        if (!ElseBody.empty())
-        {
+        if (!ElseBody.empty()) {
             auto elseNode = std::make_shared<ParserInformation>(node, "Else");
             auto elseBody = std::make_shared<ParserInformation>(elseNode, "Body:");
 
@@ -82,8 +77,7 @@ namespace Aryiele
         parentNode->Children.emplace_back(node);
     }
 
-    Nodes NodeStatementIf::GetType()
-    {
+    Nodes NodeStatementIf::GetType() {
         return Nodes_Statement_If;
     }
 

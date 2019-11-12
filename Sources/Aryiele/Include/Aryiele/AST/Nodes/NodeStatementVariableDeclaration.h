@@ -32,10 +32,8 @@
 #include <Aryiele/AST/Variable.h>
 #include <Aryiele/AST/Nodes/Node.h>
 
-namespace Aryiele
-{
-    class NodeStatementVariableDeclaration : public Node
-    {
+namespace Aryiele {
+    class NodeStatementVariableDeclaration : public Node {
     public:
         NodeStatementVariableDeclaration(
                 std::vector<std::shared_ptr<Variable>> variables = std::vector<std::shared_ptr<Variable>>());

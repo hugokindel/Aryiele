@@ -28,21 +28,18 @@
 #include <Aryiele/AST/Nodes/NodeOperationBinary.h>
 #include <Aryiele/Parser/Parser.h>
 
-namespace Aryiele
-{
+namespace Aryiele {
 
     NodeOperationBinary::NodeOperationBinary(ParserTokens operationType,
                                              std::shared_ptr<Node> lhs,
                                              std::shared_ptr<Node> rhs) :
             OperationType(operationType),
             LHS(lhs),
-            RHS(rhs)
-    {
+            RHS(rhs) {
 
     }
 
-    void NodeOperationBinary::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
-    {
+    void NodeOperationBinary::DumpInformations(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Binary Operation");
         auto operationType = std::make_shared<ParserInformation>(
             node, "Type: " + Parser::GetTokenName(OperationType));
@@ -59,8 +56,7 @@ namespace Aryiele
         parentNode->Children.emplace_back(node);
     }
 
-    Nodes NodeOperationBinary::GetType()
-    {
+    Nodes NodeOperationBinary::GetType() {
         return Nodes_Operation_Binary;
     }
 

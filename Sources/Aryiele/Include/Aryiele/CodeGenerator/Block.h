@@ -31,10 +31,8 @@
 #include <llvm/IR/Instructions.h>
 #include <Aryiele/Core/Includes.h>
 
-namespace Aryiele
-{
-    struct Block
-    {
+namespace Aryiele {
+    struct Block {
         Block(std::shared_ptr<Block> parent = nullptr,
               std::map<std::string, llvm::AllocaInst*> variables = std::map<std::string, llvm::AllocaInst*>(),
               std::vector<std::shared_ptr<Block>> children = std::vector<std::shared_ptr<Block>>());

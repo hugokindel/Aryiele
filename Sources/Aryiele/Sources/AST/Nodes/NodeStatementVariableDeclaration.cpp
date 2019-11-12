@@ -27,31 +27,26 @@
 
 #include <Aryiele/AST/Nodes/NodeStatementVariableDeclaration.h>
 
-namespace Aryiele
-{
+namespace Aryiele {
     NodeStatementVariableDeclaration::NodeStatementVariableDeclaration(
             std::vector<std::shared_ptr<Variable>> variables) :
-        Variables(variables)
-    {
+        Variables(variables) {
 
     }
 
-    void NodeStatementVariableDeclaration::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
-    {
+    void NodeStatementVariableDeclaration::DumpInformations(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Variable Declaration");
 
         auto i = 0;
 
-        for (auto &variable : Variables)
-        {
+        for (auto &variable : Variables) {
             auto variableNode = std::make_shared<ParserInformation>(node, std::to_string(i));
 
             variableNode->Children.emplace_back(std::make_shared<ParserInformation>(
                     variableNode, "Identifier: " + variable->Identifier));
             variableNode->Children.emplace_back(std::make_shared<ParserInformation>(variableNode, "Type: " + variable->Type));
 
-            if (variable->Expression)
-            {
+            if (variable->Expression) {
                 auto valueNode = std::make_shared<ParserInformation>(variableNode, "Expression:");
                 variable->Expression->DumpInformations(valueNode);
                 variableNode->Children.emplace_back(valueNode);
@@ -65,8 +60,7 @@ namespace Aryiele
         parentNode->Children.emplace_back(node);
     }
 
-    Nodes NodeStatementVariableDeclaration::GetType()
-    {
+    Nodes NodeStatementVariableDeclaration::GetType() {
         return Nodes_Statement_VariableDeclaration;
     }
 

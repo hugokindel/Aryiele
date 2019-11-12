@@ -27,17 +27,14 @@
 
 #include <Aryiele/AST/Nodes/NodeStatementReturn.h>
 
-namespace Aryiele
-{
+namespace Aryiele {
 
     NodeStatementReturn::NodeStatementReturn(std::shared_ptr<Node> expression) :
-        Expression(expression)
-    {
+        Expression(expression) {
 
     }
 
-    void NodeStatementReturn::DumpInformations(std::shared_ptr<ParserInformation> parentNode)
-    {
+    void NodeStatementReturn::DumpInformations(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Return");
         auto body = std::make_shared<ParserInformation>(node, "Body:");
 
@@ -47,8 +44,7 @@ namespace Aryiele
         parentNode->Children.emplace_back(node);
     }
 
-    Nodes NodeStatementReturn::GetType()
-    {
+    Nodes NodeStatementReturn::GetType() {
         return Nodes_Statement_Return;
     }
 
