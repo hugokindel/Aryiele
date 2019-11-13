@@ -30,7 +30,7 @@
 
 #include <memory>
 #include <vector>
-#include <Aryiele/Core/Includes.h>
+#include <Aryiele/Common.h>
 #include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
@@ -38,11 +38,11 @@ namespace Aryiele {
     public:
         NodeStatementFunctionCall(const std::string& identifier, std::vector<std::shared_ptr<Node>> arguments);
 
-        void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
-        NodeEnum GetType() override;
+        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        NodeEnum getType() override;
 
-        std::string Identifier;
-        std::vector<std::shared_ptr<Node>> Arguments;
+        std::string identifier;
+        std::vector<std::shared_ptr<Node>> arguments;
     };
 
 } /* Namespace Aryiele. */

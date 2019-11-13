@@ -28,7 +28,7 @@
 #ifndef ARYIELE_AST_NODES_NODE_H
 #define ARYIELE_AST_NODES_NODE_H
 
-#include <Aryiele/Core/Includes.h>
+#include <Aryiele/Common.h>
 #include <Aryiele/Parser/ParserInformation.h>
 
 namespace Aryiele {
@@ -49,8 +49,8 @@ namespace Aryiele {
     public:
         virtual ~Node() = default;
 
-        virtual void DumpInformations(std::shared_ptr<ParserInformation> parentNode) = 0;
-        virtual NodeEnum GetType() = 0;
+        virtual void dumpInformations(std::shared_ptr<ParserInformation> parentNode) = 0;
+        virtual NodeEnum getType() = 0;
     };
 
 } /* Namespace Aryiele. */

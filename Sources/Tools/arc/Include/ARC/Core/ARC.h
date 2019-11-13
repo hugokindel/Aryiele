@@ -29,7 +29,7 @@
 #define ARYIELE_CORE_ARC_H
 
 #include <Vanir/CLI/CLI.h>
-#include <Aryiele/Core/Includes.h>
+#include <Aryiele/Common.h>
 #include <Aryiele/Lexer/Lexer.h>
 #include <Aryiele/Parser/Parser.h>
 #include <ARC/Core/BuildType.h>
@@ -92,22 +92,22 @@ namespace ARC {
     // Main class of the Aryiele Compiler command line tool.
     class ARC {
     public:
-        static int Run(int argc, char *argv[]);
-        static std::vector<Aryiele::LexerToken> DoLexerPass(const std::string& filepath);
-        static std::vector<std::shared_ptr<Aryiele::Node>> DoParserPass(std::vector<Aryiele::LexerToken> lexerTokens);
-        static void DoCodeGeneratorPass(std::vector<std::shared_ptr<Aryiele::Node>> astNodes);
-        static void DoObjectGeneratorPass();
-        static void DoExecutableGeneratorPass();
-        static void DumpASTInformations(const std::shared_ptr<Aryiele::ParserInformation>& node, std::string indent = "");
-        static void CommandShowHelp(const std::string& s = "");
-        static void CommandShowVersion(const std::string& s = "");
-        static void CommandDefineInputFilepath(const std::string& s = "");
-        static void CommandDefineOutputFilepath(const std::string& s = "");
-        static void CommandActivateVerboseMode(const std::string& s = "");
-        static void CommandKeepAllFiles(const std::string& s = "");
-        static void CommandDefineBuildType(const std::string& s = "");
-        static void CommandOptionNotFound(const std::string& s = "");
-        static std::string GetOptionValue(const std::string& option);
+        static int run(int argc, char *argv[]);
+        static std::vector<Aryiele::LexerToken> doLexerPass(const std::string& filepath);
+        static std::vector<std::shared_ptr<Aryiele::Node>> doParserPass(std::vector<Aryiele::LexerToken> lexerTokens);
+        static void doCodeGeneratorPass(std::vector<std::shared_ptr<Aryiele::Node>> astNodes);
+        static void doObjectGeneratorPass();
+        static void doExecutableGeneratorPass();
+        static void dumpASTInformations(const std::shared_ptr<Aryiele::ParserInformation>& node, std::string indent = "");
+        static void commandShowHelp(const std::string& s = "");
+        static void commandShowVersion(const std::string& s = "");
+        static void commandDefineInputFilepath(const std::string& s = "");
+        static void commandDefineOutputFilepath(const std::string& s = "");
+        static void commandActivateVerboseMode(const std::string& s = "");
+        static void commandKeepAllFiles(const std::string& s = "");
+        static void commandDefineBuildType(const std::string& s = "");
+        static void commandOptionNotFound(const std::string& s = "");
+        static std::string getOptionValue(const std::string& option);
 
     private:
         static std::vector<Vanir::CLIOption> m_options;

@@ -28,7 +28,7 @@
 #ifndef ARYIELE_AST_NODES_NODESTATEMENTRETURN_H
 #define ARYIELE_AST_NODES_NODESTATEMENTRETURN_H
 
-#include <Aryiele/Core/Includes.h>
+#include <Aryiele/Common.h>
 #include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
@@ -36,10 +36,10 @@ namespace Aryiele {
     public:
         NodeStatementReturn(std::shared_ptr<Node> expression);
 
-        void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
-        NodeEnum GetType() override;
+        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        NodeEnum getType() override;
 
-        std::shared_ptr<Node> Expression;
+        std::shared_ptr<Node> expression;
     };
 
 } /* Namespace Aryiele. */

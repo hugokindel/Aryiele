@@ -28,7 +28,7 @@
 #ifndef ARYIELE_AST_NODES_NODECONSTANTDOUBLE_H
 #define ARYIELE_AST_NODES_NODECONSTANTDOUBLE_H
 
-#include <Aryiele/Core/Includes.h>
+#include <Aryiele/Common.h>
 #include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
@@ -36,10 +36,10 @@ namespace Aryiele {
     public:
         explicit NodeConstantDouble(double value);
 
-        void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
-        NodeEnum GetType() override;
+        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        NodeEnum getType() override;
 
-        double Value;
+        double value;
     };
 
 } /* Namespace Aryiele. */

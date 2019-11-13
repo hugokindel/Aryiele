@@ -28,18 +28,17 @@
 #ifndef ARYIELE_AST_VARIABLE_H
 #define ARYIELE_AST_VARIABLE_H
 
-#include <Aryiele/Core/Includes.h>
+#include <Aryiele/Common.h>
 #include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-    class Variable {
-    public:
+    struct Variable {
         Variable(const std::string &identifier, const std::string &type,
                  std::shared_ptr<Node> expression = nullptr);
 
-        std::string Identifier;
-        std::string Type;
-        std::shared_ptr<Node> Expression;
+        std::string identifier;
+        std::string type;
+        std::shared_ptr<Node> expression;
     };
 
 } /* Namespace Aryiele. */

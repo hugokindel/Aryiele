@@ -46,7 +46,7 @@
 #include <llvm/Transforms/Scalar/GVN.h>
 #include <llvm/IR/LegacyPassManager.h>
 #include <Vanir/Module/Module.h>
-#include <Aryiele/Core/Includes.h>
+#include <Aryiele/Common.h>
 #include <Aryiele/AST/Nodes/NodeConstantDouble.h>
 #include <Aryiele/AST/Nodes/NodeConstantInteger.h>
 #include <Aryiele/AST/Nodes/NodeFunction.h>
@@ -66,24 +66,25 @@ namespace Aryiele {
     class CodeGenerator : public Vanir::Module<CodeGenerator> {
     public:
         CodeGenerator();
-        void GenerateCode(std::vector<std::shared_ptr<Node>> nodes);
-        std::shared_ptr<llvm::Module> GetModule();
+        
+        void generateCode(std::vector<std::shared_ptr<Node>> nodes);
+        std::shared_ptr<llvm::Module> getModule();
 
     private:
-        llvm::Value* CastType(llvm::Value *value, llvm::Type *returnType);
-        llvm::AllocaInst *CreateEntryBlockAllocation(
+        llvm::Value* castType(llvm::Value *value, llvm::Type *returnType);
+        llvm::AllocaInst *createEntryBlockAllocation(
             llvm::Function *function, const std::string &identifier, llvm::Type *type = nullptr);
-        GenerationError GenerateCode(std::shared_ptr<Node> node);
-        GenerationError GenerateCode(NodeFunction* node);
-        GenerationError GenerateCode(NodeOperationBinary* node);
-        GenerationError GenerateCode(NodeConstantDouble* node);
-        GenerationError GenerateCode(NodeConstantInteger* node);
-        GenerationError GenerateCode(NodeVariable* node);
-        GenerationError GenerateCode(NodeStatementFunctionCall* node);
-        GenerationError GenerateCode(NodeStatementIf* node);
-        GenerationError GenerateCode(NodeStatementReturn* node);
-        GenerationError GenerateCode(NodeStatementBlock* node);
-        GenerationError GenerateCode(NodeStatementVariableDeclaration* node);
+        GenerationError generateCode(std::shared_ptr<Node> node);
+        GenerationError generateCode(NodeFunction* node);
+        GenerationError generateCode(NodeOperationBinary* node);
+        GenerationError generateCode(NodeConstantDouble* node);
+        GenerationError generateCode(NodeConstantInteger* node);
+        GenerationError generateCode(NodeVariable* node);
+        GenerationError generateCode(NodeStatementFunctionCall* node);
+        GenerationError generateCode(NodeStatementIf* node);
+        GenerationError generateCode(NodeStatementReturn* node);
+        GenerationError generateCode(NodeStatementBlock* node);
+        GenerationError generateCode(NodeStatementVariableDeclaration* node);
 
         llvm::LLVMContext m_context;
         llvm::IRBuilder<> m_builder = llvm::IRBuilder<>(m_context);
@@ -92,7 +93,7 @@ namespace Aryiele {
         std::shared_ptr<BlockStack> m_blockStack;
     };
     
-    CodeGenerator &GetCodeGenerator();
+    CodeGenerator &getCodeGenerator();
 
 } /* Namespace Aryiele. */
 

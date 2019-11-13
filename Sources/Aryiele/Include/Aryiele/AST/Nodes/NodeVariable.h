@@ -28,7 +28,7 @@
 #ifndef ARYIELE_AST_NODES_NODEVARIABLE_H
 #define ARYIELE_AST_NODES_NODEVARIABLE_H
 
-#include <Aryiele/Core/Includes.h>
+#include <Aryiele/Common.h>
 #include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
@@ -36,10 +36,10 @@ namespace Aryiele {
     public:
         explicit NodeVariable(const std::string& identifier);
 
-        void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
-        NodeEnum GetType() override;
+        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        NodeEnum getType() override;
 
-        std::string Identifier;
+        std::string identifier;
     };
 
 } /* Namespace Aryiele. */

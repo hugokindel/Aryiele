@@ -28,7 +28,7 @@
 #ifndef ARYIELE_AST_NODES_NODESTATEMENTBLOCK_H
 #define ARYIELE_AST_NODES_NODESTATEMENTBLOCK_H
 
-#include <Aryiele/Core/Includes.h>
+#include <Aryiele/Common.h>
 #include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
@@ -36,10 +36,10 @@ namespace Aryiele {
     public:
         explicit NodeStatementBlock(std::vector<std::shared_ptr<Node>> body = std::vector<std::shared_ptr<Node>>());
 
-        void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
-        NodeEnum GetType() override;
+        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        NodeEnum getType() override;
 
-        std::vector<std::shared_ptr<Node>> Body;
+        std::vector<std::shared_ptr<Node>> body;
     };
 
 } /* Namespace Aryiele. */

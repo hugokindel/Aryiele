@@ -30,9 +30,21 @@
 
 #include <Aryiele/Lexer/LexerToken.h>
 
-namespace Aryiele {
-    int LexerTable[][11] = {{   0,                       LexerToken_Number,     LexerToken_String,  LexerToken_Operator, LexerToken_Separator, LexerToken_Identifier, LexerToken_StringQuote, LexerToken_Space,  LexerToken_Newline, LexerToken_Unknown }, {    LexerToken_Number,      LexerToken_Number,     LexerToken_Reject,  LexerToken_Reject,   LexerToken_Reject,    LexerToken_Identifier, LexerToken_Reject,      LexerToken_Reject, LexerToken_Reject,  LexerToken_Reject  }, {    LexerToken_String,      LexerToken_Reject,     LexerToken_Reject,  LexerToken_Reject,   LexerToken_Reject,    LexerToken_Reject,     LexerToken_Reject,      LexerToken_Reject, LexerToken_Reject,  LexerToken_Reject  }, {    LexerToken_Operator,    LexerToken_Reject,     LexerToken_Reject,  LexerToken_Operator, LexerToken_Reject,    LexerToken_Reject,     LexerToken_Reject,      LexerToken_Reject, LexerToken_Reject,  LexerToken_Reject  }, {    LexerToken_Separator,   LexerToken_Reject,     LexerToken_Reject,  LexerToken_Reject,   LexerToken_Reject,    LexerToken_Reject,     LexerToken_Reject,      LexerToken_Reject, LexerToken_Reject,  LexerToken_Reject  }, {    LexerToken_Identifier,  LexerToken_Identifier, LexerToken_Reject,  LexerToken_Reject,   LexerToken_Reject,    LexerToken_Identifier, LexerToken_Reject,      LexerToken_Reject, LexerToken_Reject,  LexerToken_Reject  }, {    LexerToken_StringQuote, LexerToken_Reject,     LexerToken_Reject,  LexerToken_Reject,   LexerToken_Reject,    LexerToken_Reject,     LexerToken_Reject,      LexerToken_Reject, LexerToken_Reject,  LexerToken_Reject  }, {    LexerToken_Space,       LexerToken_Reject,     LexerToken_Reject,  LexerToken_Reject,   LexerToken_Reject,    LexerToken_Reject,     LexerToken_Reject,      LexerToken_Space,  LexerToken_Reject,  LexerToken_Reject  }, {    LexerToken_Newline,     LexerToken_Reject,     LexerToken_Reject,  LexerToken_Reject,   LexerToken_Reject,    LexerToken_Reject,     LexerToken_Reject,      LexerToken_Reject, LexerToken_Reject,  LexerToken_Reject  }, {    LexerToken_Unknown,     LexerToken_Reject,     LexerToken_Reject,  LexerToken_Reject,   LexerToken_Reject,    LexerToken_Reject,     LexerToken_Reject,      LexerToken_Reject, LexerToken_Reject,  LexerToken_Reject  }};
-
+namespace Aryiele
+{
+    int LexerTable[][11] =
+        {{ 0,                      LexerToken_Number,     LexerToken_String,  LexerToken_Operator, LexerToken_Separator, LexerToken_Identifier, LexerToken_StringQuote, LexerToken_Space,  LexerToken_Newline,  LexerToken_Unknown },
+         { LexerToken_Number,      LexerToken_Number,     LexerToken_Reject,  LexerToken_Reject,   LexerToken_Reject,    LexerToken_Identifier, LexerToken_Reject,      LexerToken_Reject, LexerToken_Reject,   LexerToken_Reject  },
+         { LexerToken_String,      LexerToken_Reject,     LexerToken_Reject,  LexerToken_Reject,   LexerToken_Reject,    LexerToken_Reject,     LexerToken_Reject,      LexerToken_Reject, LexerToken_Reject,   LexerToken_Reject  },
+         { LexerToken_Operator,    LexerToken_Reject,     LexerToken_Reject,  LexerToken_Operator, LexerToken_Reject,    LexerToken_Reject,     LexerToken_Reject,      LexerToken_Reject, LexerToken_Reject,   LexerToken_Reject  },
+         { LexerToken_Separator,   LexerToken_Reject,     LexerToken_Reject,  LexerToken_Reject,   LexerToken_Reject,    LexerToken_Reject,     LexerToken_Reject,      LexerToken_Reject, LexerToken_Reject,   LexerToken_Reject  },
+         { LexerToken_Identifier,  LexerToken_Identifier, LexerToken_Reject,  LexerToken_Reject,   LexerToken_Reject,    LexerToken_Identifier, LexerToken_Reject,      LexerToken_Reject, LexerToken_Reject,   LexerToken_Reject  },
+         { LexerToken_StringQuote, LexerToken_Reject,     LexerToken_Reject,  LexerToken_Reject,   LexerToken_Reject,    LexerToken_Reject,     LexerToken_Reject,      LexerToken_Reject, LexerToken_Reject,   LexerToken_Reject  },
+         { LexerToken_Space,       LexerToken_Reject,     LexerToken_Reject,  LexerToken_Reject,   LexerToken_Reject,    LexerToken_Reject,     LexerToken_Reject,      LexerToken_Space,  LexerToken_Reject,   LexerToken_Reject  },
+         { LexerToken_Newline,     LexerToken_Reject,     LexerToken_Reject,  LexerToken_Reject,   LexerToken_Reject,    LexerToken_Reject,     LexerToken_Reject,      LexerToken_Reject, LexerToken_Reject,   LexerToken_Reject  },
+         { LexerToken_Unknown,     LexerToken_Reject,     LexerToken_Reject,  LexerToken_Reject,   LexerToken_Reject,    LexerToken_Reject,     LexerToken_Reject,      LexerToken_Reject, LexerToken_Reject,   LexerToken_Reject  }
+        };
+    
 } /* Namespace Aryiele. */
 
 #endif /* ARYIELE_LEXER_TOKENTABLE_H. */

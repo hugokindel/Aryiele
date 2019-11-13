@@ -30,7 +30,7 @@
 
 #include <vector>
 #include <Vanir/Module/Module.h>
-#include <Aryiele/Core/Includes.h>
+#include <Aryiele/Common.h>
 #include <Aryiele/Lexer/LexerToken.h>
 #include <Aryiele/AST/Nodes/Node.h>
 #include <Aryiele/AST/Nodes/NodeFunction.h>
@@ -41,29 +41,29 @@ namespace Aryiele {
 class Parser : public Vanir::Module<Parser> {
     public:
         Parser();
-        
-        std::vector<ParserToken> ConvertTokens(std::vector<LexerToken> tokenizerTokens);
-        static std::string GetTokenName(ParserTokenEnum tokenType);
-        std::vector<std::shared_ptr<Node>> Parse(std::vector<ParserToken> tokens);
-        ParserToken GetCurrentToken();
+    
+    std::vector<std::shared_ptr<Node>> parse(std::vector<ParserToken> tokens);
+        std::vector<ParserToken> convertTokens(std::vector<LexerToken> tokenizerTokens);
+        static std::string getTokenName(ParserTokenEnum tokenType);
+        ParserToken getCurrentToken();
 
     private:
-        ParserToken GetNextToken();
-        ParserToken GetPreviousToken();
-    int GetOperatorPrecedence(const std::string& binaryOperator);
-        std::shared_ptr<NodeFunction> ParseFunction();
-        std::shared_ptr<Node> ParsePrimary();
-        std::shared_ptr<Node> ParseExpression();
-        std::shared_ptr<Node> ParseBinaryOperation(int expressionPrecedence, std::shared_ptr<Node> leftExpression);
-        std::vector<std::shared_ptr<Node>> ParseBody();
-        std::shared_ptr<Node> ParseInteger();
-        std::shared_ptr<Node> ParseDouble();
-        std::shared_ptr<Node> ParseIdentifier();
-        std::shared_ptr<Node> ParseParenthese();
-        std::shared_ptr<Node> ParseReturn();
-        std::shared_ptr<Node> ParseIf();
-        std::shared_ptr<Node> ParseBlock();
-        std::shared_ptr<Node> ParseVariableDeclaration();
+        ParserToken getNextToken();
+        ParserToken getPreviousToken();
+        int getOperatorPrecedence(const std::string& binaryOperator);
+        std::shared_ptr<NodeFunction> parseFunction();
+        std::shared_ptr<Node> parsePrimary();
+        std::shared_ptr<Node> parseExpression();
+        std::shared_ptr<Node> parseBinaryOperation(int expressionPrecedence, std::shared_ptr<Node> leftExpression);
+        std::vector<std::shared_ptr<Node>> parseBody();
+        std::shared_ptr<Node> parseInteger();
+        std::shared_ptr<Node> parseDouble();
+        std::shared_ptr<Node> parseIdentifier();
+        std::shared_ptr<Node> parseParenthese();
+        std::shared_ptr<Node> parseReturn();
+        std::shared_ptr<Node> parseIf();
+        std::shared_ptr<Node> parseBlock();
+        std::shared_ptr<Node> parseVariableDeclaration();
     
         std::map<std::string, int> m_binaryOperatorPrecedence;
         std::vector<std::shared_ptr<Node>> m_nodes;
@@ -72,18 +72,18 @@ class Parser : public Vanir::Module<Parser> {
         int m_currentTokenIndex = -1;
     };
     
-    Parser &GetParser();
+    Parser &getParser();
 
 } /* Namespace Aryiele. */
 
 #define PARSER_CHECKTOKEN(EXPECTEDTOKENTYPE) \
-if (GetParser().GetCurrentToken().Type != EXPECTEDTOKENTYPE) { \
-    LOG_ERROR("wrong token, got '", Parser::GetTokenName(m_currentToken.Type), "' but expected '", Parser::GetTokenName(EXPECTEDTOKENTYPE), "'"); \
+if (getParser().getCurrentToken().type != EXPECTEDTOKENTYPE) { \
+    LOG_ERROR("wrong token, got '", Parser::getTokenName(m_currentToken.type), "' but expected '", Parser::getTokenName(EXPECTEDTOKENTYPE), "'"); \
     return nullptr; \
 }
 
 #define PARSER_CHECKNEXTTOKEN(EXPECTEDTOKENTYPE) { \
-    GetNextToken(); \
+    getNextToken(); \
     PARSER_CHECKTOKEN(EXPECTEDTOKENTYPE); \
 }
 

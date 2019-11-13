@@ -29,19 +29,19 @@
 
 namespace Aryiele {
     NodeConstantDouble::NodeConstantDouble(double value) :
-        Value(value) {
+        value(value) {
 
     }
 
-    void NodeConstantDouble::DumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeConstantDouble::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Double");
-        auto body = std::make_shared<ParserInformation>(node, "Value: " + std::to_string(Value));
+        auto bodyNode = std::make_shared<ParserInformation>(node, "Value: " + std::to_string(value));
 
-        node->Children.emplace_back(body);
-        parentNode->Children.emplace_back(node);
+        node->children.emplace_back(bodyNode);
+        parentNode->children.emplace_back(node);
     }
     
-    NodeEnum NodeConstantDouble::GetType() {
+    NodeEnum NodeConstantDouble::getType() {
         return Node_ConstantDouble;
     }
 

@@ -33,30 +33,30 @@ namespace Aryiele {
     NodeOperationBinary::NodeOperationBinary(ParserTokenEnum operationType,
                                              std::shared_ptr<Node> lhs,
                                              std::shared_ptr<Node> rhs) :
-            OperationType(operationType),
-            LHS(lhs),
-            RHS(rhs) {
+            operationType(operationType),
+            lhs(lhs),
+            rhs(rhs) {
 
     }
 
-    void NodeOperationBinary::DumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeOperationBinary::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Binary Operation");
-        auto operationType = std::make_shared<ParserInformation>(
-            node, "Type: " + Parser::GetTokenName(OperationType));
-        auto lhs = std::make_shared<ParserInformation>(node, "LHS:");
-        auto rhs = std::make_shared<ParserInformation>(node, "RHS:");
+        auto operationTypeNode = std::make_shared<ParserInformation>(
+            node, "Type: " + Parser::getTokenName(operationType));
+        auto lhsNode = std::make_shared<ParserInformation>(node, "LHS:");
+        auto rhsNode = std::make_shared<ParserInformation>(node, "RHS:");
+    
+        lhs->dumpInformations(lhsNode);
+        rhs->dumpInformations(rhsNode);
 
-        LHS->DumpInformations(lhs);
-        RHS->DumpInformations(rhs);
+        node->children.emplace_back(operationTypeNode);
+        node->children.emplace_back(lhsNode);
+        node->children.emplace_back(rhsNode);
 
-        node->Children.emplace_back(operationType);
-        node->Children.emplace_back(lhs);
-        node->Children.emplace_back(rhs);
-
-        parentNode->Children.emplace_back(node);
+        parentNode->children.emplace_back(node);
     }
     
-    NodeEnum NodeOperationBinary::GetType() {
+    NodeEnum NodeOperationBinary::getType() {
         return Node_OperationBinary;
     }
 

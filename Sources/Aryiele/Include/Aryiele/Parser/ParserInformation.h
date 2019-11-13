@@ -38,9 +38,9 @@ namespace Aryiele {
                 std::string name = "Unnamed",
                 std::vector<std::shared_ptr<ParserInformation>> children = std::vector<std::shared_ptr<ParserInformation>>());
 
-        std::shared_ptr<ParserInformation> Parent;
-        std::string Name;
-        std::vector<std::shared_ptr<ParserInformation>> Children;
+        std::shared_ptr<ParserInformation> parent;
+        std::string name;
+        std::vector<std::shared_ptr<ParserInformation>> children;
     };
 
 } /* Namespace Aryiele. */

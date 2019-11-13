@@ -29,7 +29,7 @@
 
 namespace Aryiele {
     GenerationError::GenerationError(bool success, llvm::Value *value) :
-        Success(success), Value(value) {
+        success(success), value(value) {
 
     }
 

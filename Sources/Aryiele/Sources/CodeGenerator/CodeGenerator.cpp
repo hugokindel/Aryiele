@@ -39,7 +39,7 @@ namespace Aryiele {
         m_blockStack = std::make_shared<BlockStack>();
     }
 
-    void CodeGenerator::GenerateCode(std::vector<std::shared_ptr<Node>> nodes) {
+    void CodeGenerator::generateCode(std::vector<std::shared_ptr<Node>> nodes) {
         // PRINTF TODO: Extern
         std::vector<llvm::Type *> Doubles(1, llvm::Type::getInt32Ty(m_context));
         llvm::FunctionType *FT =
@@ -54,19 +54,19 @@ namespace Aryiele {
             Arg.setName("value");
         // --
 
-        m_blockStack->Create();
+        m_blockStack->create();
 
         for (auto& node : nodes)
-            GenerateCode(node);
+            generateCode(node);
 
-        m_blockStack->EscapeCurrent();
+        m_blockStack->escapeCurrent();
     }
 
-    std::shared_ptr<llvm::Module> CodeGenerator::GetModule() {
+    std::shared_ptr<llvm::Module> CodeGenerator::getModule() {
         return m_module;
     }
 
-    llvm::Value *CodeGenerator::CastType(llvm::Value *value, llvm::Type *returnType) {
+    llvm::Value *CodeGenerator::castType(llvm::Value *value, llvm::Type *returnType) {
         if (value->getType()->isIntegerTy() && returnType->isIntegerTy()) {
             auto *ival = (llvm::IntegerType *)value->getType();
             auto *ito  = (llvm::IntegerType *)returnType;
@@ -89,36 +89,36 @@ namespace Aryiele {
     
     // Definition code from https://llvm.org/docs/tutorial/LangImpl07.html
     llvm::AllocaInst *
-    CodeGenerator::CreateEntryBlockAllocation(llvm::Function *function, const std::string &identifier, llvm::Type *type) {
+    CodeGenerator::createEntryBlockAllocation(llvm::Function *function, const std::string &identifier, llvm::Type *type) {
         llvm::IRBuilder<> TmpB(&function->getEntryBlock(), function->getEntryBlock().begin());
 
         return TmpB.CreateAlloca(type == nullptr ? llvm::Type::getInt32Ty(m_context) : type, nullptr, identifier);
     }
 
-    GenerationError CodeGenerator::GenerateCode(std::shared_ptr<Node> node) {
+    GenerationError CodeGenerator::generateCode(std::shared_ptr<Node> node) {
         auto nodePtr = node.get();
 
-        switch (node->GetType()) {
+        switch (node->getType()) {
             caseNode_Function_Prototype:
-                return GenerateCode((NodeFunction*)nodePtr);
+                return generateCode((NodeFunction*)nodePtr);
             caseNode_Constant_Double:
-                return GenerateCode((NodeConstantDouble*)nodePtr);
+                return generateCode((NodeConstantDouble*)nodePtr);
             caseNode_Constant_Integer:
-                return GenerateCode((NodeConstantInteger*)nodePtr);
+                return generateCode((NodeConstantInteger*)nodePtr);
             caseNode_Variable:
-                return GenerateCode((NodeVariable*)nodePtr);
+                return generateCode((NodeVariable*)nodePtr);
             caseNode_Operation_Binary:
-                return GenerateCode((NodeOperationBinary*)nodePtr);
+                return generateCode((NodeOperationBinary*)nodePtr);
             caseNode_Statement_FunctionCall:
-                return GenerateCode((NodeStatementFunctionCall*)nodePtr);
+                return generateCode((NodeStatementFunctionCall*)nodePtr);
             caseNode_Statement_If:
-                return GenerateCode((NodeStatementIf*)nodePtr);
+                return generateCode((NodeStatementIf*)nodePtr);
             caseNode_Statement_Return:
-                return GenerateCode((NodeStatementReturn*)nodePtr);
+                return generateCode((NodeStatementReturn*)nodePtr);
             caseNode_Statement_Block:
-                return GenerateCode((NodeStatementBlock*)nodePtr);
+                return generateCode((NodeStatementBlock*)nodePtr);
             caseNode_Statement_VariableDeclaration:
-                return GenerateCode((NodeStatementVariableDeclaration*)nodePtr);
+                return generateCode((NodeStatementVariableDeclaration*)nodePtr);
 
             default:
                 return GenerationError();
@@ -126,14 +126,14 @@ namespace Aryiele {
     }
 
     // TODO: Return + Types
-    GenerationError CodeGenerator::GenerateCode(NodeFunction* node) {
-        llvm::Function *function = m_module->getFunction(node->Identifier);
+    GenerationError CodeGenerator::generateCode(NodeFunction* node) {
+        llvm::Function *function = m_module->getFunction(node->identifier);
 
         if (!function) {
             std::vector<llvm::Type*> arguments;
             llvm::Type* functionTypeValue;
 
-            for (const auto &argument : node->Arguments) {
+            for (const auto &argument : node->arguments) {
                 arguments.emplace_back(llvm::Type::getInt32Ty(m_context));
             }
 
@@ -142,50 +142,50 @@ namespace Aryiele {
             llvm::FunctionType *functionType = llvm::FunctionType::get(functionTypeValue, arguments, false);
 
             function = llvm::Function::Create(
-                    functionType, llvm::Function::ExternalLinkage, node->Identifier, m_module.get());
+                    functionType, llvm::Function::ExternalLinkage, node->identifier, m_module.get());
 
             unsigned i = 0;
 
             for (auto &Arg : function->args())
-                Arg.setName(node->Arguments[i++].Identifier);
+                Arg.setName(node->arguments[i++].identifier);
         }
 
-        m_blockStack->Create();
+        m_blockStack->create();
 
         llvm::BasicBlock *basicBlock = llvm::BasicBlock::Create(m_context, "entry", function);
 
         m_builder.SetInsertPoint(basicBlock);
 
         for (auto &argument : function->args()) {
-            llvm::AllocaInst *allocationInstance = CreateEntryBlockAllocation(function, argument.getName(), argument.getType());
+            llvm::AllocaInst *allocationInstance = createEntryBlockAllocation(function, argument.getName(), argument.getType());
 
             m_builder.CreateStore(&argument, allocationInstance);
 
-            m_blockStack->Current->Variables[argument.getName()] = allocationInstance;
+            m_blockStack->current->variables[argument.getName()] = allocationInstance;
         }
 
-        for (auto& statement : node->Body) {
-            auto error = GenerateCode(statement);
+        for (auto& statement : node->body) {
+            auto error = generateCode(statement);
 
-            if (!error.Success) {
+            if (!error.success) {
                 function->eraseFromParent();
 
-                LOG_ERROR("cannot generate the body of a function: ", node->Identifier);
+                LOG_ERROR("cannot generate the body of a function: ", node->identifier);
 
                 return GenerationError();
             }
         }
 
-        m_blockStack->EscapeCurrent();
+        m_blockStack->escapeCurrent();
 
         verifyFunction(*function);
 
         return GenerationError(true, function);
     }
 
-    GenerationError CodeGenerator::GenerateCode(NodeOperationBinary* node) {
-        if (node->OperationType == ParserToken_OperatorEqual) {
-            auto lhs = std::static_pointer_cast<NodeVariable>(node->LHS);
+    GenerationError CodeGenerator::generateCode(NodeOperationBinary* node) {
+        if (node->operationType == ParserToken_OperatorEqual) {
+            auto lhs = std::static_pointer_cast<NodeVariable>(node->lhs);
 
             if (!lhs) {
                 LOG_ERROR("cannot generate a binary operation: lhs: expecting a variable");
@@ -193,70 +193,70 @@ namespace Aryiele {
                 return GenerationError();
             }
 
-            auto rhsValue = GenerateCode(node->RHS);
+            auto rhsValue = generateCode(node->rhs);
 
-            if (!rhsValue.Success) {
+            if (!rhsValue.success) {
                 LOG_ERROR("cannot generate a binary operation: rhs: generation failed");
 
                 return GenerationError();
             }
 
-            llvm::Value *variable = m_blockStack->FindVariable(lhs->Identifier);
+            llvm::Value *variable = m_blockStack->findVariable(lhs->identifier);
 
             if (!variable) {
-                LOG_ERROR("cannot generate a binary operation: lhs: unknown variable '" + lhs->Identifier + "'");
+                LOG_ERROR("cannot generate a binary operation: lhs: unknown variable '" + lhs->identifier + "'");
 
                 return GenerationError();
             }
 
-            m_builder.CreateStore(rhsValue.Value, variable);
+            m_builder.CreateStore(rhsValue.value, variable);
 
-            return GenerationError(true, rhsValue.Value);
+            return GenerationError(true, rhsValue.value);
         }
 
-        auto lhsValue = GenerateCode(node->LHS);
-        auto rhsValue = GenerateCode(node->RHS);
+        auto lhsValue = generateCode(node->lhs);
+        auto rhsValue = generateCode(node->rhs);
 
-        if (!lhsValue.Success || !rhsValue.Success)
+        if (!lhsValue.success || !rhsValue.success)
             return GenerationError();
 
         llvm::Value *value = nullptr;
 
         // TODO: CODEGENERATOR: Only support integers for now
         // TODO: CODEGENERATOR: Only support signed numbers for now
-        switch (node->OperationType) {
+        switch (node->operationType) {
             case ParserToken_OperatorArithmeticPlus:
-                value = m_builder.CreateAdd(lhsValue.Value, rhsValue.Value, "add");
+                value = m_builder.CreateAdd(lhsValue.value, rhsValue.value, "add");
                 break;
             case ParserToken_OperatorArithmeticMinus:
-                value = m_builder.CreateSub(lhsValue.Value, rhsValue.Value, "sub");
+                value = m_builder.CreateSub(lhsValue.value, rhsValue.value, "sub");
                 break;
             case ParserToken_OperatorArithmeticMultiply:
-                value = m_builder.CreateMul(lhsValue.Value, rhsValue.Value, "mul");
+                value = m_builder.CreateMul(lhsValue.value, rhsValue.value, "mul");
                 break;
             case ParserToken_OperatorArithmeticDivide:
-                value = m_builder.CreateSDiv(lhsValue.Value, rhsValue.Value, "sdiv");
+                value = m_builder.CreateSDiv(lhsValue.value, rhsValue.value, "sdiv");
                 break;
             case ParserToken_OperatorComparisonLessThan:
-                value = m_builder.CreateICmpULT(lhsValue.Value, rhsValue.Value, "icmpult");
+                value = m_builder.CreateICmpULT(lhsValue.value, rhsValue.value, "icmpult");
                 break;
             case ParserToken_OperatorComparisonLessThanOrEqual:
-                value = m_builder.CreateICmpULE(lhsValue.Value, rhsValue.Value, "icmpule");
+                value = m_builder.CreateICmpULE(lhsValue.value, rhsValue.value, "icmpule");
                 break;
             case ParserToken_OperatorComparisonGreaterThan:
-                value = m_builder.CreateICmpUGT(lhsValue.Value, rhsValue.Value, "icmpugt");
+                value = m_builder.CreateICmpUGT(lhsValue.value, rhsValue.value, "icmpugt");
                 break;
             case ParserToken_OperatorComparisonGreaterThanOrEqual:
-                value = m_builder.CreateICmpUGE(lhsValue.Value, rhsValue.Value, "icmpuge");
+                value = m_builder.CreateICmpUGE(lhsValue.value, rhsValue.value, "icmpuge");
                 break;
             case ParserToken_OperatorComparisonEqual:
-                value = m_builder.CreateICmpEQ(lhsValue.Value, rhsValue.Value, "icmpeq");
+                value = m_builder.CreateICmpEQ(lhsValue.value, rhsValue.value, "icmpeq");
                 break;
             case ParserToken_OperatorComparisonNotEqual:
-                value = m_builder.CreateICmpNE(lhsValue.Value, rhsValue.Value, "icmpeq");
+                value = m_builder.CreateICmpNE(lhsValue.value, rhsValue.value, "icmpeq");
                 break;
             default: {
-                LOG_ERROR("unknown binary operator: ", Parser::GetTokenName(node->OperationType));
+                LOG_ERROR("unknown binary operator: ", Parser::getTokenName(node->operationType));
 
                 return GenerationError();
             }
@@ -265,60 +265,60 @@ namespace Aryiele {
         return GenerationError(true, value);
     }
 
-    GenerationError CodeGenerator::GenerateCode(NodeConstantDouble* node) {
-        return GenerationError(true, llvm::ConstantFP::get(m_context, llvm::APFloat(node->Value)));
+    GenerationError CodeGenerator::generateCode(NodeConstantDouble* node) {
+        return GenerationError(true, llvm::ConstantFP::get(m_context, llvm::APFloat(node->value)));
     }
 
-    GenerationError CodeGenerator::GenerateCode(NodeConstantInteger* node) {
-        return GenerationError(true, llvm::ConstantInt::get(m_context, llvm::APInt(32, node->Value)));
+    GenerationError CodeGenerator::generateCode(NodeConstantInteger* node) {
+        return GenerationError(true, llvm::ConstantInt::get(m_context, llvm::APInt(32, node->value)));
     }
 
-    GenerationError CodeGenerator::GenerateCode(NodeVariable* node) {
-        llvm::Value *value = m_blockStack->FindVariable(node->Identifier);
+    GenerationError CodeGenerator::generateCode(NodeVariable* node) {
+        llvm::Value *value = m_blockStack->findVariable(node->identifier);
 
         if (!value) {
-            LOG_ERROR("unknown variable: ", node->Identifier);
+            LOG_ERROR("unknown variable: ", node->identifier);
         }
 
-        return GenerationError(true, m_builder.CreateLoad(value, node->Identifier.c_str()));
+        return GenerationError(true, m_builder.CreateLoad(value, node->identifier.c_str()));
     }
 
 
-    GenerationError CodeGenerator::GenerateCode(NodeStatementFunctionCall* node) {
-        llvm::Function *calledFunction = m_module->getFunction(node->Identifier);
+    GenerationError CodeGenerator::generateCode(NodeStatementFunctionCall* node) {
+        llvm::Function *calledFunction = m_module->getFunction(node->identifier);
 
         if (!calledFunction) {
-            LOG_ERROR("unknown function referenced: ", node->Identifier);
+            LOG_ERROR("unknown function referenced: ", node->identifier);
 
             return GenerationError();
         }
 
-        if (calledFunction->arg_size() != node->Arguments.size()) {
+        if (calledFunction->arg_size() != node->arguments.size()) {
             LOG_ERROR("incorrect number of argument passed: ",
-                      node->Arguments.size(), " while expecting ", calledFunction->arg_size());
+                      node->arguments.size(), " while expecting ", calledFunction->arg_size());
 
             return GenerationError();
         }
 
         std::vector<llvm::Value*> argumentsValues;
 
-        for (unsigned i = 0, e = static_cast<unsigned int>(node->Arguments.size()); i != e; ++i) {
-            auto error = GenerateCode(node->Arguments[i]);
+        for (unsigned i = 0, e = static_cast<unsigned int>(node->arguments.size()); i != e; ++i) {
+            auto error = generateCode(node->arguments[i]);
 
-            if (!error.Success)
+            if (!error.success)
                 return GenerationError();
 
-            argumentsValues.push_back(error.Value);
+            argumentsValues.push_back(error.value);
         }
 
         return GenerationError(true, m_builder.CreateCall(calledFunction, argumentsValues, "calltmp"));
     }
 
     // TODO: CODEGENERATOR: Support for no "Else" statement
-    GenerationError CodeGenerator::GenerateCode(NodeStatementIf* node) {
-        auto conditionValue = GenerateCode(node->Condition);
+    GenerationError CodeGenerator::generateCode(NodeStatementIf* node) {
+        auto conditionValue = generateCode(node->condition);
 
-        if (!conditionValue.Success)
+        if (!conditionValue.success)
             return GenerationError();
 
         llvm::Function *function = m_builder.GetInsertBlock()->getParent();
@@ -327,32 +327,32 @@ namespace Aryiele {
         llvm::BasicBlock *elseBasicBlock = llvm::BasicBlock::Create(m_context, "else", function);
         llvm::BasicBlock *mergeBasicBlock = llvm::BasicBlock::Create(m_context, "merge", function);
 
-        m_builder.CreateCondBr(conditionValue.Value, ifBasicBlock, elseBasicBlock);
+        m_builder.CreateCondBr(conditionValue.value, ifBasicBlock, elseBasicBlock);
         m_builder.SetInsertPoint(ifBasicBlock);
-        m_blockStack->Create();
+        m_blockStack->create();
 
-        for (auto &statement : node->IfBody) {
-            auto generatedCode = GenerateCode(statement);
+        for (auto &statement : node->ifBody) {
+            auto generatedCode = generateCode(statement);
 
-            if (!generatedCode.Success)
+            if (!generatedCode.success)
                 return GenerationError();
         }
 
-        m_blockStack->EscapeCurrent();
+        m_blockStack->escapeCurrent();
         m_builder.CreateBr(mergeBasicBlock);
         m_builder.SetInsertPoint(elseBasicBlock);
 
-        if (!node->ElseBody.empty()) {
-            m_blockStack->Create();
+        if (!node->elseBody.empty()) {
+            m_blockStack->create();
 
-            for (auto &statement : node->ElseBody) {
-                auto generatedCode = GenerateCode(statement);
+            for (auto &statement : node->elseBody) {
+                auto generatedCode = generateCode(statement);
 
-                if (!generatedCode.Success)
+                if (!generatedCode.success)
                     return GenerationError();
             }
 
-            m_blockStack->EscapeCurrent();
+            m_blockStack->escapeCurrent();
         }
 
         m_builder.CreateBr(mergeBasicBlock);
@@ -361,67 +361,67 @@ namespace Aryiele {
         return GenerationError(true);
     }
 
-    GenerationError CodeGenerator::GenerateCode(NodeStatementReturn* node) {
-        auto error = GenerateCode(node->Expression);
+    GenerationError CodeGenerator::generateCode(NodeStatementReturn* node) {
+        auto error = generateCode(node->expression);
 
-        if (!error.Success) {
+        if (!error.success) {
             LOG_ERROR("cannot generate return value");
 
             return GenerationError();
         }
 
-        m_builder.CreateRet(error.Value);
+        m_builder.CreateRet(error.value);
 
-        return GenerationError(true, error.Value);
+        return GenerationError(true, error.value);
     }
 
-    GenerationError CodeGenerator::GenerateCode(NodeStatementBlock *node) {
-        m_blockStack->Create();
+    GenerationError CodeGenerator::generateCode(NodeStatementBlock *node) {
+        m_blockStack->create();
 
-        for (auto &statement : node->Body) {
-            auto error = GenerateCode(statement);
+        for (auto &statement : node->body) {
+            auto error = generateCode(statement);
 
-            if (!error.Success) {
+            if (!error.success) {
                 LOG_ERROR("cannot generate the body of a block in function");
             }
         }
 
-        m_blockStack->EscapeCurrent();
+        m_blockStack->escapeCurrent();
 
         return GenerationError(true);
     }
 
     // TODO: CODEGENERATOR: Support other variable types (for now only int32).
-    GenerationError CodeGenerator::GenerateCode(NodeStatementVariableDeclaration *node) {
+    GenerationError CodeGenerator::generateCode(NodeStatementVariableDeclaration *node) {
         llvm::Function *function = m_builder.GetInsertBlock()->getParent();
 
-        for (auto &variable : node->Variables) {
+        for (auto &variable : node->variables) {
             GenerationError error;
 
-            if (variable->Expression) {
-                error = GenerateCode(variable->Expression);
+            if (variable->expression) {
+                error = generateCode(variable->expression);
 
-                if (!error.Success) {
+                if (!error.success) {
                     LOG_ERROR("cannot generate declaration of a variable");
 
                     return GenerationError();
                 }
             }
             else {
-                error.Value = llvm::ConstantInt::get(m_context, llvm::APInt(32, 0));
+                error.value = llvm::ConstantInt::get(m_context, llvm::APInt(32, 0));
             }
 
-            llvm::AllocaInst *allocationInstance = CreateEntryBlockAllocation(function, variable->Identifier);
+            llvm::AllocaInst *allocationInstance = createEntryBlockAllocation(function, variable->identifier);
 
-            m_builder.CreateStore(error.Value, allocationInstance);
+            m_builder.CreateStore(error.value, allocationInstance);
 
-            m_blockStack->Current->Variables[variable->Identifier] = allocationInstance;
+            m_blockStack->current->variables[variable->identifier] = allocationInstance;
         }
 
         return GenerationError(true);
     }
     
-    CodeGenerator &GetCodeGenerator() {
+    CodeGenerator &getCodeGenerator() {
         return CodeGenerator::getInstance();
     }
 

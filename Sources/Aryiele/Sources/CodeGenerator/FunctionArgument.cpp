@@ -29,7 +29,7 @@
 
 namespace Aryiele {
     FunctionArgument::FunctionArgument(const std::string &identifier, llvm::Type *type) :
-        Identifier(identifier), Type(type) {
+        identifier(identifier), type(type) {
 
     }
 

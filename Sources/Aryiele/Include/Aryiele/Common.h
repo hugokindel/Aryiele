@@ -25,9 +25,9 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_CORE_INCLUDES_H
-#define ARYIELE_CORE_INCLUDES_H
+#ifndef ARYIELE_CORE_COMMON_H
+#define ARYIELE_CORE_COMMON_H
 
-#include <Aryiele/Core/Logger.h>
+#include <Aryiele/Utility/Logger.h>
 
-#endif /* ARYIELE_CORE_INCLUDES_H. */
+#endif /* ARYIELE_CORE_COMMON_H. */

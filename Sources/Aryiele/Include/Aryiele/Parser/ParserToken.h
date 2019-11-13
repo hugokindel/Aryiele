@@ -28,7 +28,7 @@
 #ifndef ARYIELE_PARSER_PARSERTOKEN_H
 #define ARYIELE_PARSER_PARSERTOKEN_H
 
-#include <Aryiele/Core/Includes.h>
+#include <Aryiele/Common.h>
 
 namespace Aryiele {
     enum ParserTokenEnum {
@@ -104,8 +104,8 @@ namespace Aryiele {
     struct ParserToken {
         explicit ParserToken(const std::string& content = std::string(), ParserTokenEnum type = ParserToken_Unknown);
 
-        std::string Content;
-        ParserTokenEnum Type;
+        std::string content;
+        ParserTokenEnum type;
     };
 
 } /* Namespace Aryiele. */

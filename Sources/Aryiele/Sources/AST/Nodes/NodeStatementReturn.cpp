@@ -30,21 +30,21 @@
 namespace Aryiele {
 
     NodeStatementReturn::NodeStatementReturn(std::shared_ptr<Node> expression) :
-        Expression(expression) {
+        expression(expression) {
 
     }
 
-    void NodeStatementReturn::DumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeStatementReturn::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Return");
-        auto body = std::make_shared<ParserInformation>(node, "Body:");
+        auto bodyNode = std::make_shared<ParserInformation>(node, "Body:");
 
-        Expression->DumpInformations(body);
+        expression->dumpInformations(bodyNode);
 
-        node->Children.emplace_back(body);
-        parentNode->Children.emplace_back(node);
+        node->children.emplace_back(bodyNode);
+        parentNode->children.emplace_back(node);
     }
     
-    NodeEnum NodeStatementReturn::GetType() {
+    NodeEnum NodeStatementReturn::getType() {
         return Node_StatementReturn;
     }
 

@@ -77,19 +77,15 @@ endif()
 add_definitions(${LLVM_DEFINITIONS})
 
 add_library(Aryiele
-        Include/Aryiele/Core/Includes.h
-        Include/Aryiele/Core/Logger.h
+        Include/Aryiele/Common.h
         Include/Aryiele/Lexer/Lexer.h
         Include/Aryiele/Lexer/LexerToken.h
-        Include/Aryiele/Lexer/LexerTokens.h
         Include/Aryiele/Lexer/LexerTable.h
         Include/Aryiele/Parser/Parser.h
         Include/Aryiele/Parser/ParserToken.h
-        Include/Aryiele/Parser/ParserTokens.h
         Include/Aryiele/Parser/ParserInformation.h
         Include/Aryiele/AST/Argument.h
         Include/Aryiele/AST/Variable.h
-        Include/Aryiele/AST/Nodes.h
         Include/Aryiele/AST/Nodes/Node.h
         Include/Aryiele/AST/Nodes/NodeConstantDouble.h
         Include/Aryiele/AST/Nodes/NodeConstantInteger.h
@@ -107,12 +103,13 @@ add_library(Aryiele
         Include/Aryiele/CodeGenerator/Function.h
         Include/Aryiele/CodeGenerator/FunctionArgument.h
         Include/Aryiele/CodeGenerator/GenerationError.h
+        Include/Aryiele/Utility/Logger.h
         Sources/Lexer/Lexer.cpp
         Sources/Lexer/LexerToken.cpp
         Sources/Parser/Parser.cpp
         Sources/Parser/ParserToken.cpp
         Sources/Parser/ParserInformation.cpp
-        Sources/AST/CLIOption.cpp
+        Sources/AST/Argument.cpp
         Sources/AST/Variable.cpp
         Sources/AST/Nodes/NodeConstantDouble.cpp
         Sources/AST/Nodes/NodeConstantInteger.cpp

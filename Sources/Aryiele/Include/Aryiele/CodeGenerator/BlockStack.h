@@ -28,19 +28,18 @@
 #ifndef ARYIELE_CODEGENERATOR_BLOCKSTACK_H
 #define ARYIELE_CODEGENERATOR_BLOCKSTACK_H
 
-#include <Aryiele/Core/Includes.h>
+#include <Aryiele/Common.h>
 #include <Aryiele/CodeGenerator/Block.h>
 
 namespace Aryiele {
-    class BlockStack {
-    public:
+    struct BlockStack {
         BlockStack() = default;
 
-        std::shared_ptr<Block> Create(bool setAsCurrent = true);
-        std::shared_ptr<Block> EscapeCurrent();
-        llvm::AllocaInst* FindVariable(const std::string& identifier);
+        std::shared_ptr<Block> create(bool setAsCurrent = true);
+        std::shared_ptr<Block> escapeCurrent();
+        llvm::AllocaInst* findVariable(const std::string& identifier);
 
-        std::shared_ptr<Block> Current = nullptr;
+        std::shared_ptr<Block> current = nullptr;
     };
 
 } /* Namespace Aryiele. */

@@ -29,22 +29,22 @@
 
 namespace Aryiele {
     NodeStatementBlock::NodeStatementBlock(std::vector<std::shared_ptr<Node>> body) :
-        Body(body) {
+        body(body) {
 
     }
 
-    void NodeStatementBlock::DumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeStatementBlock::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Block");
-        auto body = std::make_shared<ParserInformation>(node, "Body:");
+        auto bodyNode = std::make_shared<ParserInformation>(node, "Body:");
 
-        for (auto& statement : Body)
-            statement->DumpInformations(body);
+        for (auto& statement : body)
+            statement->dumpInformations(bodyNode);
 
-        node->Children.emplace_back(body);
-        parentNode->Children.emplace_back(node);
+        node->children.emplace_back(bodyNode);
+        parentNode->children.emplace_back(node);
     }
 
-    NodeEnum NodeStatementBlock::GetType() {
+    NodeEnum NodeStatementBlock::getType() {
         return Node_StatementBlock;
     }
 

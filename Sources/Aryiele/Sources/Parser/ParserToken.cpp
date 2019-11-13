@@ -29,7 +29,7 @@
 
 namespace Aryiele {
     ParserToken::ParserToken(const std::string &content, Aryiele::ParserTokenEnum type) :
-        Content(content), Type(type) {
+        content(content), type(type) {
 
     }
 

@@ -37,7 +37,7 @@
 #include <llvm/Bitcode/BitcodeWriter.h>
 #include <llvm/Bitcode/BitcodeReader.h>
 #include <Vanir/FileSystem/FileSystem.h>
-#include <Aryiele/Core/Includes.h>
+#include <Aryiele/Common.h>
 #include <Aryiele/Lexer/Lexer.h>
 #include <Aryiele/Parser/Parser.h>
 #include <Aryiele/CodeGenerator/CodeGenerator.h>
@@ -61,7 +61,7 @@ namespace ARC {
 
     BuildType ARC::m_buildType = BuildType_Executable;
     
-    int ARC::Run(const int argc, char *argv[]) {
+    int ARC::run(const int argc, char *argv[]) {
         Aryiele::Lexer::start();
         Aryiele::Parser::start();
         Aryiele::CodeGenerator::start();
@@ -77,29 +77,29 @@ namespace ARC {
         
         m_options.emplace_back(
             std::vector<std::string>({"-h", "--help"}),
-            &ARC::CommandShowHelp,
+            &ARC::commandShowHelp,
             std::vector<std::string>({"Display this information."}));
         m_options.emplace_back(
             std::vector<std::string>({"-V", "--version"}),
-            &ARC::CommandShowVersion,
+            &ARC::commandShowVersion,
             std::vector<std::string>({"Display version information."}));
         m_options.emplace_back(
             std::vector<std::string>({"-k", "--keep-files"}),
-            &ARC::CommandKeepAllFiles,
+            &ARC::commandKeepAllFiles,
             std::vector<std::string>({"Keep all files after compilation."}));
         m_options.emplace_back(
             std::vector<std::string>({"-v", "--verbose"}),
-            &ARC::CommandActivateVerboseMode,
+            &ARC::commandActivateVerboseMode,
             std::vector<std::string>({"Activate the verbose mode,", "which displays informations about the compilation."}));
         m_options.emplace_back(
             std::vector<std::string>({"-o", "--output-file"}),
-            &ARC::CommandDefineOutputFilepath,
+            &ARC::commandDefineOutputFilepath,
             std::vector<std::string>({"Define the output file at <file>."}),
             Vanir::CLIOptionType_OptionWithValue,
             "<filename>");
         m_options.emplace_back(
             std::vector<std::string>({"-t", "--build-type"}),
-            &ARC::CommandDefineBuildType,
+            &ARC::commandDefineBuildType,
             std::vector<std::string>({"Choose a build type (default is exe):"}),
             Vanir::CLIOptionType_OptionWithValue,
             "<type>",
@@ -121,15 +121,15 @@ namespace ARC {
 
 #ifdef FINAL_RELEASE
         if(argc < 2) {
-            LOG("");
-            LOG("                ARC -- Aryiele Compiler");
-            LOG("");
-            LOG("Usage:");
-            LOG("    arc [options] <file>");
+            LOG("")
+            LOG("                ARC -- Aryiele Compiler")
+            LOG("")
+            LOG("Usage:")
+            LOG("    arc [options] <file>")
             LOG("        Compile Aryiele source code to a native executable.")
             LOG("        Example: arc main.ac")
-            LOG("");
-            LOG("arc --help  shows full documentation on the options.");
+            LOG("")
+            LOG("arc --help  shows full documentation on the options.")
         }
 #endif
 
@@ -152,34 +152,34 @@ namespace ARC {
         if (!m_inputFilepath.empty()) {
             if (!Vanir::FileSystem::fileExist(m_inputFilepath)) {
                 LOG_WARNING(m_inputFilepath, ": no such file or directory")
-                LOG_ERROR("no input file");
+                LOG_ERROR("no input file")
             }
             else {
                 Vanir::Logger::resetCounters();
                 
-                auto lexerPass = DoLexerPass(m_inputFilepath);
+                auto lexerPass = doLexerPass(m_inputFilepath);
                 
-                ARC_RUN_CHECKERRORS();
+                ARC_RUN_CHECKERRORS()
                 
-                auto parserPass = DoParserPass(lexerPass);
+                auto parserPass = doParserPass(lexerPass);
                 
-                ARC_RUN_CHECKERRORS();
+                ARC_RUN_CHECKERRORS()
                 
-                DoCodeGeneratorPass(parserPass);
+                doCodeGeneratorPass(parserPass);
                 
                 if (m_buildType == BuildType_Object || m_buildType == BuildType_Executable) {
-                    ARC_RUN_CHECKERRORS();
+                    ARC_RUN_CHECKERRORS()
                     
-                    DoObjectGeneratorPass();
+                    doObjectGeneratorPass();
                     
                     if (!m_keepAllFiles)
                         remove(m_tempIRFilepath.c_str());
                 }
                 
                 if (m_buildType == BuildType_Executable) {
-                    ARC_RUN_CHECKERRORS();
+                    ARC_RUN_CHECKERRORS()
                     
-                    DoExecutableGeneratorPass();
+                    doExecutableGeneratorPass();
                     
                     if (!m_keepAllFiles)
                         remove(m_tempOBJFilepath.c_str());
@@ -198,49 +198,49 @@ namespace ARC {
         return 0;
     }
     
-    std::vector<Aryiele::LexerToken> ARC::DoLexerPass(const std::string& filepath) {
+    std::vector<Aryiele::LexerToken> ARC::doLexerPass(const std::string& filepath) {
         auto lexer = Aryiele::Lexer::getInstancePtr();
         
-        auto lexerTokens = lexer->Tokenize(filepath);
+        auto lexerTokens = lexer->lex(filepath);
         
         for (auto& token : lexerTokens) {
             if (m_verboseMode) {
-                LOG_VERBOSE("lexer: ", token.Content, " => ", lexer->GetTokenName(token));
+                LOG_VERBOSE("lexer: ", token.content, " => ", lexer->getTokenName(token))
             }
             
-            if (token.Type == Aryiele::LexerToken_Unknown) {
-                LOG_ERROR("lexer: unknown token");
+            if (token.type == Aryiele::LexerToken_Unknown) {
+                LOG_ERROR("lexer: unknown token")
             }
         }
         
         return lexerTokens;
     }
     
-    std::vector<std::shared_ptr<Aryiele::Node>> ARC::DoParserPass(std::vector<Aryiele::LexerToken> lexerTokens) {
+    std::vector<std::shared_ptr<Aryiele::Node>> ARC::doParserPass(std::vector<Aryiele::LexerToken> lexerTokens) {
         auto parser = Aryiele::Parser::getInstancePtr();
         
-        auto parserTokens = parser->ConvertTokens(std::move(lexerTokens));
+        auto parserTokens = parser->convertTokens(std::move(lexerTokens));
         
         for (auto& token : parserTokens) {
             if (m_verboseMode) {
-                LOG_VERBOSE("parser: ", token.Content, " => ", parser->GetTokenName(token.Type));
+                LOG_VERBOSE("parser: ", token.content, " => ", parser->getTokenName(token.type))
             }
             
-            if (token.Type == Aryiele::ParserToken_Unknown) {
-                LOG_ERROR("parser: unknown token");
+            if (token.type == Aryiele::ParserToken_Unknown) {
+                LOG_ERROR("parser: unknown token")
             }
         }
         
-        auto nodes = parser->Parse(parserTokens);
+        auto nodes = parser->parse(parserTokens);
         
         if (m_verboseMode) {
             auto dumpNode = std::make_shared<Aryiele::ParserInformation>(nullptr, "AST");
             
             // TODO: Small memory leak coming from here (see valgrind)
             for (auto& node : nodes)
-                node->DumpInformations(dumpNode);
+                node->dumpInformations(dumpNode);
             
-            DumpASTInformations(dumpNode, " ");
+            dumpASTInformations(dumpNode, " ");
             
             dumpNode.reset();
         }
@@ -248,17 +248,17 @@ namespace ARC {
         return nodes;
     }
     
-    void ARC::DoCodeGeneratorPass(std::vector<std::shared_ptr<Aryiele::Node>> astNodes) {
+    void ARC::doCodeGeneratorPass(std::vector<std::shared_ptr<Aryiele::Node>> astNodes) {
         auto codeGenerator = Aryiele::CodeGenerator::getInstancePtr();
         
-        codeGenerator->GenerateCode(std::move(astNodes));
+        codeGenerator->generateCode(std::move(astNodes));
         
         if (::Vanir::Logger::errorCount > 0) {
-            LOG_ERROR("ir code generation failed with ", ::Vanir::Logger::errorCount, " errors");
+            LOG_ERROR("ir code generation failed with ", ::Vanir::Logger::errorCount, " errors")
         }
         else {
             if (m_verboseMode) {
-                LOG_VERBOSE("ir code generated with success");
+                LOG_VERBOSE("ir code generated with success")
             }
             
             m_tempIRFilepath = Vanir::FileSystem::getFilePath(m_inputFilepath) + ".ll";
@@ -277,16 +277,16 @@ namespace ARC {
             std::error_code errorCode;
             llvm::raw_fd_ostream ostream(m_tempIRFilepath, errorCode, llvm::sys::fs::F_None);
             
-            codeGenerator->GetModule()->print(ostream, nullptr);
+            codeGenerator->getModule()->print(ostream, nullptr);
             ostream.flush();
             
             if (m_verboseMode) {
-                LOG_VERBOSE("ir code file generated with success");
+                LOG_VERBOSE("ir code file generated with success")
             }
         }
     }
     
-    void ARC::DoObjectGeneratorPass() {
+    void ARC::doObjectGeneratorPass() {
         m_tempOBJFilepath = Vanir::FileSystem::getFilePath(m_inputFilepath) + ".o";
         
         if (!m_outputFilepath.empty()) {
@@ -304,15 +304,15 @@ namespace ARC {
         
         if(!(errorCode = system(("llc " + m_tempIRFilepath + " -filetype=obj -o=" + m_tempOBJFilepath).c_str()))) {
             if (m_verboseMode) {
-                LOG_VERBOSE("object file generated with success");
+                LOG_VERBOSE("object file generated with success")
             }
         }
         else {
-            LOG_WARNING("cannot generate object: command exited with code: ", errorCode);
+            LOG_WARNING("cannot generate object: command exited with code: ", errorCode)
         }
     }
     
-    void ARC::DoExecutableGeneratorPass() {
+    void ARC::doExecutableGeneratorPass() {
         m_tempEXEFilepath = Vanir::FileSystem::getFilePath(m_inputFilepath);
         
         if (!m_outputFilepath.empty()) {
@@ -330,80 +330,80 @@ namespace ARC {
         
         if(!(errorCode = system(("gcc " + m_tempOBJFilepath + " -L../libs -lSTD -o " + m_tempEXEFilepath).c_str()))) {
             if (m_verboseMode) {
-                LOG_VERBOSE("executable file generated with success");
+                LOG_VERBOSE("executable file generated with success")
             }
         }
         else {
-            LOG_WARNING("cannot generate executable: command exited with code: ", errorCode);
+            LOG_WARNING("cannot generate executable: command exited with code: ", errorCode)
         }
     }
     
-    void ARC::DumpASTInformations(const std::shared_ptr<Aryiele::ParserInformation>& node, std::string indent) {
-        const auto isRoot = node->Parent == nullptr;
-        const auto hasChildren = !node->Children.empty();
+    void ARC::dumpASTInformations(const std::shared_ptr<Aryiele::ParserInformation>& node, std::string indent) {
+        const auto isRoot = node->parent == nullptr;
+        const auto hasChildren = !node->children.empty();
         auto isLastSibling = true;
         
         if (!isRoot) {
-            isLastSibling = (static_cast<int>(std::distance(node->Parent->Children.begin(),
-                                std::find(node->Parent->Children.begin(), node->Parent->Children.end(), node)))
-                             == static_cast<int>(node->Parent->Children.size()) - 1);
+            isLastSibling = (static_cast<int>(std::distance(node->parent->children.begin(),
+                                std::find(node->parent->children.begin(), node->parent->children.end(), node)))
+                             == static_cast<int>(node->parent->children.size()) - 1);
         }
         
         if (isRoot) {
-            ULOG_VERBOSE("ast: ", node->Name);
+            ULOG_VERBOSE("ast: ", node->name)
         }
         else {
-            ULOG_VERBOSE("ast:", indent + (isLastSibling ? "└╴" : "├╴"), node->Name);
+            ULOG_VERBOSE("ast:", indent + (isLastSibling ? "└╴" : "├╴"), node->name)
             indent += isLastSibling ? "  " : "│ ";
         }
         
         if (hasChildren) {
-            for (auto& nodeChild : node->Children)
-                DumpASTInformations(nodeChild, indent);
+            for (auto& nodeChild : node->children)
+                dumpASTInformations(nodeChild, indent);
         }
     }
     
-    void ARC::CommandShowHelp(const std::string& s) {
+    void ARC::commandShowHelp(const std::string& s) {
 #ifdef PLATFORM_WINDOWS
         LOG("Usage: arc.exe [options] <file>");
 #else
-        LOG("Usage: arc [options] <file>");
+        LOG("Usage: arc [options] <file>")
 #endif
         LOG("")
         
         auto help = Vanir::CLI::getOptionsDescriptionList(m_options);
         
         for (auto& hLine : help) {
-            LOG(hLine);
+            LOG(hLine)
         }
     }
     
-    void ARC::CommandShowVersion(const std::string& s) {
-        LOG("arc (Aryiele Compiler) ", ARC_VERSION);
+    void ARC::commandShowVersion(const std::string& s) {
+        LOG("arc (Aryiele Compiler) ", ARC_VERSION)
     }
     
-    void ARC::CommandDefineInputFilepath(const std::string& s) {
+    void ARC::commandDefineInputFilepath(const std::string& s) {
         m_inputFilepath = s;
     }
     
-    void ARC::CommandDefineOutputFilepath(const std::string& s) {
-        auto result = GetOptionValue(s);
+    void ARC::commandDefineOutputFilepath(const std::string& s) {
+        auto result = getOptionValue(s);
         
         if (!result.empty()) {
             m_outputFilepath = result;
         }
     }
     
-    void ARC::CommandActivateVerboseMode(const std::string& s) {
+    void ARC::commandActivateVerboseMode(const std::string& s) {
         m_verboseMode = true;
     }
     
-    void ARC::CommandKeepAllFiles(const std::string& s) {
+    void ARC::commandKeepAllFiles(const std::string& s) {
         m_keepAllFiles = true;
     }
     
-    void ARC::CommandDefineBuildType(const std::string& s) {
-        auto result = GetOptionValue(s);
+    void ARC::commandDefineBuildType(const std::string& s) {
+        auto result = getOptionValue(s);
         
         if (!result.empty()) {
             if (result == "ir") {
@@ -416,22 +416,22 @@ namespace ARC {
                 m_buildType = BuildType_Executable;
             }
             else {
-                ULOG_WARNING("arc: unknown type value: ", s);
+                ULOG_WARNING("arc: unknown type value: ", s)
             }
         }
     }
     
-    void ARC::CommandOptionNotFound(const std::string& s) {
+    void ARC::commandOptionNotFound(const std::string& s) {
         ULOG("arc: unknown command line argument '", s, "'. Try: 'arc --help'")
-        ULOG("arc: did you mean '", Vanir::CLI::findClosestOption(s, m_options), "'?");
+        ULOG("arc: did you mean '", Vanir::CLI::findClosestOption(s, m_options), "'?")
     }
     
-    std::string ARC::GetOptionValue(const std::string &option) {
+    std::string ARC::getOptionValue(const std::string &option) {
         auto optionName = option.substr(0, option.find('=') + 1);
         auto result = option.substr(option.find('=') + 1);
         
         if (result.empty()) {
-            LOG_WARNING("empty value after option '", optionName, "'");
+            LOG_WARNING("empty value after option '", optionName, "'")
             
             return std::string();
         }

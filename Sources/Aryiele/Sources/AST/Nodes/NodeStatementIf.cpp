@@ -32,52 +32,51 @@ namespace Aryiele {
                                      std::vector<std::shared_ptr<Node>> ifBody,
                                      std::vector<std::shared_ptr<Node>> elseBody,
                                      std::vector<std::vector<std::shared_ptr<Node>>> elseIfBody) :
-        Condition(condition), IfBody(ifBody), ElseBody(elseBody), ElseIfBody(elseIfBody) {
+        condition(condition), ifBody(ifBody), elseBody(elseBody), elseIfBody(elseIfBody) {
 
     }
 
-    void NodeStatementIf::DumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeStatementIf::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "If/Else");
-
         auto ifNode = std::make_shared<ParserInformation>(node, "If");
-        auto ifCondition = std::make_shared<ParserInformation>(ifNode, "Condition:");
-        auto ifBody = std::make_shared<ParserInformation>(ifNode, "Body:");
+        auto ifConditionNode = std::make_shared<ParserInformation>(ifNode, "Condition:");
+        auto ifBodyNode = std::make_shared<ParserInformation>(ifNode, "Body:");
 
-        Condition->DumpInformations(ifCondition);
+        condition->dumpInformations(ifConditionNode);
 
-        for (auto& i : IfBody)
-            i->DumpInformations(ifBody);
+        for (auto& i : ifBody)
+            i->dumpInformations(ifBodyNode);
 
-        ifNode->Children.emplace_back(ifCondition);
-        ifNode->Children.emplace_back(ifBody);
-        node->Children.emplace_back(ifNode);
+        ifNode->children.emplace_back(ifConditionNode);
+        ifNode->children.emplace_back(ifBodyNode);
+        node->children.emplace_back(ifNode);
 
-        for (auto elseIfBody : ElseIfBody) {
+        for (auto elseIfBody : elseIfBody) {
             auto elseNode = std::make_shared<ParserInformation>(node, "Else If");
             auto elseBody = std::make_shared<ParserInformation>(elseNode, "Body:");
 
             for (auto& i : elseIfBody)
-                i->DumpInformations(elseBody);
+                i->dumpInformations(elseBody);
 
-            elseNode->Children.emplace_back(elseBody);
-            node->Children.emplace_back(elseNode);
+            elseNode->children.emplace_back(elseBody);
+            node->children.emplace_back(elseNode);
         }
 
-        if (!ElseBody.empty()) {
+        if (!elseBody.empty()) {
             auto elseNode = std::make_shared<ParserInformation>(node, "Else");
-            auto elseBody = std::make_shared<ParserInformation>(elseNode, "Body:");
+            auto elseBodyNode = std::make_shared<ParserInformation>(elseNode, "Body:");
 
-            for (auto& i : ElseBody)
-                i->DumpInformations(elseBody);
+            for (auto& i : elseBody)
+                i->dumpInformations(elseBodyNode);
 
-            elseNode->Children.emplace_back(elseBody);
-            node->Children.emplace_back(elseNode);
+            elseNode->children.emplace_back(elseBodyNode);
+            node->children.emplace_back(elseNode);
         }
 
-        parentNode->Children.emplace_back(node);
+        parentNode->children.emplace_back(node);
     }
     
-    NodeEnum NodeStatementIf::GetType() {
+    NodeEnum NodeStatementIf::getType() {
         return Node_StatementIf;
     }
 

@@ -28,14 +28,14 @@
 #ifndef ARYIELE_AST_ARGUMENT_H
 #define ARYIELE_AST_ARGUMENT_H
 
-#include <Aryiele/Core/Includes.h>
+#include <Aryiele/Common.h>
 
 namespace Aryiele {
     struct Argument {
         Argument(const std::string& identifier, const std::string& type);
 
-        std::string Identifier;
-        std::string Type;
+        std::string identifier;
+        std::string type;
     };
 
 } /* Namespace Aryiele. */

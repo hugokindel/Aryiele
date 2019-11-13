@@ -29,14 +29,14 @@
 #define ARYIELE_CODEGENERATOR_GENERATIONERROR_H
 
 #include <llvm/IR/Value.h>
-#include <Aryiele/Core/Includes.h>
+#include <Aryiele/Common.h>
 
 namespace Aryiele {
     struct GenerationError {
         GenerationError(bool success = false, llvm::Value *value = nullptr);
 
-        bool Success;
-        llvm::Value *Value;
+        bool success;
+        llvm::Value *value;
     };
 
 } /* Namespace Aryiele. */

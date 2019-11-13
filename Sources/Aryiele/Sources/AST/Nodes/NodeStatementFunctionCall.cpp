@@ -31,35 +31,35 @@ namespace Aryiele {
 
     NodeStatementFunctionCall::NodeStatementFunctionCall(const std::string &identifier,
                                                            std::vector<std::shared_ptr<Node>> arguments) :
-        Identifier(identifier), Arguments(arguments) {
+        identifier(identifier), arguments(arguments) {
 
     }
 
-    void NodeStatementFunctionCall::DumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeStatementFunctionCall::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Function Call");
-        auto identifier = std::make_shared<ParserInformation>(node, "Identifier: " + Identifier);
+        auto identifierNode = std::make_shared<ParserInformation>(node, "Identifier: " + identifier);
         auto argumentsNode = std::make_shared<ParserInformation>(node, "Arguments:");
 
         auto i = 0;
 
-        for(auto& argument : Arguments) {
+        for(auto& argument : arguments) {
             auto argumentNode = std::make_shared<ParserInformation>(argumentsNode, std::to_string(i));
             auto body = std::make_shared<ParserInformation>(argumentNode, "Body:");
 
-            argument->DumpInformations(body);
+            argument->dumpInformations(body);
 
-            argumentNode->Children.emplace_back(body);
-            argumentsNode->Children.emplace_back(argumentNode);
+            argumentNode->children.emplace_back(body);
+            argumentsNode->children.emplace_back(argumentNode);
 
             i++;
         }
 
-        node->Children.emplace_back(identifier);
-        node->Children.emplace_back(argumentsNode);
-        parentNode->Children.emplace_back(node);
+        node->children.emplace_back(identifierNode);
+        node->children.emplace_back(argumentsNode);
+        parentNode->children.emplace_back(node);
     }
     
-    NodeEnum NodeStatementFunctionCall::GetType() {
+    NodeEnum NodeStatementFunctionCall::getType() {
         return Node_StatementFunctionCall;
     }
 

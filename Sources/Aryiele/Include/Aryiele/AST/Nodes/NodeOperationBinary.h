@@ -29,7 +29,7 @@
 #define ARYIELE_AST_NODES_NODEOPERATIONBINARY_H
 
 #include <memory>
-#include <Aryiele/Core/Includes.h>
+#include <Aryiele/Common.h>
 #include <Aryiele/Parser/ParserToken.h>
 #include <Aryiele/AST/Nodes/Node.h>
 
@@ -38,12 +38,12 @@ namespace Aryiele {
     public:
         NodeOperationBinary(ParserTokenEnum operationType, std::shared_ptr<Node> lhs, std::shared_ptr<Node> rhs);
 
-        void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
-        NodeEnum GetType() override;
+        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        NodeEnum getType() override;
 
-        ParserTokenEnum OperationType;
-        std::shared_ptr<Node> LHS;
-        std::shared_ptr<Node> RHS;
+        ParserTokenEnum operationType;
+        std::shared_ptr<Node> lhs;
+        std::shared_ptr<Node> rhs;
     };
 
 } /* Namespace Aryiele. */

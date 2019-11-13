@@ -29,7 +29,7 @@
 
 namespace Aryiele {
     LexerToken::LexerToken(const std::string& content, const LexerTokenEnum type) :
-        Content(content), Type(type) {
+        content(content), type(type) {
 
     }
 

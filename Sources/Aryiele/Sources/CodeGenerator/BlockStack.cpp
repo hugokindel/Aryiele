@@ -28,44 +28,44 @@
 #include <Aryiele/CodeGenerator/BlockStack.h>
 
 namespace Aryiele {
-    std::shared_ptr<Block> BlockStack::Create(bool setAsCurrent) {
+    std::shared_ptr<Block> BlockStack::create(bool setAsCurrent) {
         auto block = std::make_shared<Block>();
 
-        if (Current) {
-            block->Parent = Current;
-            Current->Children.emplace_back(block);
+        if (current) {
+            block->parent = current;
+            current->children.emplace_back(block);
         }
 
         if (setAsCurrent)
-            Current = block;
+            current = block;
 
-        return Current;
+        return current;
     }
 
-    std::shared_ptr<Block> BlockStack::EscapeCurrent() {
-        if (Current->Parent)
-            Current = Current->Parent;
+    std::shared_ptr<Block> BlockStack::escapeCurrent() {
+        if (current->parent)
+            current = current->parent;
         else
-            Current = nullptr;
+            current = nullptr;
 
-        return Current;
+        return current;
     }
 
-    llvm::AllocaInst* BlockStack::FindVariable(const std::string& identifier) {
-        auto block = Current;
+    llvm::AllocaInst* BlockStack::findVariable(const std::string& identifier) {
+        auto block = current;
         llvm::AllocaInst* variable = nullptr;
 
-        if (block->Variables.find(identifier) != block->Variables.end())
-            variable = Current->Variables[identifier];
+        if (block->variables.find(identifier) != block->variables.end())
+            variable = current->variables[identifier];
 
         while (!variable) {
-            block = block->Parent;
+            block = block->parent;
 
             if (!block)
                 break;
 
-            if (block->Variables.find(identifier) != block->Variables.end())
-                variable = block->Variables[identifier];
+            if (block->variables.find(identifier) != block->variables.end())
+                variable = block->variables[identifier];
         }
 
         return variable;

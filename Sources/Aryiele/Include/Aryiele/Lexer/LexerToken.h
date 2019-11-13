@@ -46,10 +46,10 @@ namespace Aryiele {
     };
     
     struct LexerToken {
-        LexerToken(const std::string& content = std::string(), LexerTokenEnum type = LexerToken_Unknown);
+        explicit LexerToken(const std::string& content = std::string(), LexerTokenEnum type = LexerToken_Unknown);
 
-        std::string Content;
-        LexerTokenEnum Type;
+        std::string content;
+        LexerTokenEnum type;
     };
 
 } /* Namespace Aryiele. */

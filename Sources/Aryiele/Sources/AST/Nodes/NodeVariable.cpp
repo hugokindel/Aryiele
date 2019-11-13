@@ -29,19 +29,19 @@
 
 namespace Aryiele {
     NodeVariable::NodeVariable(const std::string& identifier) :
-            Identifier(identifier) {
+            identifier(identifier) {
 
     }
 
-    void NodeVariable::DumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeVariable::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Variable");
-        auto body = std::make_shared<ParserInformation>(node, "Identifier: " + Identifier);
+        auto bodyNode = std::make_shared<ParserInformation>(node, "Identifier: " + identifier);
 
-        node->Children.emplace_back(body);
-        parentNode->Children.emplace_back(node);
+        node->children.emplace_back(bodyNode);
+        parentNode->children.emplace_back(node);
     }
     
-    NodeEnum NodeVariable::GetType() {
+    NodeEnum NodeVariable::getType() {
         return Node_Variable;
     }
 

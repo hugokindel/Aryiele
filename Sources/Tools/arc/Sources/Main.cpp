@@ -33,10 +33,10 @@
 //                                                                                  //
 //==================================================================================//
 
-#include <arc/Core/ARC.h>
+#include <ARC/Core/ARC.h>
 
 int main(const int argc, char *argv[]) {
     auto arc = std::make_shared<ARC::ARC>();
 
-    return arc->Run(argc, argv);
+    return arc->run(argc, argv);
 }

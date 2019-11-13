@@ -28,7 +28,7 @@
 #ifndef ARYIELE_AST_NODES_NODEFUNCTION_H
 #define ARYIELE_AST_NODES_NODEFUNCTION_H
 
-#include <Aryiele/Core/Includes.h>
+#include <Aryiele/Common.h>
 #include <Aryiele/AST/Nodes/Node.h>
 #include <Aryiele/AST/Argument.h>
 
@@ -40,13 +40,13 @@ namespace Aryiele {
                      std::vector<Argument> argumentsName,
                      std::vector<std::shared_ptr<Node>> body);
 
-        void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
-        NodeEnum GetType() override;
+        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        NodeEnum getType() override;
 
-        std::string Identifier;
-        std::string Type;
-        std::vector<Argument> Arguments;
-        std::vector<std::shared_ptr<Node>> Body;
+        std::string identifier;
+        std::string type;
+        std::vector<Argument> arguments;
+        std::vector<std::shared_ptr<Node>> body;
     };
 
 } /* Namespace Aryiele. */

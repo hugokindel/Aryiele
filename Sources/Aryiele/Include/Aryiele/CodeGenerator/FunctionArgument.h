@@ -29,14 +29,14 @@
 #define ARYIELE_CODEGENERATOR_FUNCTIONARGUMENT_H
 
 #include <llvm/IR/Type.h>
-#include <Aryiele/Core/Includes.h>
+#include <Aryiele/Common.h>
 
 namespace Aryiele {
     struct FunctionArgument {
         FunctionArgument(const std::string& identifier, llvm::Type *type);
 
-        std::string Identifier;
-        llvm::Type *Type;
+        std::string identifier;
+        llvm::Type *type;
     };
 
 } /* Namespace Aryiele. */

@@ -28,7 +28,7 @@
 #ifndef ARYIELE_AST_NODES_NODESTATEMENTIF_H
 #define ARYIELE_AST_NODES_NODESTATEMENTIF_H
 
-#include <Aryiele/Core/Includes.h>
+#include <Aryiele/Common.h>
 #include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
@@ -40,13 +40,13 @@ namespace Aryiele {
                          std::vector<std::vector<std::shared_ptr<Node>>> elseIfBody =
                                  std::vector<std::vector<std::shared_ptr<Node>>>());
 
-        void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
-        NodeEnum GetType() override;
+        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        NodeEnum getType() override;
 
-        std::shared_ptr<Node> Condition;
-        std::vector<std::shared_ptr<Node>> IfBody;
-        std::vector<std::shared_ptr<Node>> ElseBody;
-        std::vector<std::vector<std::shared_ptr<Node>>> ElseIfBody;
+        std::shared_ptr<Node> condition;
+        std::vector<std::shared_ptr<Node>> ifBody;
+        std::vector<std::shared_ptr<Node>> elseBody;
+        std::vector<std::vector<std::shared_ptr<Node>>> elseIfBody;
     };
 
 } /* Namespace Aryiele. */

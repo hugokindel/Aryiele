@@ -30,28 +30,28 @@
 
 #include <vector>
 #include <Vanir/Module/Module.h>
-#include <Aryiele/Core/Includes.h>
+#include <Aryiele/Common.h>
 #include <Aryiele/Lexer/LexerToken.h>
 
 namespace Aryiele {
 class Lexer : public Vanir::Module<Lexer> {
     public:
-        std::vector<LexerToken> Tokenize(const std::string& filepath);
-        static std::string GetTokenName(LexerToken tokenType);
+        std::vector<LexerToken> lex(const std::string& filepath);
+        static std::string getTokenName(LexerToken tokenType);
 
     private:
         // First pass of the Lexer (separate all characters by expression with a finite-state machine).
-        void UseFiniteStateMachine(std::string expression);
+        void useStateMachine(std::string expression);
         // Second pass of the Lexer (remove all comments as it ain't needed to keep them).
-        void RemoveComments();
+        void removeComments();
         // Third pass of the Lexer (remove all spaces; define literal strings, keywords, booleans).
-        void DetailTokens();
-        LexerTokenEnum GetTransitionTableColumn(char currentCharacter);
+        void detailTokens();
+        static LexerTokenEnum getTransitionTableColumn(char currentCharacter);
 
         std::vector<LexerToken> m_tokens;
     };
 
-    Lexer &GetLexer();
+    Lexer &getLexer();
 
 } /* Namespace Aryiele. */
 

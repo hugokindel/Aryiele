@@ -28,7 +28,7 @@
 #ifndef ARYIELE_AST_NODES_NODESTATEMENTVARIABLEDECLARATION_H
 #define ARYIELE_AST_NODES_NODESTATEMENTVARIABLEDECLARATION_H
 
-#include <Aryiele/Core/Includes.h>
+#include <Aryiele/Common.h>
 #include <Aryiele/AST/Variable.h>
 #include <Aryiele/AST/Nodes/Node.h>
 
@@ -38,10 +38,10 @@ namespace Aryiele {
         NodeStatementVariableDeclaration(
                 std::vector<std::shared_ptr<Variable>> variables = std::vector<std::shared_ptr<Variable>>());
 
-        void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
-        NodeEnum GetType() override;
+        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        NodeEnum getType() override;
 
-        std::vector<std::shared_ptr<Variable>> Variables;
+        std::vector<std::shared_ptr<Variable>> variables;
     };
 
 } /* Namespace Aryiele. */

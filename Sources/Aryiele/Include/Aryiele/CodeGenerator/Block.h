@@ -29,7 +29,7 @@
 #define ARYIELE_CODEGENERATOR_BLOCK_H
 
 #include <llvm/IR/Instructions.h>
-#include <Aryiele/Core/Includes.h>
+#include <Aryiele/Common.h>
 
 namespace Aryiele {
     struct Block {
@@ -37,9 +37,9 @@ namespace Aryiele {
               std::map<std::string, llvm::AllocaInst*> variables = std::map<std::string, llvm::AllocaInst*>(),
               std::vector<std::shared_ptr<Block>> children = std::vector<std::shared_ptr<Block>>());
 
-        std::shared_ptr<Block> Parent = nullptr;
-        std::map<std::string, llvm::AllocaInst*> Variables;
-        std::vector<std::shared_ptr<Block>> Children;
+        std::shared_ptr<Block> parent = nullptr;
+        std::map<std::string, llvm::AllocaInst*> variables;
+        std::vector<std::shared_ptr<Block>> children;
     };
 
 } /* Namespace Aryiele. */
