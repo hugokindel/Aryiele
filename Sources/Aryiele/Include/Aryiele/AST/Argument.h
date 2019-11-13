@@ -25,8 +25,8 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_ARGUMENT_H
-#define ARYIELE_ARGUMENT_H
+#ifndef ARYIELE_AST_ARGUMENT_H
+#define ARYIELE_AST_ARGUMENT_H
 
 #include <Aryiele/Core/Includes.h>
 
@@ -40,4 +40,4 @@ namespace Aryiele {
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_ARGUMENT_H. */
+#endif /* ARYIELE_AST_ARGUMENT_H. */

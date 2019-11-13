@@ -25,8 +25,8 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_LEXER_H
-#define ARYIELE_LEXER_H
+#ifndef ARYIELE_LEXER_LEXER_H
+#define ARYIELE_LEXER_LEXER_H
 
 #include <vector>
 #include <Vanir/Module/Module.h>
@@ -55,4 +55,4 @@ class Lexer : public Vanir::Module<Lexer> {
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_LEXER_H. */
+#endif /* ARYIELE_LEXER_LEXER_H. */

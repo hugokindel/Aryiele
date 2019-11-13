@@ -25,16 +25,16 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARC_BUILDTYPES_H
-#define ARC_BUILDTYPES_H
+#ifndef ARC_CORE_BUILDTYPE_H
+#define ARC_CORE_BUILDTYPE_H
 
 namespace ARC {
-    enum BuildTypes {
-        BuildTypes_IR,
-        BuildTypes_Object,
-        BuildTypes_Executable
+    enum BuildType {
+        BuildType_IR,
+        BuildType_Object,
+        BuildType_Executable
     };
 
 } /* Namespace ARC. */
 
-#endif /* ARC_BUILDTYPES_H. */
+#endif /* ARC_CORE_BUILDTYPE_H. */

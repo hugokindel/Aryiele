@@ -25,8 +25,8 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_BLOCK_H
-#define ARYIELE_BLOCK_H
+#ifndef ARYIELE_CODEGENERATOR_BLOCK_H
+#define ARYIELE_CODEGENERATOR_BLOCK_H
 
 #include <llvm/IR/Instructions.h>
 #include <Aryiele/Core/Includes.h>
@@ -44,4 +44,4 @@ namespace Aryiele {
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_BLOCK_H. */
+#endif /* ARYIELE_CODEGENERATOR_BLOCK_H. */

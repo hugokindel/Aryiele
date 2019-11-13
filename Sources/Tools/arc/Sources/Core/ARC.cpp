@@ -41,7 +41,7 @@
 #include <Aryiele/Lexer/Lexer.h>
 #include <Aryiele/Parser/Parser.h>
 #include <Aryiele/CodeGenerator/CodeGenerator.h>
-#include <ARC/ARC.h>
+#include <ARC/Core/ARC.h>
 
 namespace ARC {
     std::vector<Vanir::CLIOption> ARC::m_options;
@@ -59,16 +59,12 @@ namespace ARC {
     bool ARC::m_keepAllFiles;
 #endif
 
-#ifndef FINAL_RELEASE
-    BuildTypes ARC::m_buildType = BuildTypes_Executable; // TODO: Put IR sometimes
-#else
-    BuildTypes ARC::m_buildType = BuildTypes_Executable;
-#endif
+    BuildType ARC::m_buildType = BuildType_Executable;
     
     int ARC::Run(const int argc, char *argv[]) {
-        Aryiele::Lexer::Start();
-        Aryiele::Parser::Start();
-        Aryiele::CodeGenerator::Start();
+        Aryiele::Lexer::start();
+        Aryiele::Parser::start();
+        Aryiele::CodeGenerator::start();
 
 #ifdef _WIN32
         FILE* stream;
@@ -154,12 +150,12 @@ namespace ARC {
 #endif
         
         if (!m_inputFilepath.empty()) {
-            if (!Vanir::FileSystem::FileExist(m_inputFilepath)) {
+            if (!Vanir::FileSystem::fileExist(m_inputFilepath)) {
                 LOG_WARNING(m_inputFilepath, ": no such file or directory")
                 LOG_ERROR("no input file");
             }
             else {
-                Vanir::Logger::ResetCounters();
+                Vanir::Logger::resetCounters();
                 
                 auto lexerPass = DoLexerPass(m_inputFilepath);
                 
@@ -171,7 +167,7 @@ namespace ARC {
                 
                 DoCodeGeneratorPass(parserPass);
                 
-                if (m_buildType == BuildTypes_Object || m_buildType == BuildTypes_Executable) {
+                if (m_buildType == BuildType_Object || m_buildType == BuildType_Executable) {
                     ARC_RUN_CHECKERRORS();
                     
                     DoObjectGeneratorPass();
@@ -180,7 +176,7 @@ namespace ARC {
                         remove(m_tempIRFilepath.c_str());
                 }
                 
-                if (m_buildType == BuildTypes_Executable) {
+                if (m_buildType == BuildType_Executable) {
                     ARC_RUN_CHECKERRORS();
                     
                     DoExecutableGeneratorPass();
@@ -195,15 +191,15 @@ namespace ARC {
         Vanir::Logger::Stop();
 #endif
         
-        Aryiele::CodeGenerator::Shutdown();
-        Aryiele::Parser::Shutdown();
-        Aryiele::Lexer::Shutdown();
+        Aryiele::CodeGenerator::shutdown();
+        Aryiele::Parser::shutdown();
+        Aryiele::Lexer::shutdown();
         
         return 0;
     }
     
     std::vector<Aryiele::LexerToken> ARC::DoLexerPass(const std::string& filepath) {
-        auto lexer = Aryiele::Lexer::GetInstancePtr();
+        auto lexer = Aryiele::Lexer::getInstancePtr();
         
         auto lexerTokens = lexer->Tokenize(filepath);
         
@@ -221,7 +217,7 @@ namespace ARC {
     }
     
     std::vector<std::shared_ptr<Aryiele::Node>> ARC::DoParserPass(std::vector<Aryiele::LexerToken> lexerTokens) {
-        auto parser = Aryiele::Parser::GetInstancePtr();
+        auto parser = Aryiele::Parser::getInstancePtr();
         
         auto parserTokens = parser->ConvertTokens(std::move(lexerTokens));
         
@@ -253,27 +249,27 @@ namespace ARC {
     }
     
     void ARC::DoCodeGeneratorPass(std::vector<std::shared_ptr<Aryiele::Node>> astNodes) {
-        auto codeGenerator = Aryiele::CodeGenerator::GetInstancePtr();
+        auto codeGenerator = Aryiele::CodeGenerator::getInstancePtr();
         
         codeGenerator->GenerateCode(std::move(astNodes));
         
-        if (::Vanir::Logger::ErrorCount > 0) {
-            LOG_ERROR("ir code generation failed with ", ::Vanir::Logger::ErrorCount, " errors");
+        if (::Vanir::Logger::errorCount > 0) {
+            LOG_ERROR("ir code generation failed with ", ::Vanir::Logger::errorCount, " errors");
         }
         else {
             if (m_verboseMode) {
                 LOG_VERBOSE("ir code generated with success");
             }
             
-            m_tempIRFilepath = Vanir::FileSystem::GetPathWithoutExtension(m_inputFilepath) + ".ll";
+            m_tempIRFilepath = Vanir::FileSystem::getFilePath(m_inputFilepath) + ".ll";
             
             if (!m_outputFilepath.empty()) {
                 switch (m_buildType) {
-                    case BuildTypes_IR:
+                    case BuildType_IR:
                         m_tempIRFilepath = m_outputFilepath;
                         break;
                     default:
-                        m_tempIRFilepath = Vanir::FileSystem::GetPathWithoutExtension(m_outputFilepath) + ".ll";
+                        m_tempIRFilepath = Vanir::FileSystem::getFilePath(m_outputFilepath) + ".ll";
                         break;
                 }
             }
@@ -291,15 +287,15 @@ namespace ARC {
     }
     
     void ARC::DoObjectGeneratorPass() {
-        m_tempOBJFilepath = Vanir::FileSystem::GetPathWithoutExtension(m_inputFilepath) + ".o";
+        m_tempOBJFilepath = Vanir::FileSystem::getFilePath(m_inputFilepath) + ".o";
         
         if (!m_outputFilepath.empty()) {
             switch (m_buildType) {
-                case BuildTypes_Object:
+                case BuildType_Object:
                     m_tempOBJFilepath = m_outputFilepath;
                     break;
                 default:
-                    m_tempOBJFilepath = Vanir::FileSystem::GetPathWithoutExtension(m_outputFilepath) + ".o";
+                    m_tempOBJFilepath = Vanir::FileSystem::getFilePath(m_outputFilepath) + ".o";
                     break;
             }
         }
@@ -317,15 +313,15 @@ namespace ARC {
     }
     
     void ARC::DoExecutableGeneratorPass() {
-        m_tempEXEFilepath = Vanir::FileSystem::GetPathWithoutExtension(m_inputFilepath);
+        m_tempEXEFilepath = Vanir::FileSystem::getFilePath(m_inputFilepath);
         
         if (!m_outputFilepath.empty()) {
             switch (m_buildType) {
-                case BuildTypes_Executable:
+                case BuildType_Executable:
                     m_tempEXEFilepath = m_outputFilepath;
                     break;
                 default:
-                    m_tempEXEFilepath = Vanir::FileSystem::GetPathWithoutExtension(m_outputFilepath);
+                    m_tempEXEFilepath = Vanir::FileSystem::getFilePath(m_outputFilepath);
                     break;
             }
         }
@@ -411,13 +407,13 @@ namespace ARC {
         
         if (!result.empty()) {
             if (result == "ir") {
-                m_buildType = BuildTypes_IR;
+                m_buildType = BuildType_IR;
             }
             else if (result == "obj") {
-                m_buildType = BuildTypes_Object;
+                m_buildType = BuildType_Object;
             }
             else if (result == "exe") {
-                m_buildType = BuildTypes_Executable;
+                m_buildType = BuildType_Executable;
             }
             else {
                 ULOG_WARNING("arc: unknown type value: ", s);

@@ -25,8 +25,8 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_PARSERTOKEN_H
-#define ARYIELE_PARSERTOKEN_H
+#ifndef ARYIELE_PARSER_PARSERTOKEN_H
+#define ARYIELE_PARSER_PARSERTOKEN_H
 
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/Parser/ParserTokens.h>
@@ -41,4 +41,4 @@ namespace Aryiele {
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_PARSERTOKEN_H. */
+#endif /* ARYIELE_PARSER_PARSERTOKEN_H. */

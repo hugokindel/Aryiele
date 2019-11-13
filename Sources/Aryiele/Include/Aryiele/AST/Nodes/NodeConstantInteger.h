@@ -25,8 +25,8 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_NODECONSTANTINTEGER_H
-#define ARYIELE_NODECONSTANTINTEGER_H
+#ifndef ARYIELE_AST_NODES_NODECONSTANTINTEGER_H
+#define ARYIELE_AST_NODES_NODECONSTANTINTEGER_H
 
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/AST/Nodes/Node.h>
@@ -44,4 +44,4 @@ namespace Aryiele {
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_NODECONSTANTINTEGER_H. */
+#endif /* ARYIELE_AST_NODES_NODECONSTANTINTEGER_H. */

@@ -25,9 +25,10 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_LEXERTOKENS_H
-#define ARYIELE_LEXERTOKENS_H
+#ifndef ARYIELE_LEXER_LEXERTOKENS_H
+#define ARYIELE_LEXER_LEXERTOKENS_H
 
+// TODO: Enum
 namespace Aryiele {
     enum LexerTokens {
         LexerTokens_Reject,
@@ -50,4 +51,4 @@ namespace Aryiele {
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_LEXERTOKENS_H. */
+#endif /* ARYIELE_LEXER_LEXERTOKENS_H. */

@@ -25,8 +25,8 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_TOKENTABLE_H
-#define ARYIELE_TOKENTABLE_H
+#ifndef ARYIELE_LEXER_TOKENTABLE_H
+#define ARYIELE_LEXER_TOKENTABLE_H
 
 #include <Aryiele/Lexer/LexerTokens.h>
 
@@ -35,4 +35,4 @@ namespace Aryiele {
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_TOKENTABLE_H. */
+#endif /* ARYIELE_LEXER_TOKENTABLE_H. */

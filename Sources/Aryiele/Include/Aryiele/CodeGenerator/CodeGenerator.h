@@ -25,8 +25,8 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_CODEGENERATOR_H
-#define ARYIELE_CODEGENERATOR_H
+#ifndef ARYIELE_CODEGENERATOR_CODEGENERATOR_H
+#define ARYIELE_CODEGENERATOR_CODEGENERATOR_H
 
 #include <llvm/ADT/APFloat.h>
 #include <llvm/ADT/STLExtras.h>
@@ -96,4 +96,4 @@ namespace Aryiele {
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_CODEGENERATOR_H. */
+#endif /* ARYIELE_CODEGENERATOR_CODEGENERATOR_H. */

@@ -25,8 +25,8 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_LEXERTOKEN_H
-#define ARYIELE_LEXERTOKEN_H
+#ifndef ARYIELE_LEXER_LEXERTOKEN_H
+#define ARYIELE_LEXER_LEXERTOKEN_H
 
 #include <string>
 #include <Aryiele/Lexer/LexerTokens.h>
@@ -41,4 +41,4 @@ namespace Aryiele {
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_LEXERTOKEN_H. */
+#endif /* ARYIELE_LEXER_LEXERTOKEN_H. */

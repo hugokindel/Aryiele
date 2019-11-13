@@ -25,8 +25,8 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_NODEOPERATIONBINARY_H
-#define ARYIELE_NODEOPERATIONBINARY_H
+#ifndef ARYIELE_AST_NODES_NODEOPERATIONBINARY_H
+#define ARYIELE_AST_NODES_NODEOPERATIONBINARY_H
 
 #include <memory>
 #include <Aryiele/Core/Includes.h>
@@ -48,4 +48,4 @@ namespace Aryiele {
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_NODEOPERATIONBINARY_H. */
+#endif /* ARYIELE_AST_NODES_NODEOPERATIONBINARY_H. */

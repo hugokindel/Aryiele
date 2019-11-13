@@ -79,9 +79,9 @@ endif()
 add_definitions(${LLVM_DEFINITIONS})
 
 add_executable(arc
-        Include/ARC/ARC.h
-        Include/ARC/BuildTypes.h
-        Sources/ARC.cpp
+        Include/ARC/Core/ARC.h
+        Include/ARC/Core/BuildType.h
+        Sources/Core/ARC.cpp
         Sources/Main.cpp)
         
 

@@ -25,9 +25,10 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_NODES_H
-#define ARYIELE_NODES_H
+#ifndef ARYIELE_AST_NODES_H
+#define ARYIELE_AST_NODES_H
 
+// TODO: Enum
 namespace Aryiele {
     enum Nodes {
         Nodes_Constant_Double,
@@ -48,4 +49,4 @@ namespace Aryiele {
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_NODES_H. */
+#endif /* ARYIELE_AST_NODES_H. */

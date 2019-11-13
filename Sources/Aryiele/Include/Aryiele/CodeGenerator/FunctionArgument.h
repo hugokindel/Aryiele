@@ -25,8 +25,8 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_FUNCTIONARGUMENT_H
-#define ARYIELE_FUNCTIONARGUMENT_H
+#ifndef ARYIELE_CODEGENERATOR_FUNCTIONARGUMENT_H
+#define ARYIELE_CODEGENERATOR_FUNCTIONARGUMENT_H
 
 #include <llvm/IR/Type.h>
 #include <Aryiele/Core/Includes.h>
@@ -41,4 +41,4 @@ namespace Aryiele {
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_FUNCTIONARGUMENT_H. */
+#endif /* ARYIELE_CODEGENERATOR_FUNCTIONARGUMENT_H. */

@@ -229,7 +229,7 @@ namespace Aryiele {
     }
     
     Lexer &GetLexer() {
-        return Lexer::GetInstance();
+        return Lexer::getInstance();
     }
 
 } /* Namespace Aryiele. */

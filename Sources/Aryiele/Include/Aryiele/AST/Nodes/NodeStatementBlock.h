@@ -25,8 +25,8 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_NODESTATEMENTBLOCK_H
-#define ARYIELE_NODESTATEMENTBLOCK_H
+#ifndef ARYIELE_AST_NODES_NODESTATEMENTBLOCK_H
+#define ARYIELE_AST_NODES_NODESTATEMENTBLOCK_H
 
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/AST/Nodes/Node.h>
@@ -44,4 +44,4 @@ namespace Aryiele {
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_NODESTATEMENTBLOCK_H. */
+#endif /* ARYIELE_AST_NODES_NODESTATEMENTBLOCK_H. */

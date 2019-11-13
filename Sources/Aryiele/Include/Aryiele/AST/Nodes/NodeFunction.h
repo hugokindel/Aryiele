@@ -25,8 +25,8 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_NODEFUNCTION_H
-#define ARYIELE_NODEFUNCTION_H
+#ifndef ARYIELE_AST_NODES_NODEFUNCTION_H
+#define ARYIELE_AST_NODES_NODEFUNCTION_H
 
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/AST/Nodes/Node.h>
@@ -51,4 +51,4 @@ namespace Aryiele {
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_NODEFUNCTION_H. */
+#endif /* ARYIELE_AST_NODES_NODEFUNCTION_H. */

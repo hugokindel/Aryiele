@@ -33,7 +33,7 @@
 //                                                                                  //
 //==================================================================================//
 
-#include <arc/ARC.h>
+#include <arc/Core/ARC.h>
 
 int main(const int argc, char *argv[]) {
     auto arc = std::make_shared<ARC::ARC>();

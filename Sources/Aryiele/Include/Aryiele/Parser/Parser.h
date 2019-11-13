@@ -25,8 +25,8 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_PARSER_H
-#define ARYIELE_PARSER_H
+#ifndef ARYIELE_PARSER_PARSER_H
+#define ARYIELE_PARSER_PARSER_H
 
 #include <vector>
 #include <Vanir/Module/Module.h>
@@ -87,4 +87,4 @@ if (GetParser().GetCurrentToken().Type != EXPECTEDTOKENTYPE) { \
     PARSER_CHECKTOKEN(EXPECTEDTOKENTYPE); \
 }
 
-#endif /* ARYIELE_PARSER_H. */
+#endif /* ARYIELE_PARSER_PARSER_H. */

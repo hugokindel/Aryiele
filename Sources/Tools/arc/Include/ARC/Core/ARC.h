@@ -25,55 +25,55 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_ARC_H
-#define ARYIELE_ARC_H
+#ifndef ARYIELE_CORE_ARC_H
+#define ARYIELE_CORE_ARC_H
 
 #include <Vanir/CLI/CLI.h>
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/Lexer/Lexer.h>
 #include <Aryiele/Parser/Parser.h>
-#include <ARC/BuildTypes.h>
+#include <ARC/Core/BuildType.h>
 
 #define ARC_VERSION "0.0.1"
 #define FINAL_RELEASE // ONLY use for final releases.
 
 #include <Vanir/Logger/Logger.h>
 
-#define LOG(...) ::Vanir::Logger::Log(__VA_ARGS__);
+#define LOG(...) ::Vanir::Logger::log(__VA_ARGS__);
 #define LOG_INFO(...) { \
-    ::Vanir::Logger::Log("arc: ", __VA_ARGS__); \
-    ::Vanir::Logger::InfoCount += 1; \
+    ::Vanir::Logger::log("arc: ", __VA_ARGS__); \
+    ::Vanir::Logger::infoCount += 1; \
 }
 #define LOG_VERBOSE(...) { \
-    ::Vanir::Logger::Log("arc: ", ::Vanir::LogColor(::Vanir::TerminalColor_Bright_Blue), "verbose: ", ::Vanir::LogColor(), __VA_ARGS__); \
-    ::Vanir::Logger::WarningCount += 1; \
+    ::Vanir::Logger::log("arc: ", ::Vanir::LogColor(::Vanir::LogColor_Bright_Blue), "verbose: ", ::Vanir::LogColor(), __VA_ARGS__); \
+    ::Vanir::Logger::warningCount += 1; \
 }
 #define LOG_WARNING(...) { \
-    ::Vanir::Logger::Log("arc: ", ::Vanir::LogColor(::Vanir::TerminalColor_Yellow), "warning: ", ::Vanir::LogColor(), __VA_ARGS__); \
-    ::Vanir::Logger::WarningCount += 1; \
+    ::Vanir::Logger::log("arc: ", ::Vanir::LogColor(::Vanir::LogColor_Yellow), "warning: ", ::Vanir::LogColor(), __VA_ARGS__); \
+    ::Vanir::Logger::warningCount += 1; \
 }
 #define LOG_ERROR(...) { \
-    ::Vanir::Logger::Log("arc: ", ::Vanir::LogColor(::Vanir::TerminalColor_Red), "error: ", ::Vanir::LogColor(), __VA_ARGS__); \
-    ::Vanir::Logger::ErrorCount += 1; \
+    ::Vanir::Logger::log("arc: ", ::Vanir::LogColor(::Vanir::LogColor_Red), "error: ", ::Vanir::LogColor(), __VA_ARGS__); \
+    ::Vanir::Logger::errorCount += 1; \
 }
 
 #ifdef _WIN32
-#define ULOG(...) ::Vanir::Logger::ULog(__VA_ARGS__);
+#define ULOG(...) ::Vanir::Logger::ulog(__VA_ARGS__);
 #define ULOG_INFO(...) { \
-    ::Vanir::Logger::ULog("arc: ", __VA_ARGS__); \
-    ::Vanir::Logger::InfoCount += 1; \
+    ::Vanir::Logger::ulog("arc: ", __VA_ARGS__); \
+    ::Vanir::Logger::infoCount += 1; \
 }
 #define ULOG_VERBOSE(...) { \
-    ::Vanir::Logger::ULog("arc: ", ::Vanir::LogColor(::Vanir::TerminalColor_Bright_Blue), "verbose: ", ::Vanir::LogColor(), __VA_ARGS__); \
-    ::Vanir::Logger::WarningCount += 1; \
+    ::Vanir::Logger::ulog("arc: ", ::Vanir::LogColor(::Vanir::LogColor_Bright_Blue), "verbose: ", ::Vanir::LogColor(), __VA_ARGS__); \
+    ::Vanir::Logger::warningCount += 1; \
 }
 #define ULOG_WARNING(...) { \
-    ::Vanir::Logger::ULog("arc: ", ::Vanir::LogColor(::Vanir::TerminalColor_Yellow), "warning: ", ::Vanir::LogColor(), __VA_ARGS__); \
-    ::Vanir::Logger::WarningCount += 1; \
+    ::Vanir::Logger::ulog("arc: ", ::Vanir::LogColor(::Vanir::LogColor_Yellow), "warning: ", ::Vanir::LogColor(), __VA_ARGS__); \
+    ::Vanir::Logger::warningCount += 1; \
 }
 #define ULOG_ERROR(...) { \
-    ::Vanir::Logger::ULog("arc: ", ::Vanir::LogColor(::Vanir::TerminalColor_Red), "error: ", ::Vanir::LogColor(), __VA_ARGS__); \
-    ::Vanir::Logger::ErrorCount += 1; \
+    ::Vanir::Logger::ulog("arc: ", ::Vanir::LogColor(::Vanir::LogColor_Red), "error: ", ::Vanir::LogColor(), __VA_ARGS__); \
+    ::Vanir::Logger::errorCount += 1; \
 }
 #else
 #define ULOG(...) LOG(__VA_ARGS__)
@@ -83,9 +83,9 @@
 #endif
 
 #define ARC_RUN_CHECKERRORS() { \
-    if (::Vanir::Logger::ErrorCount > 0) \
+    if (::Vanir::Logger::errorCount > 0) \
         return 0; \
-    Vanir::Logger::ResetCounters(); \
+    Vanir::Logger::resetCounters(); \
 }
 
 namespace ARC {
@@ -119,9 +119,9 @@ namespace ARC {
         static std::string m_tempArgv;
         static bool m_verboseMode;
         static bool m_keepAllFiles;
-        static BuildTypes m_buildType;
+        static BuildType m_buildType;
     };
 
 } /* Namespace ARC. */
 
-#endif /* ARYIELE_ARC_H. */
+#endif /* ARYIELE_CORE_ARC_H. */

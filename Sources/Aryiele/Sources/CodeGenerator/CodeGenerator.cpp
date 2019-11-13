@@ -422,7 +422,7 @@ namespace Aryiele {
     }
     
     CodeGenerator &GetCodeGenerator() {
-        return CodeGenerator::GetInstance();
+        return CodeGenerator::getInstance();
     }
 
 } /* Namespace Aryiele. */

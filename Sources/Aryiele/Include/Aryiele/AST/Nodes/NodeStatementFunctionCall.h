@@ -25,8 +25,8 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_NODESTATEMENTFUNCTIONCALL_H
-#define ARYIELE_NODESTATEMENTFUNCTIONCALL_H
+#ifndef ARYIELE_AST_NODES_NODESTATEMENTFUNCTIONCALL_H
+#define ARYIELE_AST_NODES_NODESTATEMENTFUNCTIONCALL_H
 
 #include <memory>
 #include <vector>
@@ -47,4 +47,4 @@ namespace Aryiele {
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_NODESTATEMENTFUNCTIONCALL_H. */
+#endif /* ARYIELE_AST_NODES_NODESTATEMENTFUNCTIONCALL_H. */

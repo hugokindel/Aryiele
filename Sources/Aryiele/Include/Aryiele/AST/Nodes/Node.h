@@ -25,8 +25,8 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_NODE_H
-#define ARYIELE_NODE_H
+#ifndef ARYIELE_AST_NODES_NODE_H
+#define ARYIELE_AST_NODES_NODE_H
 
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/Parser/ParserInformation.h>
@@ -43,4 +43,4 @@ namespace Aryiele {
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_NODE_H. */
+#endif /* ARYIELE_AST_NODES_NODE_H. */

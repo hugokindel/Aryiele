@@ -25,8 +25,8 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_NODESTATEMENTVARIABLEDECLARATION_H
-#define ARYIELE_NODESTATEMENTVARIABLEDECLARATION_H
+#ifndef ARYIELE_AST_NODES_NODESTATEMENTVARIABLEDECLARATION_H
+#define ARYIELE_AST_NODES_NODESTATEMENTVARIABLEDECLARATION_H
 
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/AST/Variable.h>
@@ -46,4 +46,4 @@ namespace Aryiele {
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_NODESTATEMENTVARIABLEDECLARATION_H. */
+#endif /* ARYIELE_AST_NODES_NODESTATEMENTVARIABLEDECLARATION_H. */

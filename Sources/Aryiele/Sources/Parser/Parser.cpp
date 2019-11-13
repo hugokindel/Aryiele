@@ -617,7 +617,7 @@ namespace Aryiele {
     }
     
     Parser &GetParser() {
-        return Parser::GetInstance();
+        return Parser::getInstance();
     }
     
 } /* Namespace Aryiele. */

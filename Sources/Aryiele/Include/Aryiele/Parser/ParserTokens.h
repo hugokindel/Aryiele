@@ -25,9 +25,10 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_PARSERTOKENS_H
-#define ARYIELE_PARSERTOKENS_H
+#ifndef ARYIELE_PARSER_PARSERTOKENS_H
+#define ARYIELE_PARSER_PARSERTOKENS_H
 
+// TODO: Enum
 namespace Aryiele {
     enum ParserTokens {
         ParserTokens_LiteralValue_Integer, // A number, example: 9
@@ -111,4 +112,4 @@ namespace Aryiele {
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_PARSERTOKENS_H. */
+#endif /* ARYIELE_PARSER_PARSERTOKENS_H. */

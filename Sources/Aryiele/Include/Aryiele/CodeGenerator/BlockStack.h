@@ -25,8 +25,8 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_BLOCKSTACK_H
-#define ARYIELE_BLOCKSTACK_H
+#ifndef ARYIELE_CODEGENERATOR_BLOCKSTACK_H
+#define ARYIELE_CODEGENERATOR_BLOCKSTACK_H
 
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/CodeGenerator/Block.h>
@@ -45,4 +45,4 @@ namespace Aryiele {
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_BLOCKSTACK_H. */
+#endif /* ARYIELE_CODEGENERATOR_BLOCKSTACK_H. */

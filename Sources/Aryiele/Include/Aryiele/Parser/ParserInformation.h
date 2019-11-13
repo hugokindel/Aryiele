@@ -25,8 +25,8 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_PARSERDUMPTREENODE_H
-#define ARYIELE_PARSERDUMPTREENODE_H
+#ifndef ARYIELE_PARSER_PARSERDUMPTREENODE_H
+#define ARYIELE_PARSER_PARSERDUMPTREENODE_H
 
 #include <string>
 #include <vector>
@@ -45,4 +45,4 @@ namespace Aryiele {
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_PARSERDUMPTREENODE_H. */
+#endif /* ARYIELE_PARSER_PARSERDUMPTREENODE_H. */

@@ -25,8 +25,8 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_GENERATIONERROR_H
-#define ARYIELE_GENERATIONERROR_H
+#ifndef ARYIELE_CODEGENERATOR_GENERATIONERROR_H
+#define ARYIELE_CODEGENERATOR_GENERATIONERROR_H
 
 #include <llvm/IR/Value.h>
 #include <Aryiele/Core/Includes.h>
@@ -41,4 +41,4 @@ namespace Aryiele {
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_GENERATIONERROR_H. */
+#endif /* ARYIELE_CODEGENERATOR_GENERATIONERROR_H. */
