@@ -39,7 +39,7 @@ namespace Aryiele {
                 std::vector<std::shared_ptr<Variable>> variables = std::vector<std::shared_ptr<Variable>>());
 
         void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
-        Nodes GetType() override;
+        NodeEnum GetType() override;
 
         std::vector<std::shared_ptr<Variable>> Variables;
     };

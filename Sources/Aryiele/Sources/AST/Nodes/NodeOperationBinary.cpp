@@ -30,7 +30,7 @@
 
 namespace Aryiele {
 
-    NodeOperationBinary::NodeOperationBinary(ParserTokens operationType,
+    NodeOperationBinary::NodeOperationBinary(ParserTokenEnum operationType,
                                              std::shared_ptr<Node> lhs,
                                              std::shared_ptr<Node> rhs) :
             OperationType(operationType),
@@ -55,9 +55,9 @@ namespace Aryiele {
 
         parentNode->Children.emplace_back(node);
     }
-
-    Nodes NodeOperationBinary::GetType() {
-        return Nodes_Operation_Binary;
+    
+    NodeEnum NodeOperationBinary::GetType() {
+        return Node_OperationBinary;
     }
 
 } /* Namespace Aryiele. */

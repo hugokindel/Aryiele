@@ -29,14 +29,27 @@
 #define ARYIELE_LEXER_LEXERTOKEN_H
 
 #include <string>
-#include <Aryiele/Lexer/LexerTokens.h>
 
 namespace Aryiele {
+    enum LexerTokenEnum {
+        LexerToken_Reject,
+        LexerToken_Number,
+        LexerToken_String,
+        LexerToken_Operator,
+        LexerToken_Separator,
+        LexerToken_Identifier,
+        // Not on final pass.
+        LexerToken_StringQuote,
+        LexerToken_Space,
+        LexerToken_Newline,
+        LexerToken_Unknown
+    };
+    
     struct LexerToken {
-        LexerToken(const std::string& content = std::string(), LexerTokens type = LexerTokens_Unknown);
+        LexerToken(const std::string& content = std::string(), LexerTokenEnum type = LexerToken_Unknown);
 
         std::string Content;
-        LexerTokens Type;
+        LexerTokenEnum Type;
     };
 
 } /* Namespace Aryiele. */

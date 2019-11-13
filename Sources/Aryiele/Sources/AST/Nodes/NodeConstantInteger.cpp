@@ -40,9 +40,9 @@ namespace Aryiele {
         node->Children.emplace_back(body);
         parentNode->Children.emplace_back(node);
     }
-
-    Nodes NodeConstantInteger::GetType() {
-        return Nodes_Constant_Integer;
+    
+    NodeEnum NodeConstantInteger::GetType() {
+        return Node_ConstantInteger;
     }
 
 } /* Namespace Aryiele. */

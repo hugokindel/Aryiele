@@ -43,9 +43,9 @@ namespace Aryiele {
         node->Children.emplace_back(body);
         parentNode->Children.emplace_back(node);
     }
-
-    Nodes NodeStatementReturn::GetType() {
-        return Nodes_Statement_Return;
+    
+    NodeEnum NodeStatementReturn::GetType() {
+        return Node_StatementReturn;
     }
 
 } /* Namespace Aryiele. */

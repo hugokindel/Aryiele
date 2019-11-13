@@ -67,8 +67,8 @@ namespace Aryiele {
         parentNode->Children.emplace_back(node);
     }
 
-    Nodes NodeFunction::GetType() {
-        return Nodes_Function_Prototype;
+    NodeEnum NodeFunction::GetType() {
+        return Node_FunctionPrototype;
     }
 
 } /* Namespace Aryiele. */

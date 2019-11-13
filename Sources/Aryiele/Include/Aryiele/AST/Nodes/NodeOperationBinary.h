@@ -30,18 +30,18 @@
 
 #include <memory>
 #include <Aryiele/Core/Includes.h>
-#include <Aryiele/Parser/ParserTokens.h>
+#include <Aryiele/Parser/ParserToken.h>
 #include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
     class NodeOperationBinary : public Node {
     public:
-        NodeOperationBinary(ParserTokens operationType, std::shared_ptr<Node> lhs, std::shared_ptr<Node> rhs);
+        NodeOperationBinary(ParserTokenEnum operationType, std::shared_ptr<Node> lhs, std::shared_ptr<Node> rhs);
 
         void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
-        Nodes GetType() override;
+        NodeEnum GetType() override;
 
-        ParserTokens OperationType;
+        ParserTokenEnum OperationType;
         std::shared_ptr<Node> LHS;
         std::shared_ptr<Node> RHS;
     };

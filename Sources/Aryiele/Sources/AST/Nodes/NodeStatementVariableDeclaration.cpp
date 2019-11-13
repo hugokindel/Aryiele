@@ -59,9 +59,9 @@ namespace Aryiele {
 
         parentNode->Children.emplace_back(node);
     }
-
-    Nodes NodeStatementVariableDeclaration::GetType() {
-        return Nodes_Statement_VariableDeclaration;
+    
+    NodeEnum NodeStatementVariableDeclaration::GetType() {
+        return Node_StatementVariableDeclaration;
     }
 
 } /* Namespace Aryiele. */

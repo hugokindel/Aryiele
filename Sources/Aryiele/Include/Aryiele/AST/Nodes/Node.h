@@ -30,15 +30,27 @@
 
 #include <Aryiele/Core/Includes.h>
 #include <Aryiele/Parser/ParserInformation.h>
-#include <Aryiele/AST/Nodes.h>
 
 namespace Aryiele {
+    enum NodeEnum {
+        Node_ConstantDouble,
+        Node_ConstantInteger,
+        Node_FunctionPrototype,
+        Node_OperationBinary,
+        Node_StatementBlock,
+        Node_StatementFunctionCall,
+        Node_StatementIf,
+        Node_StatementReturn,
+        Node_StatementVariableDeclaration,
+        Node_Variable
+    };
+    
     class Node {
     public:
         virtual ~Node() = default;
 
         virtual void DumpInformations(std::shared_ptr<ParserInformation> parentNode) = 0;
-        virtual Nodes GetType() = 0;
+        virtual NodeEnum GetType() = 0;
     };
 
 } /* Namespace Aryiele. */

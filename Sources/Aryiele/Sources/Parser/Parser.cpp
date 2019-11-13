@@ -70,113 +70,113 @@ namespace Aryiele {
     
     std::vector<ParserToken> Parser::ConvertTokens(std::vector<LexerToken> LexerTokens) {
         auto tokens = std::vector<ParserToken>();
-        auto lastToken = LexerToken(std::string(), LexerTokens_Unknown);
+        auto lastToken = LexerToken(std::string(), LexerToken_Unknown);
 
         for (auto& token : LexerTokens) {
             switch (token.Type) {
-                case LexerTokens_Number:
+                case LexerToken_Number:
                     // Numbers.
                     if (token.Content.find('.') != std::string::npos)
-                        tokens.emplace_back(token.Content, ParserTokens_LiteralValue_Decimal);
+                        tokens.emplace_back(token.Content, ParserToken_LiteralValueDecimal);
                     else
-                        tokens.emplace_back(token.Content, ParserTokens_LiteralValue_Integer);
+                        tokens.emplace_back(token.Content, ParserToken_LiteralValueInteger);
                     break;
-                case LexerTokens_String:
-                    tokens.emplace_back(token.Content, ParserTokens_LiteralValue_String);
+                case LexerToken_String:
+                    tokens.emplace_back(token.Content, ParserToken_LiteralValueString);
                     break;
-                case LexerTokens_Operator:
+                case LexerToken_Operator:
                     // Operators.
                     if (token.Content == "=")
-                        tokens.emplace_back(token.Content, ParserTokens_Operator_Equal);
+                        tokens.emplace_back(token.Content, ParserToken_OperatorEqual);
                     // Arithmetic Operators.
                     else if ((token.Content == "+" &&
-                             lastToken.Type != LexerTokens_Number &&
-                             lastToken.Type != LexerTokens_Identifier) &&
+                             lastToken.Type != LexerToken_Number &&
+                             lastToken.Type != LexerToken_Identifier) &&
                              lastToken.Content != "(" &&
                              lastToken.Content != ")")
-                        tokens.emplace_back(token.Content, ParserTokens_Operator_Arithmetic_UnaryPlus);
+                        tokens.emplace_back(token.Content, ParserToken_OperatorArithmeticUnaryPlus);
                     else if (token.Content == "+")
-                        tokens.emplace_back(token.Content, ParserTokens_Operator_Arithmetic_Plus);
+                        tokens.emplace_back(token.Content, ParserToken_OperatorArithmeticPlus);
                     else if ((token.Content == "-" &&
-                              lastToken.Type != LexerTokens_Number &&
-                              lastToken.Type != LexerTokens_Identifier) &&
+                              lastToken.Type != LexerToken_Number &&
+                              lastToken.Type != LexerToken_Identifier) &&
                               lastToken.Content != "(" &&
                               lastToken.Content != ")")
-                        tokens.emplace_back(token.Content, ParserTokens_Operator_Arithmetic_UnaryMinus);
+                        tokens.emplace_back(token.Content, ParserToken_OperatorArithmeticUnaryMinus);
                     else if (token.Content == "-")
-                        tokens.emplace_back(token.Content, ParserTokens_Operator_Arithmetic_Minus);
+                        tokens.emplace_back(token.Content, ParserToken_OperatorArithmeticMinus);
                     else if (token.Content == "*")
-                        tokens.emplace_back(token.Content, ParserTokens_Operator_Arithmetic_Multiply);
+                        tokens.emplace_back(token.Content, ParserToken_OperatorArithmeticMultiply);
                     else if (token.Content == "/")
-                        tokens.emplace_back(token.Content, ParserTokens_Operator_Arithmetic_Divide);
+                        tokens.emplace_back(token.Content, ParserToken_OperatorArithmeticDivide);
                     else if (token.Content == "%")
-                        tokens.emplace_back(token.Content, ParserTokens_Operator_Arithmetic_Remainder);
+                        tokens.emplace_back(token.Content, ParserToken_OperatorArithmeticRemainder);
                     // Comparison Operators.
                     else if (token.Content == "==")
-                        tokens.emplace_back(token.Content, ParserTokens_Operator_Comparison_Equal);
+                        tokens.emplace_back(token.Content, ParserToken_OperatorComparisonEqual);
                     else if (token.Content == "!=")
-                        tokens.emplace_back(token.Content, ParserTokens_Operator_Comparison_NotEqual);
+                        tokens.emplace_back(token.Content, ParserToken_OperatorComparisonNotEqual);
                     else if (token.Content == "<")
-                        tokens.emplace_back(token.Content, ParserTokens_Operator_Comparison_LessThan);
+                        tokens.emplace_back(token.Content, ParserToken_OperatorComparisonLessThan);
                     else if (token.Content == ">")
-                        tokens.emplace_back(token.Content, ParserTokens_Operator_Comparison_GreaterThan);
+                        tokens.emplace_back(token.Content, ParserToken_OperatorComparisonGreaterThan);
                     else if (token.Content == "<=")
-                        tokens.emplace_back(token.Content, ParserTokens_Operator_Comparison_LessThanOrEqual);
+                        tokens.emplace_back(token.Content, ParserToken_OperatorComparisonLessThanOrEqual);
                     else if (token.Content == ">=")
-                        tokens.emplace_back(token.Content, ParserTokens_Operator_Comparison_GreaterThanOrEqual);
+                        tokens.emplace_back(token.Content, ParserToken_OperatorComparisonGreaterThanOrEqual);
                     // Logical Operators.
                     else if (token.Content == "&&")
-                        tokens.emplace_back(token.Content, ParserTokens_Operator_Logical_And);
+                        tokens.emplace_back(token.Content, ParserToken_OperatorLogicalAnd);
                     else if (token.Content == "||")
-                        tokens.emplace_back(token.Content, ParserTokens_Operator_Logical_Or);
+                        tokens.emplace_back(token.Content, ParserToken_OperatorLogicalOr);
                     else if (token.Content == "!")
-                        tokens.emplace_back(token.Content, ParserTokens_Operator_Logical_Not);
+                        tokens.emplace_back(token.Content, ParserToken_OperatorLogicalNot);
                     else
-                        tokens.emplace_back(token.Content, ParserTokens_Unknown);
+                        tokens.emplace_back(token.Content, ParserToken_Unknown);
                     break;
-                case LexerTokens_Separator:
+                case LexerToken_Separator:
                     // Separators
                     if (token.Content == "(")
-                        tokens.emplace_back(token.Content, ParserTokens_Separator_RoundBracket_Open);
+                        tokens.emplace_back(token.Content, ParserToken_SeparatorRoundBracketOpen);
                     else if (token.Content == ")")
-                        tokens.emplace_back(token.Content, ParserTokens_Separator_RoundBracket_Closed);
+                        tokens.emplace_back(token.Content, ParserToken_SeparatorRoundBracketClosed);
                     else if (token.Content == "[")
-                        tokens.emplace_back(token.Content, ParserTokens_Separator_SquareBracket_Open);
+                        tokens.emplace_back(token.Content, ParserToken_SeparatorSquareBracketOpen);
                     else if (token.Content == "]")
-                        tokens.emplace_back(token.Content, ParserTokens_Separator_SquareBracket_Closed);
+                        tokens.emplace_back(token.Content, ParserToken_SeparatorSquareBracketClosed);
                     else if (token.Content == "{")
-                        tokens.emplace_back(token.Content, ParserTokens_Separator_CurlyBracket_Open);
+                        tokens.emplace_back(token.Content, ParserToken_SeparatorCurlyBracketOpen);
                     else if (token.Content == "}")
-                        tokens.emplace_back(token.Content, ParserTokens_Separator_CurlyBracket_Closed);
+                        tokens.emplace_back(token.Content, ParserToken_SeparatorCurlyBracketClosed);
                     else if (token.Content == ";")
-                        tokens.emplace_back(token.Content, ParserTokens_Separator_Semicolon);
+                        tokens.emplace_back(token.Content, ParserToken_SeparatorSemicolon);
                     else if (token.Content == ":")
-                        tokens.emplace_back(token.Content, ParserTokens_Separator_Colon);
+                        tokens.emplace_back(token.Content, ParserToken_SeparatorColon);
                     else if (token.Content == ",")
-                        tokens.emplace_back(token.Content, ParserTokens_Separator_Comma);
+                        tokens.emplace_back(token.Content, ParserToken_SeparatorComma);
                     else
-                        tokens.emplace_back(token.Content, ParserTokens_Unknown);
+                        tokens.emplace_back(token.Content, ParserToken_Unknown);
                     break;
-                case LexerTokens_Identifier:
+                case LexerToken_Identifier:
                     // Boolean
                     if (token.Content == "true" || token.Content == "false")
-                        tokens.emplace_back(token.Content, ParserTokens_LiteralValue_Boolean);
+                        tokens.emplace_back(token.Content, ParserToken_LiteralValueBoolean);
                     // Keywords
                     else if (token.Content == "func")
-                        tokens.emplace_back(token.Content, ParserTokens_Keyword_TopLevel_Function);
+                        tokens.emplace_back(token.Content, ParserToken_Keyword_TopLevel_Function);
                     else if (token.Content == "var")
-                        tokens.emplace_back(token.Content, ParserTokens_Keyword_Var);
+                        tokens.emplace_back(token.Content, ParserToken_KeywordVar);
                     else if (token.Content == "return")
-                        tokens.emplace_back(token.Content, ParserTokens_Keyword_Return);
+                        tokens.emplace_back(token.Content, ParserToken_KeywordReturn);
                     else if (token.Content == "if")
-                        tokens.emplace_back(token.Content, ParserTokens_Keyword_If);
+                        tokens.emplace_back(token.Content, ParserToken_KeywordIf);
                     else if (token.Content == "else")
-                        tokens.emplace_back(token.Content, ParserTokens_Keyword_Else);
+                        tokens.emplace_back(token.Content, ParserToken_KeywordElse);
                     else
-                        tokens.emplace_back(token.Content, ParserTokens_Identifier);
+                        tokens.emplace_back(token.Content, ParserToken_Identifier);
                     break;
                 default:
-                    tokens.emplace_back(token.Content, ParserTokens_Unknown);
+                    tokens.emplace_back(token.Content, ParserToken_Unknown);
                     break;
             }
 
@@ -186,82 +186,81 @@ namespace Aryiele {
         return tokens;
     }
 
-    std::string Parser::GetTokenName(ParserTokens tokenType) {
+    std::string Parser::GetTokenName(ParserTokenEnum tokenType) {
         switch (tokenType) {
-
-            case ParserTokens_LiteralValue_Integer:
-                return "LiteralValue_Integer";
-            case ParserTokens_LiteralValue_Decimal:
-                return "LiteralValue_Decimal";
-            case ParserTokens_LiteralValue_String:
-                return "LiteralValue_String";
-            case ParserTokens_LiteralValue_Boolean:
-                return "LiteralValue_Boolean";
-            case ParserTokens_Operator_Equal:
-                return "Operator_Equal";
-            case ParserTokens_Operator_Arithmetic_Plus:
-                return "Operator_Arithmetic_Plus";
-            case ParserTokens_Operator_Arithmetic_UnaryPlus:
-                return "Operator_Arithmetic_UnaryPlus";
-            case ParserTokens_Operator_Arithmetic_Minus:
-                return "Operator_Arithmetic_Minus";
-            case ParserTokens_Operator_Arithmetic_UnaryMinus:
-                return "Operator_Arithmetic_UnaryMinus";
-            case ParserTokens_Operator_Arithmetic_Multiply:
-                return "Operator_Arithmetic_Multiply";
-            case ParserTokens_Operator_Arithmetic_Divide:
-                return "Operator_Arithmetic_Divide";
-            case ParserTokens_Operator_Arithmetic_Remainder:
-                return "Operator_Arithmetic_Remainder";
-            case ParserTokens_Operator_Comparison_Equal:
-                return "Operator_Comparison_Equal";
-            case ParserTokens_Operator_Comparison_NotEqual:
-                return "Operator_Comparison_NotEqual";
-            case ParserTokens_Operator_Comparison_LessThan:
-                return "Operator_Comparison_LessThan";
-            case ParserTokens_Operator_Comparison_GreaterThan:
-                return "Operator_Comparison_GreaterThan";
-            case ParserTokens_Operator_Comparison_LessThanOrEqual:
-                return "Operator_Comparison_LessThanOrEqual";
-            case ParserTokens_Operator_Comparison_GreaterThanOrEqual:
-                return "Operator_Comparison_GreaterThanOrEqual";
-            case ParserTokens_Operator_Logical_And:
-                return "Operator_Logical_And";
-            case ParserTokens_Operator_Logical_Or:
-                return "Operator_Logical_Or";
-            case ParserTokens_Operator_Logical_Not:
-                return "Operator_Logical_Not";
-            case ParserTokens_Separator_RoundBracket_Open:
-                return "Separator_RoundBracket_Open";
-            case ParserTokens_Separator_RoundBracket_Closed:
-                return "Separator_RoundBracket_Closed";
-            case ParserTokens_Separator_SquareBracket_Open:
-                return "Separator_SquareBracket_Open";
-            case ParserTokens_Separator_SquareBracket_Closed:
-                return "Separator_SquareBracket_Closed";
-            case ParserTokens_Separator_CurlyBracket_Open:
-                return "Separator_CurlyBracket_Open";
-            case ParserTokens_Separator_CurlyBracket_Closed:
-                return "Separator_CurlyBracket_Closed";
-            case ParserTokens_Separator_Colon:
-                return "Separator_Colon";
-            case ParserTokens_Separator_Comma:
-                return "Separator_Comma";
-            case ParserTokens_Separator_Semicolon:
-                return "Separator_Semicolon";
-            case ParserTokens_Keyword_TopLevel_Function:
-                return "Keyword_TopLevel_Function";
-            case ParserTokens_Keyword_Var:
-                return "Keyword_Var";
-            case ParserTokens_Keyword_Return:
-                return "Keyword_Return";
-            case ParserTokens_Keyword_If:
-                return "Keyword_If";
-            case ParserTokens_Keyword_Else:
-                return "Keyword_Else";
-            case ParserTokens_Identifier:
+            case ParserToken_LiteralValueInteger:
+                return "LiteralValueInteger";
+            case ParserToken_LiteralValueDecimal:
+                return "LiteralValueDecimal";
+            case ParserToken_LiteralValueString:
+                return "LiteralValueString";
+            case ParserToken_LiteralValueBoolean:
+                return "LiteralValueBoolean";
+            case ParserToken_OperatorEqual:
+                return "OperatorEqual";
+            case ParserToken_OperatorArithmeticPlus:
+                return "OperatorArithmeticPlus";
+            case ParserToken_OperatorArithmeticUnaryPlus:
+                return "OperatorArithmeticUnaryPlus";
+            case ParserToken_OperatorArithmeticMinus:
+                return "OperatorArithmeticMinus";
+            case ParserToken_OperatorArithmeticUnaryMinus:
+                return "OperatorArithmeticUnaryMinus";
+            case ParserToken_OperatorArithmeticMultiply:
+                return "OperatorArithmeticMultiply";
+            case ParserToken_OperatorArithmeticDivide:
+                return "OperatorArithmeticDivide";
+            case ParserToken_OperatorArithmeticRemainder:
+                return "OperatorArithmeticRemainder";
+            case ParserToken_OperatorComparisonEqual:
+                return "OperatorComparisonEqual";
+            case ParserToken_OperatorComparisonNotEqual:
+                return "OperatorComparisonNotEqual";
+            case ParserToken_OperatorComparisonLessThan:
+                return "OperatorComparisonLessThan";
+            case ParserToken_OperatorComparisonGreaterThan:
+                return "OperatorComparisonGreaterThan";
+            case ParserToken_OperatorComparisonLessThanOrEqual:
+                return "OperatorComparisonLessThanOrEqual";
+            case ParserToken_OperatorComparisonGreaterThanOrEqual:
+                return "OperatorComparisonGreaterThanOrEqual";
+            case ParserToken_OperatorLogicalAnd:
+                return "OperatorLogicalAnd";
+            case ParserToken_OperatorLogicalOr:
+                return "OperatorLogicalOr";
+            case ParserToken_OperatorLogicalNot:
+                return "OperatorLogicalNot";
+            case ParserToken_SeparatorRoundBracketOpen:
+                return "SeparatorRoundBracketOpen";
+            case ParserToken_SeparatorRoundBracketClosed:
+                return "SeparatorRoundBracketClosed";
+            case ParserToken_SeparatorSquareBracketOpen:
+                return "SeparatorSquareBracketOpen";
+            case ParserToken_SeparatorSquareBracketClosed:
+                return "SeparatorSquareBracketClosed";
+            case ParserToken_SeparatorCurlyBracketOpen:
+                return "SeparatorCurlyBracketOpen";
+            case ParserToken_SeparatorCurlyBracketClosed:
+                return "SeparatorCurlyBracketClosed";
+            case ParserToken_SeparatorColon:
+                return "SeparatorColon";
+            case ParserToken_SeparatorComma:
+                return "SeparatorComma";
+            case ParserToken_SeparatorSemicolon:
+                return "SeparatorSemicolon";
+            case ParserToken_Keyword_TopLevel_Function:
+                return "KeywordTopLevelFunction";
+            case ParserToken_KeywordVar:
+                return "KeywordVar";
+            case ParserToken_KeywordReturn:
+                return "KeywordReturn";
+            case ParserToken_KeywordIf:
+                return "KeywordIf";
+            case ParserToken_KeywordElse:
+                return "KeywordElse";
+            case ParserToken_Identifier:
                 return "Identifier";
-            case ParserTokens_EOF:
+            case ParserToken_EOF:
                 return "EOF";
             default:
                 return "Unknown";
@@ -270,14 +269,14 @@ namespace Aryiele {
 
     std::vector<std::shared_ptr<Node>> Parser::Parse(std::vector<ParserToken> tokens) {
         m_tokens = std::move(tokens);
-        m_tokens.emplace_back("", ParserTokens_EOF);
+        m_tokens.emplace_back("", ParserToken_EOF);
 
         while (true) {
             GetNextToken();
 
-            if (m_currentToken.Type == ParserTokens_EOF)
+            if (m_currentToken.Type == ParserToken_EOF)
                 break;
-            if (m_currentToken.Type == ParserTokens_Keyword_TopLevel_Function)
+            if (m_currentToken.Type == ParserToken_Keyword_TopLevel_Function)
                 m_nodes.emplace_back(ParseFunction());
         }
 
@@ -315,7 +314,7 @@ namespace Aryiele {
 
         GetNextToken();
 
-        if (m_currentToken.Type == ParserTokens_Identifier)
+        if (m_currentToken.Type == ParserToken_Identifier)
             name = m_currentToken.Content;
         else {
             LOG_ERROR("Expected an identifier.");
@@ -325,7 +324,7 @@ namespace Aryiele {
 
         GetNextToken();
 
-        if (m_currentToken.Type != ParserTokens_Separator_RoundBracket_Open) {
+        if (m_currentToken.Type != ParserToken_SeparatorRoundBracketOpen) {
             LOG_ERROR("Expected an opened round bracket.");
 
             return nullptr;
@@ -334,20 +333,20 @@ namespace Aryiele {
         while (true) {
             GetNextToken();
 
-            if (m_currentToken.Type == ParserTokens_Separator_RoundBracket_Closed)
+            if (m_currentToken.Type == ParserToken_SeparatorRoundBracketClosed)
                 break;
-            else if (m_currentToken.Type == ParserTokens_Identifier) {
+            else if (m_currentToken.Type == ParserToken_Identifier) {
                 auto identifier = m_currentToken.Content;
 
                 GetNextToken();
-                PARSER_CHECKTOKEN(ParserTokens_Separator_Colon);
+                PARSER_CHECKTOKEN(ParserToken_SeparatorColon);
 
                 GetNextToken();
-                PARSER_CHECKTOKEN(ParserTokens_Identifier);
+                PARSER_CHECKTOKEN(ParserToken_Identifier);
 
                 arguments.emplace_back(Argument(identifier, m_currentToken.Content));
             }
-            else if (m_currentToken.Type == ParserTokens_Separator_Comma) {
+            else if (m_currentToken.Type == ParserToken_SeparatorComma) {
                 continue;
             }
             else {
@@ -359,11 +358,11 @@ namespace Aryiele {
 
         GetNextToken();
 
-        PARSER_CHECKTOKEN(ParserTokens_Separator_Colon);
+        PARSER_CHECKTOKEN(ParserToken_SeparatorColon);
 
         GetNextToken();
 
-        if (m_currentToken.Type == ParserTokens_Identifier)
+        if (m_currentToken.Type == ParserToken_Identifier)
             type = m_currentToken.Content;
         else {
             LOG_ERROR("Expected a type name.");
@@ -373,7 +372,7 @@ namespace Aryiele {
 
         GetNextToken();
 
-        PARSER_CHECKTOKEN(ParserTokens_Separator_CurlyBracket_Open);
+        PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketOpen);
 
         auto expressions = ParseBody();
 
@@ -382,21 +381,21 @@ namespace Aryiele {
 
     std::shared_ptr<Node> Parser::ParsePrimary() {
         switch (m_currentToken.Type) {
-            case ParserTokens_LiteralValue_Integer:
+            case ParserToken_LiteralValueInteger:
                 return ParseInteger();
-            case ParserTokens_LiteralValue_Decimal:
+            case ParserToken_LiteralValueDecimal:
                 return ParseDouble();
-            case ParserTokens_Separator_RoundBracket_Open:
+            case ParserToken_SeparatorRoundBracketOpen:
                 return ParseParenthese();
-            case ParserTokens_Keyword_Return:
+            case ParserToken_KeywordReturn:
                 return ParseReturn();
-            case ParserTokens_Keyword_If:
+            case ParserToken_KeywordIf:
                 return ParseIf();
-            case ParserTokens_Identifier:
+            case ParserToken_Identifier:
                 return ParseIdentifier();
-            case ParserTokens_Separator_CurlyBracket_Open:
+            case ParserToken_SeparatorCurlyBracketOpen:
                 return ParseBlock();
-            case ParserTokens_Keyword_Var:
+            case ParserToken_KeywordVar:
                 return ParseVariableDeclaration();
 
             default:
@@ -448,7 +447,7 @@ namespace Aryiele {
         while (true) {
             GetNextToken();
 
-            if (m_currentToken.Type == ParserTokens_Separator_CurlyBracket_Closed)
+            if (m_currentToken.Type == ParserToken_SeparatorCurlyBracketClosed)
                 break;
 
             auto expression = ParseExpression();
@@ -481,22 +480,22 @@ namespace Aryiele {
 
         GetNextToken();
 
-        if (m_currentToken.Type == ParserTokens_Separator_RoundBracket_Open) {
+        if (m_currentToken.Type == ParserToken_SeparatorRoundBracketOpen) {
             GetNextToken();
 
             std::vector<std::shared_ptr<Node>> arguments;
 
-            if (m_currentToken.Type != ParserTokens_Separator_RoundBracket_Closed) {
+            if (m_currentToken.Type != ParserToken_SeparatorRoundBracketClosed) {
                 while (true) {
                     if (auto arg = ParseExpression())
                         arguments.emplace_back(arg);
                     else
                         return nullptr;
 
-                    if (m_currentToken.Type == ParserTokens_Separator_RoundBracket_Closed)
+                    if (m_currentToken.Type == ParserToken_SeparatorRoundBracketClosed)
                         break;
 
-                    if (m_currentToken.Type != ParserTokens_Separator_Comma)
+                    if (m_currentToken.Type != ParserToken_SeparatorComma)
                     {
                         LOG_ERROR("Expected ')' or ',' in argument list");
                     }
@@ -541,30 +540,30 @@ namespace Aryiele {
             return nullptr;
         }
 
-        PARSER_CHECKTOKEN(ParserTokens_Separator_CurlyBracket_Open);
+        PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketOpen);
 
         auto ifBody = ParseBody();
 
-        PARSER_CHECKTOKEN(ParserTokens_Separator_CurlyBracket_Closed);
+        PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketClosed);
 
         std::vector<std::shared_ptr<Node>> elseBody;
 
         GetNextToken();
 
-        if (m_currentToken.Type == ParserTokens_Keyword_Else) {
+        if (m_currentToken.Type == ParserToken_KeywordElse) {
             GetNextToken();
 
-            if (m_currentToken.Type == ParserTokens_Keyword_If) {
+            if (m_currentToken.Type == ParserToken_KeywordIf) {
                 elseBody.emplace_back(ParseIf());
 
-                PARSER_CHECKTOKEN(ParserTokens_Separator_CurlyBracket_Closed);
+                PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketClosed);
             }
             else {
-                PARSER_CHECKTOKEN(ParserTokens_Separator_CurlyBracket_Open);
+                PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketOpen);
 
                 elseBody = ParseBody();
 
-                PARSER_CHECKTOKEN(ParserTokens_Separator_CurlyBracket_Closed);
+                PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketClosed);
             }
         }
         else {
@@ -588,12 +587,12 @@ namespace Aryiele {
         std::vector<std::shared_ptr<Variable>> variables;
 
         while (true) {
-            PARSER_CHECKNEXTTOKEN(ParserTokens_Identifier);
+            PARSER_CHECKNEXTTOKEN(ParserToken_Identifier);
 
             auto identifier = m_currentToken.Content;
 
-            PARSER_CHECKNEXTTOKEN(ParserTokens_Separator_Colon);
-            PARSER_CHECKNEXTTOKEN(ParserTokens_Identifier);
+            PARSER_CHECKNEXTTOKEN(ParserToken_SeparatorColon);
+            PARSER_CHECKNEXTTOKEN(ParserToken_Identifier);
 
             auto type = m_currentToken.Content;
 
@@ -601,7 +600,7 @@ namespace Aryiele {
 
             std::shared_ptr<Node> value = nullptr;
 
-            if (m_currentToken.Type == ParserTokens_Operator_Equal) {
+            if (m_currentToken.Type == ParserToken_OperatorEqual) {
                 GetNextToken();
 
                 value = ParseExpression();
@@ -609,7 +608,7 @@ namespace Aryiele {
 
             variables.emplace_back(std::make_shared<Variable>(identifier, type, value));
 
-            if (m_currentToken.Type != ParserTokens_Separator_Comma)
+            if (m_currentToken.Type != ParserToken_SeparatorComma)
                 break;
         }
 

@@ -43,7 +43,7 @@ class Parser : public Vanir::Module<Parser> {
         Parser();
         
         std::vector<ParserToken> ConvertTokens(std::vector<LexerToken> tokenizerTokens);
-        static std::string GetTokenName(ParserTokens tokenType);
+        static std::string GetTokenName(ParserTokenEnum tokenType);
         std::vector<std::shared_ptr<Node>> Parse(std::vector<ParserToken> tokens);
         ParserToken GetCurrentToken();
 

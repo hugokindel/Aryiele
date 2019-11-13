@@ -37,7 +37,7 @@ namespace Aryiele {
 class Lexer : public Vanir::Module<Lexer> {
     public:
         std::vector<LexerToken> Tokenize(const std::string& filepath);
-        std::string GetTokenName(LexerToken tokenType);
+        static std::string GetTokenName(LexerToken tokenType);
 
     private:
         // First pass of the Lexer (separate all characters by expression with a finite-state machine).
@@ -46,7 +46,7 @@ class Lexer : public Vanir::Module<Lexer> {
         void RemoveComments();
         // Third pass of the Lexer (remove all spaces; define literal strings, keywords, booleans).
         void DetailTokens();
-        LexerTokens GetTransitionTableColumn(char currentCharacter);
+        LexerTokenEnum GetTransitionTableColumn(char currentCharacter);
 
         std::vector<LexerToken> m_tokens;
     };

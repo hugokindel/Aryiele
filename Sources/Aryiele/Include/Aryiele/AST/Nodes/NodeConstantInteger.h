@@ -37,7 +37,7 @@ namespace Aryiele {
         explicit NodeConstantInteger(int value);
 
         void DumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
-        Nodes GetType() override;
+        NodeEnum GetType() override;
 
         int Value;
     };

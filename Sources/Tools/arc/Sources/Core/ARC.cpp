@@ -208,7 +208,7 @@ namespace ARC {
                 LOG_VERBOSE("lexer: ", token.Content, " => ", lexer->GetTokenName(token));
             }
             
-            if (token.Type == Aryiele::LexerTokens_Unknown) {
+            if (token.Type == Aryiele::LexerToken_Unknown) {
                 LOG_ERROR("lexer: unknown token");
             }
         }
@@ -226,7 +226,7 @@ namespace ARC {
                 LOG_VERBOSE("parser: ", token.Content, " => ", parser->GetTokenName(token.Type));
             }
             
-            if (token.Type == Aryiele::ParserTokens_Unknown) {
+            if (token.Type == Aryiele::ParserToken_Unknown) {
                 LOG_ERROR("parser: unknown token");
             }
         }

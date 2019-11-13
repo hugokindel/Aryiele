@@ -76,9 +76,9 @@ namespace Aryiele {
 
         parentNode->Children.emplace_back(node);
     }
-
-    Nodes NodeStatementIf::GetType() {
-        return Nodes_Statement_If;
+    
+    NodeEnum NodeStatementIf::GetType() {
+        return Node_StatementIf;
     }
 
 } /* Namespace Aryiele. */

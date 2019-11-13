@@ -28,7 +28,7 @@
 #include <Aryiele/Lexer/LexerToken.h>
 
 namespace Aryiele {
-    LexerToken::LexerToken(const std::string& content, const LexerTokens type) :
+    LexerToken::LexerToken(const std::string& content, const LexerTokenEnum type) :
         Content(content), Type(type) {
 
     }

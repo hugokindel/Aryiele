@@ -99,25 +99,25 @@ namespace Aryiele {
         auto nodePtr = node.get();
 
         switch (node->GetType()) {
-            case Nodes_Function_Prototype:
+            caseNode_Function_Prototype:
                 return GenerateCode((NodeFunction*)nodePtr);
-            case Nodes_Constant_Double:
+            caseNode_Constant_Double:
                 return GenerateCode((NodeConstantDouble*)nodePtr);
-            case Nodes_Constant_Integer:
+            caseNode_Constant_Integer:
                 return GenerateCode((NodeConstantInteger*)nodePtr);
-            case Nodes_Variable:
+            caseNode_Variable:
                 return GenerateCode((NodeVariable*)nodePtr);
-            case Nodes_Operation_Binary:
+            caseNode_Operation_Binary:
                 return GenerateCode((NodeOperationBinary*)nodePtr);
-            case Nodes_Statement_FunctionCall:
+            caseNode_Statement_FunctionCall:
                 return GenerateCode((NodeStatementFunctionCall*)nodePtr);
-            case Nodes_Statement_If:
+            caseNode_Statement_If:
                 return GenerateCode((NodeStatementIf*)nodePtr);
-            case Nodes_Statement_Return:
+            caseNode_Statement_Return:
                 return GenerateCode((NodeStatementReturn*)nodePtr);
-            case Nodes_Statement_Block:
+            caseNode_Statement_Block:
                 return GenerateCode((NodeStatementBlock*)nodePtr);
-            case Nodes_Statement_VariableDeclaration:
+            caseNode_Statement_VariableDeclaration:
                 return GenerateCode((NodeStatementVariableDeclaration*)nodePtr);
 
             default:
@@ -184,7 +184,7 @@ namespace Aryiele {
     }
 
     GenerationError CodeGenerator::GenerateCode(NodeOperationBinary* node) {
-        if (node->OperationType == ParserTokens_Operator_Equal) {
+        if (node->OperationType == ParserToken_OperatorEqual) {
             auto lhs = std::static_pointer_cast<NodeVariable>(node->LHS);
 
             if (!lhs) {
@@ -225,34 +225,34 @@ namespace Aryiele {
         // TODO: CODEGENERATOR: Only support integers for now
         // TODO: CODEGENERATOR: Only support signed numbers for now
         switch (node->OperationType) {
-            case ParserTokens_Operator_Arithmetic_Plus:
+            case ParserToken_OperatorArithmeticPlus:
                 value = m_builder.CreateAdd(lhsValue.Value, rhsValue.Value, "add");
                 break;
-            case ParserTokens_Operator_Arithmetic_Minus:
+            case ParserToken_OperatorArithmeticMinus:
                 value = m_builder.CreateSub(lhsValue.Value, rhsValue.Value, "sub");
                 break;
-            case ParserTokens_Operator_Arithmetic_Multiply:
+            case ParserToken_OperatorArithmeticMultiply:
                 value = m_builder.CreateMul(lhsValue.Value, rhsValue.Value, "mul");
                 break;
-            case ParserTokens_Operator_Arithmetic_Divide:
+            case ParserToken_OperatorArithmeticDivide:
                 value = m_builder.CreateSDiv(lhsValue.Value, rhsValue.Value, "sdiv");
                 break;
-            case ParserTokens_Operator_Comparison_LessThan:
+            case ParserToken_OperatorComparisonLessThan:
                 value = m_builder.CreateICmpULT(lhsValue.Value, rhsValue.Value, "icmpult");
                 break;
-            case ParserTokens_Operator_Comparison_LessThanOrEqual:
+            case ParserToken_OperatorComparisonLessThanOrEqual:
                 value = m_builder.CreateICmpULE(lhsValue.Value, rhsValue.Value, "icmpule");
                 break;
-            case ParserTokens_Operator_Comparison_GreaterThan:
+            case ParserToken_OperatorComparisonGreaterThan:
                 value = m_builder.CreateICmpUGT(lhsValue.Value, rhsValue.Value, "icmpugt");
                 break;
-            case ParserTokens_Operator_Comparison_GreaterThanOrEqual:
+            case ParserToken_OperatorComparisonGreaterThanOrEqual:
                 value = m_builder.CreateICmpUGE(lhsValue.Value, rhsValue.Value, "icmpuge");
                 break;
-            case ParserTokens_Operator_Comparison_Equal:
+            case ParserToken_OperatorComparisonEqual:
                 value = m_builder.CreateICmpEQ(lhsValue.Value, rhsValue.Value, "icmpeq");
                 break;
-            case ParserTokens_Operator_Comparison_NotEqual:
+            case ParserToken_OperatorComparisonNotEqual:
                 value = m_builder.CreateICmpNE(lhsValue.Value, rhsValue.Value, "icmpeq");
                 break;
             default: {
