@@ -39,6 +39,24 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "Sources/Tools/arc/Sources/Core/ARC.cpp",
+			"settings":
+			{
+				"buffer_size": 16503,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/hugok/Downloads/archive_tp9/echappement_bis.sh",
+			"settings":
+			{
+				"buffer_size": 286,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -112,35 +130,38 @@
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/Lexer",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/Lexer",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/Parser",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Tools",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Tools/arc",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Tools/arc/Include",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Tools/arc/Include/ARC",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Tools/arc/Sources",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources/CLI",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources/Error"
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/Parser"
 	],
 	"file_history":
 	[
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/Lexer/LexerTable.h",
-		"/Users/hugok/Downloads/archive_tp9/echappement.sh",
-		"/Users/hugok/Downloads/archive_tp9/reponses_TP9.txt",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes/NodeOperationBinary.h",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Aryiele.sublime-project",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/CMakeLists.txt",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/Lexer/Lexer.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/Parser/Parser.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/Parser/ParserToken.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Tools/arc/Include/ARC/Core/ARC.h",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes/Node.h",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes/NodeConstantDouble.h",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes/NodeConstantInteger.h",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes/NodeFunction.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes/NodeOperationBinary.h",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes/NodeStatementBlock.h",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes/NodeStatementFunctionCall.h",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes/NodeStatementIf.h",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes/NodeStatementReturn.h",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes/NodeStatementVariableDeclaration.h",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes/NodeVariable.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Variable.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/CodeGenerator/Block.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/CodeGenerator/BlockStack.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/CodeGenerator/CodeGenerator.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/CodeGenerator/Function.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/CodeGenerator/FunctionArgument.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/CodeGenerator/GenerationError.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Argument.h",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/Lexer/LexerTable.h",
+		"/Users/hugok/Downloads/archive_tp9/echappement.sh",
+		"/Users/hugok/Downloads/archive_tp9/reponses_TP9.txt",
+		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Aryiele.sublime-project",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Tools/arc/Include/ARC/ARC.h",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/CMakeLists.txt",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Include/Vanir/Logger/Logger.h",
@@ -185,22 +206,11 @@
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources/String/String.cpp",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources/Utility/Timer.cpp",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir/Sources/Utility/Utils.cpp",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Argument.h",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes.h",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Variable.h",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/CodeGenerator/Block.h",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/CodeGenerator/BlockStack.h",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/CodeGenerator/CodeGenerator.h",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/CodeGenerator/Function.h",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/CodeGenerator/FunctionArgument.h",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/CodeGenerator/GenerationError.h",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/Core/Logger.h",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/Lexer/Lexer.h",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/Lexer/LexerToken.h",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/Lexer/LexerTokens.h",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/Parser/Parser.h",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/Parser/ParserInformation.h",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/Parser/ParserToken.h",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/Parser/ParserTokens.h",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/AST/CLIOption.cpp",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/AST/Nodes/NodeConstantDouble.cpp",
@@ -238,7 +248,6 @@
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Bin/Aryiele/AppleClang_8_Release/bin/example-1.ac",
 		"/Users/hugok/Desktop/test.sh",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/STD/CMakeLists.txt",
-		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/CMakeLists.txt",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/CMakeLists.txt",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Sources/AST/Argument.cpp",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/STD/Include/STD/IO/Print.h",
@@ -252,8 +261,7 @@
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Build/.Temps/Clang_8_Release/Sources/Dependencies/LLVM/include/llvm/Config/llvm-config.h",
 		"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Build/.Temps/Clang_8_Release/Sources/Dependencies/LLVM/include/llvm/Config/config.h",
 		"/Users/hugok/Desktop/Folder/main.cpp",
-		"/Users/hugok/Desktop/Folder/example.sublime-project",
-		"/Users/hugok/Desktop/Folder/CMakeLists.txt"
+		"/Users/hugok/Desktop/Folder/example.sublime-project"
 	],
 	"find":
 	{
@@ -264,6 +272,7 @@
 		"height": 113.0,
 		"where_history":
 		[
+			"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources",
 			"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele/Include/Aryiele/AST/Nodes",
 			"/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Aryiele,/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Tools/arc,/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/STD,/Users/hugok/Documents/Programmation/Projets/Personnel/Aryiele/Sources/Vanir",
 			""
@@ -274,6 +283,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"#include <Aryiele/Core/Includes.h>",
 			"#endif /* ARYIELE_",
 			"#define ARYIELE_",
 			"#ifndef ARYIELE_",
@@ -290,6 +300,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"#include <Aryiele/Common.h>",
 			"#endif /* ARYIELE_AST_NODES_",
 			"#define ARYIELE_AST_NODES_",
 			"#ifndef ARYIELE_AST_NODES_",
@@ -306,8 +317,67 @@
 	"groups":
 	[
 		{
+			"selected": 1,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "Sources/Tools/arc/Sources/Core/ARC.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 16503,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/Users/hugok/Downloads/archive_tp9/echappement_bis.sh",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 286,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								221,
+								221
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/ShellScript/Bash.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
 			]
 		}
 	],

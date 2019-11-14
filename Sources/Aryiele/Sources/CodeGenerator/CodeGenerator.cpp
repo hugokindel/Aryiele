@@ -99,27 +99,26 @@ namespace Aryiele {
         auto nodePtr = node.get();
 
         switch (node->getType()) {
-            caseNode_Function_Prototype:
+            case Node_FunctionPrototype:
                 return generateCode((NodeFunction*)nodePtr);
-            caseNode_Constant_Double:
+            case Node_ConstantDouble:
                 return generateCode((NodeConstantDouble*)nodePtr);
-            caseNode_Constant_Integer:
+            case Node_ConstantInteger:
                 return generateCode((NodeConstantInteger*)nodePtr);
-            caseNode_Variable:
+            case Node_Variable:
                 return generateCode((NodeVariable*)nodePtr);
-            caseNode_Operation_Binary:
+            case Node_OperationBinary:
                 return generateCode((NodeOperationBinary*)nodePtr);
-            caseNode_Statement_FunctionCall:
+            case Node_StatementFunctionCall:
                 return generateCode((NodeStatementFunctionCall*)nodePtr);
-            caseNode_Statement_If:
+            case Node_StatementIf:
                 return generateCode((NodeStatementIf*)nodePtr);
-            caseNode_Statement_Return:
+            case Node_StatementReturn:
                 return generateCode((NodeStatementReturn*)nodePtr);
-            caseNode_Statement_Block:
+            case Node_StatementBlock:
                 return generateCode((NodeStatementBlock*)nodePtr);
-            caseNode_Statement_VariableDeclaration:
+            case Node_StatementVariableDeclaration:
                 return generateCode((NodeStatementVariableDeclaration*)nodePtr);
-
             default:
                 return GenerationError();
         }
