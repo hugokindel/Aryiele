@@ -25,54 +25,26 @@
 //                                                                                  //
 //==================================================================================//
 
-#include <Aryiele/AST/Nodes/NodeFunction.h>
+#include <Aryiele/AST/Nodes/NodeNamespace.h>
 
 namespace Aryiele {
-    NodeFunction::NodeFunction(const std::string& identifier,
-                               const std::string& type,
-                               std::vector<Argument> arguments,
-                               std::vector<std::shared_ptr<Node>> body) :
-        identifier(identifier), type(type), arguments(arguments), body(body) {
-
+    NodeNamesapce::NodeNamesapce(const std::string& identifier, const std::vector<std::shared_ptr<Node>>& content) :
+        identifier(identifier), content(content) {
+    
     }
-
-    void NodeFunction::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
-        auto node = std::make_shared<ParserInformation>(parentNode, "Function");
-        auto argumentsNode = std::make_shared<ParserInformation>(node, "Arguments:");
-        auto valueNode = std::make_shared<ParserInformation>(node, "Body:");
-
-        for (auto& childNode : body)
-            childNode->dumpInformations(valueNode);
-
-        int i = 0;
-
-        for(auto& argument : arguments) {
-            auto argumentNode = std::make_shared<ParserInformation>(argumentsNode, std::to_string(i));
-
-            argumentNode->children.emplace_back(std::make_shared<ParserInformation>(
-                argumentNode, "Identifier: " + argument.identifier));
-            argumentNode->children.emplace_back(std::make_shared<ParserInformation>(
-                argumentNode, "Type: " + argument.type));
-
-            argumentsNode->children.emplace_back(argumentNode);
-
-            i++;
-        }
-
-        node->children.emplace_back(std::make_shared<ParserInformation>(node, "Identifier: " + identifier));
-        node->children.emplace_back(std::make_shared<ParserInformation>(node, "Type: " + type));
-        
-        if (!arguments.empty()) {
-            node->children.emplace_back(argumentsNode);
-        }
-        
-        node->children.emplace_back(valueNode);
-
+    
+    void NodeNamesapce::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+        auto node = std::make_shared<ParserInformation>(parentNode, "Namespace");
+        auto bodyNode = std::make_shared<ParserInformation>(node, "Content:");
+    
+        for (auto& statement : content)
+            statement->dumpInformations(bodyNode);
+    
+        node->children.emplace_back(bodyNode);
         parentNode->children.emplace_back(node);
     }
-
-    NodeEnum NodeFunction::getType() {
-        return Node_FunctionPrototype;
+    
+    NodeEnum NodeNamesapce::getType() {
+        return Node_Namespace;
     }
-
 } /* Namespace Aryiele. */

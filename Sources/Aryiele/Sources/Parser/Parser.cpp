@@ -41,26 +41,21 @@
 #include <Aryiele/AST/Nodes/NodeVariable.h>
 
 namespace Aryiele {
-    /* TODO: Add operators:
-    * Bitwise operator ?
-    * Ternary operator ?
-    * Negative logical operator ? */
     Parser::Parser() {
-        m_binaryOperatorPrecedence[";"] = -1;
-        m_binaryOperatorPrecedence["="] = 10;
-        m_binaryOperatorPrecedence["&&"] = 20;
-        m_binaryOperatorPrecedence["||"] = 20;
-        m_binaryOperatorPrecedence["<"] = 30;
-        m_binaryOperatorPrecedence[">"] = 30;
-        m_binaryOperatorPrecedence["<="] = 30;
-        m_binaryOperatorPrecedence[">="] = 30;
-        m_binaryOperatorPrecedence["=="] = 30;
-        m_binaryOperatorPrecedence["!="] = 30;
-        m_binaryOperatorPrecedence["+"] = 40;
-        m_binaryOperatorPrecedence["-"] = 40;
-        m_binaryOperatorPrecedence["%"] = 50;
-        m_binaryOperatorPrecedence["*"] = 50;
-        m_binaryOperatorPrecedence["/"] = 50;
+        m_binaryOperatorPrecedence[ParserToken_OperatorEqual] = 10;
+        m_binaryOperatorPrecedence[ParserToken_OperatorLogicalAnd] = 20;
+        m_binaryOperatorPrecedence[ParserToken_OperatorLogicalOr] = 20;
+        m_binaryOperatorPrecedence[ParserToken_OperatorComparisonLessThan] = 30;
+        m_binaryOperatorPrecedence[ParserToken_OperatorComparisonGreaterThan] = 30;
+        m_binaryOperatorPrecedence[ParserToken_OperatorComparisonLessThanOrEqual] = 30;
+        m_binaryOperatorPrecedence[ParserToken_OperatorComparisonGreaterThanOrEqual] = 30;
+        m_binaryOperatorPrecedence[ParserToken_OperatorComparisonEqual] = 30;
+        m_binaryOperatorPrecedence[ParserToken_OperatorComparisonNotEqual] = 30;
+        m_binaryOperatorPrecedence[ParserToken_OperatorArithmeticPlus] = 40;
+        m_binaryOperatorPrecedence[ParserToken_OperatorArithmeticMinus] = 40;
+        m_binaryOperatorPrecedence[ParserToken_OperatorArithmeticRemainder] = 50;
+        m_binaryOperatorPrecedence[ParserToken_OperatorArithmeticMultiply] = 50;
+        m_binaryOperatorPrecedence[ParserToken_OperatorArithmeticDivide] = 50;
     }
     
     std::vector<std::shared_ptr<Node>> Parser::parse(std::vector<ParserToken> tokens) {
@@ -72,21 +67,20 @@ namespace Aryiele {
             
             if (m_currentToken.type == ParserToken_EOF)
                 break;
-            if (m_currentToken.type == ParserToken_Keyword_TopLevel_Function)
+            if (m_currentToken.type == ParserToken_KeywordFunction)
                 m_nodes.emplace_back(parseFunction());
         }
         
         return m_nodes;
     }
     
-    std::vector<ParserToken> Parser::convertTokens(std::vector<LexerToken> LexerTokens) {
+    std::vector<ParserToken> Parser::convertTokens(const std::vector<LexerToken>& LexerTokens) {
         auto tokens = std::vector<ParserToken>();
         auto lastToken = LexerToken(std::string(), LexerToken_Unknown);
 
         for (auto& token : LexerTokens) {
             switch (token.type) {
                 case LexerToken_Number:
-                    // Numbers.
                     if (token.content.find('.') != std::string::npos)
                         tokens.emplace_back(token.content, ParserToken_LiteralValueDecimal);
                     else
@@ -95,78 +89,87 @@ namespace Aryiele {
                 case LexerToken_String:
                     tokens.emplace_back(token.content, ParserToken_LiteralValueString);
                     break;
+                case LexerToken_Character:
+                    tokens.emplace_back(token.content, ParserToken_LiteralValueCharacter);
+                    break;
                 case LexerToken_Operator:
                     // Operators.
                     if (token.content == "=")
-                        tokens.emplace_back(token.content, ParserToken_OperatorEqual);
+                        tokens.emplace_back("", ParserToken_OperatorEqual);
                     // Arithmetic Operators.
+                    else if (token.content == "+=")
+                        tokens.emplace_back("", ParserToken_OperatorArithmeticPlusEqual);
+                    else if (token.content == "-=")
+                        tokens.emplace_back("", ParserToken_OperatorArithmeticMinusEqual);
+                    else if (token.content == "*=")
+                        tokens.emplace_back("", ParserToken_OperatorArithmeticMultiplyEqual);
+                    else if (token.content == "/=")
+                        tokens.emplace_back("", ParserToken_OperatorArithmeticDivideEqual);
+                    else if (token.content == "%=")
+                        tokens.emplace_back("", ParserToken_OperatorArithmeticRemainderEqual);
                     else if ((token.content == "+" &&
                              lastToken.type != LexerToken_Number &&
                              lastToken.type != LexerToken_Identifier) &&
-                             lastToken.content != "(" &&
+                             lastToken.content != "(" && // TODO: Error ?
                              lastToken.content != ")")
-                        tokens.emplace_back(token.content, ParserToken_OperatorUnaryArithmeticPlus);
+                        tokens.emplace_back("", ParserToken_OperatorUnaryArithmeticPlus);
                     else if (token.content == "+")
-                        tokens.emplace_back(token.content, ParserToken_OperatorArithmeticPlus);
+                        tokens.emplace_back("", ParserToken_OperatorArithmeticPlus);
                     else if ((token.content == "-" &&
                               lastToken.type != LexerToken_Number &&
                               lastToken.type != LexerToken_Identifier) &&
-                              lastToken.content != "(" &&
+                              lastToken.content != "(" && // TODO: Error ?
                               lastToken.content != ")")
-                        tokens.emplace_back(token.content, ParserToken_OperatorUnaryArithmeticMinus);
+                        tokens.emplace_back("", ParserToken_OperatorUnaryArithmeticMinus);
                     else if (token.content == "-")
-                        tokens.emplace_back(token.content, ParserToken_OperatorArithmeticMinus);
+                        tokens.emplace_back("", ParserToken_OperatorArithmeticMinus);
                     else if (token.content == "*")
-                        tokens.emplace_back(token.content, ParserToken_OperatorArithmeticMultiply);
+                        tokens.emplace_back("", ParserToken_OperatorArithmeticMultiply);
                     else if (token.content == "/")
-                        tokens.emplace_back(token.content, ParserToken_OperatorArithmeticDivide);
+                        tokens.emplace_back("", ParserToken_OperatorArithmeticDivide);
                     else if (token.content == "%")
-                        tokens.emplace_back(token.content, ParserToken_OperatorArithmeticRemainder);
-                    // Comparison Operators.
+                        tokens.emplace_back("", ParserToken_OperatorArithmeticRemainder);
                     else if (token.content == "==")
-                        tokens.emplace_back(token.content, ParserToken_OperatorComparisonEqual);
+                        tokens.emplace_back("", ParserToken_OperatorComparisonEqual);
                     else if (token.content == "!=")
-                        tokens.emplace_back(token.content, ParserToken_OperatorComparisonNotEqual);
+                        tokens.emplace_back("", ParserToken_OperatorComparisonNotEqual);
                     else if (token.content == "<")
-                        tokens.emplace_back(token.content, ParserToken_OperatorComparisonLessThan);
+                        tokens.emplace_back("", ParserToken_OperatorComparisonLessThan);
                     else if (token.content == ">")
-                        tokens.emplace_back(token.content, ParserToken_OperatorComparisonGreaterThan);
+                        tokens.emplace_back("", ParserToken_OperatorComparisonGreaterThan);
                     else if (token.content == "<=")
-                        tokens.emplace_back(token.content, ParserToken_OperatorComparisonLessThanOrEqual);
+                        tokens.emplace_back("", ParserToken_OperatorComparisonLessThanOrEqual);
                     else if (token.content == ">=")
-                        tokens.emplace_back(token.content, ParserToken_OperatorComparisonGreaterThanOrEqual);
-                    // Logical Operators.
+                        tokens.emplace_back("", ParserToken_OperatorComparisonGreaterThanOrEqual);
                     else if (token.content == "&&")
-                        tokens.emplace_back(token.content, ParserToken_OperatorLogicalAnd);
+                        tokens.emplace_back("", ParserToken_OperatorLogicalAnd);
                     else if (token.content == "||")
-                        tokens.emplace_back(token.content, ParserToken_OperatorLogicalOr);
+                        tokens.emplace_back("", ParserToken_OperatorLogicalOr);
                     else if (token.content == "!")
-                        tokens.emplace_back(token.content, ParserToken_OperatorUnaryLogicalNot);
-                    else
-                        tokens.emplace_back(token.content, ParserToken_Unknown);
+                        tokens.emplace_back("", ParserToken_OperatorUnaryLogicalNot);
                     break;
                 case LexerToken_Separator:
                     // Separators
                     if (token.content == "(")
-                        tokens.emplace_back(token.content, ParserToken_SeparatorRoundBracketOpen);
+                        tokens.emplace_back("", ParserToken_SeparatorRoundBracketOpen);
                     else if (token.content == ")")
-                        tokens.emplace_back(token.content, ParserToken_SeparatorRoundBracketClosed);
+                        tokens.emplace_back("", ParserToken_SeparatorRoundBracketClosed);
                     else if (token.content == "[")
-                        tokens.emplace_back(token.content, ParserToken_SeparatorSquareBracketOpen);
+                        tokens.emplace_back("", ParserToken_SeparatorSquareBracketOpen);
                     else if (token.content == "]")
-                        tokens.emplace_back(token.content, ParserToken_SeparatorSquareBracketClosed);
+                        tokens.emplace_back("", ParserToken_SeparatorSquareBracketClosed);
                     else if (token.content == "{")
-                        tokens.emplace_back(token.content, ParserToken_SeparatorCurlyBracketOpen);
+                        tokens.emplace_back("", ParserToken_SeparatorCurlyBracketOpen);
                     else if (token.content == "}")
-                        tokens.emplace_back(token.content, ParserToken_SeparatorCurlyBracketClosed);
+                        tokens.emplace_back("", ParserToken_SeparatorCurlyBracketClosed);
                     else if (token.content == ";")
-                        tokens.emplace_back(token.content, ParserToken_SeparatorSemicolon);
+                        tokens.emplace_back("", ParserToken_SeparatorSemicolon);
                     else if (token.content == ":")
-                        tokens.emplace_back(token.content, ParserToken_SeparatorColon);
+                        tokens.emplace_back("", ParserToken_SeparatorColon);
                     else if (token.content == ",")
-                        tokens.emplace_back(token.content, ParserToken_SeparatorComma);
-                    else
-                        tokens.emplace_back(token.content, ParserToken_Unknown);
+                        tokens.emplace_back("", ParserToken_SeparatorComma);
+                    else if (token.content == ".")
+                        tokens.emplace_back("", ParserToken_SeparatorDot);
                     break;
                 case LexerToken_Identifier:
                     // Boolean
@@ -174,25 +177,51 @@ namespace Aryiele {
                         tokens.emplace_back(token.content, ParserToken_LiteralValueBoolean);
                     // Keywords
                     else if (token.content == "func")
-                        tokens.emplace_back(token.content, ParserToken_Keyword_TopLevel_Function);
+                        tokens.emplace_back("", ParserToken_KeywordFunction);
                     else if (token.content == "var")
-                        tokens.emplace_back(token.content, ParserToken_KeywordVar);
+                        tokens.emplace_back("", ParserToken_KeywordVar);
+                    else if (token.content == "let")
+                        tokens.emplace_back("", ParserToken_KeywordLet);
+                    else if (token.content == "for")
+                        tokens.emplace_back("", ParserToken_KeywordFor);
+                    else if (token.content == "from")
+                        tokens.emplace_back("", ParserToken_KeywordFrom);
+                    else if (token.content == "to")
+                        tokens.emplace_back("", ParserToken_KeywordTo);
+                    else if (token.content == "do")
+                        tokens.emplace_back("", ParserToken_KeywordDo);
+                    else if (token.content == "while")
+                        tokens.emplace_back("", ParserToken_KeywordWhile);
+                    else if (token.content == "switch")
+                        tokens.emplace_back("", ParserToken_KeywordSwitch);
+                    else if (token.content == "case")
+                        tokens.emplace_back("", ParserToken_KeywordCase);
                     else if (token.content == "return")
-                        tokens.emplace_back(token.content, ParserToken_KeywordReturn);
+                        tokens.emplace_back("", ParserToken_KeywordReturn);
                     else if (token.content == "if")
-                        tokens.emplace_back(token.content, ParserToken_KeywordIf);
+                        tokens.emplace_back("", ParserToken_KeywordIf);
                     else if (token.content == "else")
-                        tokens.emplace_back(token.content, ParserToken_KeywordElse);
+                        tokens.emplace_back("", ParserToken_KeywordElse);
                     else
                         tokens.emplace_back(token.content, ParserToken_Identifier);
+                    break;
+                case LexerToken_Space:
+                    tokens.emplace_back("", ParserToken_Space);
+                    break;
+                case LexerToken_Newline:
+                    tokens.emplace_back("", ParserToken_Newline);
                     break;
                 default:
                     tokens.emplace_back(token.content, ParserToken_Unknown);
                     break;
             }
 
-            lastToken = token;
+            if (token.type != LexerToken_Space && token.type != LexerToken_Newline) {
+                lastToken = token;
+            }
         }
+    
+        tokens.emplace_back("", ParserToken_EOF);
 
         return tokens;
     }
@@ -259,8 +288,8 @@ namespace Aryiele {
                 return "SeparatorComma";
             case ParserToken_SeparatorSemicolon:
                 return "SeparatorSemicolon";
-            case ParserToken_Keyword_TopLevel_Function:
-                return "KeywordTopLevelFunction";
+            case ParserToken_KeywordFunction:
+                return "KeywordFunction";
             case ParserToken_KeywordVar:
                 return "KeywordVar";
             case ParserToken_KeywordReturn:
@@ -271,8 +300,43 @@ namespace Aryiele {
                 return "KeywordElse";
             case ParserToken_Identifier:
                 return "Identifier";
+            case ParserToken_LiteralValueCharacter:
+                return "LiteralValueCharacter";
+            case ParserToken_OperatorArithmeticPlusEqual:
+                return "OperatorArithmeticPlusEqual";
+            case ParserToken_OperatorArithmeticMinusEqual:
+                return "OperatorArithmeticMinusqual";
+            case ParserToken_OperatorArithmeticMultiplyEqual:
+                return "OperatorArithmeticMultiplyEqual";
+            case ParserToken_OperatorArithmeticDivideEqual:
+                return "OperatorArithmeticDivideEqual";
+            case ParserToken_OperatorArithmeticRemainderEqual:
+                return "OperatorArithmeticRemainderEqual";
+            case ParserToken_SeparatorDot:
+                return "SeparatorDot";
+            case ParserToken_KeywordLet:
+                return "KeywordLet";
+            case ParserToken_KeywordFor:
+                return "KeywordFor";
+            case ParserToken_KeywordFrom:
+                return "KeywordFrom";
+            case ParserToken_KeywordTo:
+                return "KeywordTo";
+            case ParserToken_KeywordDo:
+                return "KeywordDo";
+            case ParserToken_KeywordWhile:
+                return "KeywordWhile";
+            case ParserToken_KeywordSwitch:
+                return "KeywordSwitch";
+            case ParserToken_KeywordCase:
+                return "KeywordCase";
+            case ParserToken_Space:
+                return "Space";
+            case ParserToken_Newline:
+                return "Newline";
             case ParserToken_EOF:
                 return "EOF";
+            case ParserToken_Unknown:
             default:
                 return "Unknown";
         }
@@ -284,18 +348,37 @@ namespace Aryiele {
 
     ParserToken Parser::getNextToken() {
         m_currentToken = m_tokens[++m_currentTokenIndex];
-
-        return m_currentToken;
-    }
-
-    ParserToken Parser::getPreviousToken() {
-        if (m_currentTokenIndex > 0)
-            m_currentToken = m_tokens[--m_currentTokenIndex];
+        
+        if (m_currentToken.type == ParserToken_Newline) {
+            m_currentLine++;
+            m_currentColumn = 0;
+        } else {
+            if (m_currentToken.content.empty()) {
+                m_currentColumn++;
+            } else {
+                m_currentColumn += m_currentToken.content.size();
+            }
+        }
+        
+        while (m_currentToken.type == ParserToken_Space) {
+            m_currentToken = m_tokens[++m_currentTokenIndex];
+    
+            if (m_currentToken.type == ParserToken_Newline) {
+                m_currentLine++;
+                m_currentColumn = 0;
+            } else {
+                if (m_currentToken.content.empty()) {
+                    m_currentColumn++;
+                } else {
+                    m_currentColumn += m_currentToken.content.size();
+                }
+            }
+        }
 
         return m_currentToken;
     }
     
-    int Parser::getOperatorPrecedence(const std::string &binaryOperator) {
+    int Parser::getOperatorPrecedence(ParserTokenEnum binaryOperator) {
         if(m_binaryOperatorPrecedence.find(binaryOperator) == m_binaryOperatorPrecedence.end())
             return -1;
         else
@@ -308,21 +391,17 @@ namespace Aryiele {
         std::vector<Argument> arguments;
 
         getNextToken();
-
-        if (m_currentToken.type == ParserToken_Identifier)
+        
+        if (m_currentToken.type == ParserToken_Identifier) {
             name = m_currentToken.content;
-        else {
-            LOG_ERROR("Expected an identifier.")
-
-            return nullptr;
+        } else {
+            PARSER_ERROR("Expected an identifier.")
         }
 
         getNextToken();
 
         if (m_currentToken.type != ParserToken_SeparatorRoundBracketOpen) {
-            LOG_ERROR("Expected an opened round bracket.")
-
-            return nullptr;
+            PARSER_ERROR("Expected an opened round bracket.");
         }
 
         while (true) {
@@ -345,30 +424,31 @@ namespace Aryiele {
                 continue;
             }
             else {
-                LOG_ERROR("Expected either a closed round bracket or a variable.")
-
-                return nullptr;
+                PARSER_ERROR("expected either a closed round bracket or a variable")
             }
         }
 
         getNextToken();
-
-        PARSER_CHECKTOKEN(ParserToken_SeparatorColon)
-
-        getNextToken();
-
-        if (m_currentToken.type == ParserToken_Identifier)
-            type = m_currentToken.content;
-        else {
-            LOG_ERROR("Expected a type name.")
-
-            return nullptr;
+        
+        if (m_currentToken.type == ParserToken_SeparatorColon) {
+            PARSER_CHECKTOKEN(ParserToken_SeparatorColon)
+    
+            getNextToken();
+    
+            if (m_currentToken.type == ParserToken_Identifier)
+                type = m_currentToken.content;
+            else {
+                PARSER_ERROR("Expected a type name")
+            }
+    
+            getNextToken();
+    
+            PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketOpen)
+        } else if (m_currentToken.type == ParserToken_SeparatorCurlyBracketOpen) {
+            type = "Void";
+        } else {
+            PARSER_ERROR("expected either identifier or opened curly bracket")
         }
-
-        getNextToken();
-
-        PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketOpen)
-
         auto expressions = parseBody();
 
         return std::make_shared<NodeFunction>(name, type, arguments, expressions);
@@ -392,7 +472,6 @@ namespace Aryiele {
                 return parseBlock();
             case ParserToken_KeywordVar:
                 return parseVariableDeclaration();
-
             default:
                 return nullptr;
         }
@@ -400,7 +479,7 @@ namespace Aryiele {
 
     std::shared_ptr<Node> Parser::parseExpression() {
         auto leftExpression = parsePrimary();
-
+    
         if (!leftExpression)
             return nullptr;
 
@@ -409,21 +488,21 @@ namespace Aryiele {
 
     std::shared_ptr<Node> Parser::parseBinaryOperation(int expressionPrecedence, std::shared_ptr<Node> leftExpression) {
         while (true) {
-            int tokenPrecedence = getOperatorPrecedence(m_currentToken.content);
-
+            int tokenPrecedence = getOperatorPrecedence(m_currentToken.type);
+    
             if (tokenPrecedence < expressionPrecedence)
                 return leftExpression;
-
+    
             auto operationType = m_currentToken.type;
 
             getNextToken();
-
+    
             auto rightExpression = parsePrimary();
 
             if (!rightExpression)
                 return nullptr;
 
-            int nextPrecedence = getOperatorPrecedence(m_currentToken.content);
+            int nextPrecedence = getOperatorPrecedence(m_currentToken.type);
 
             if (tokenPrecedence < nextPrecedence) {
                 rightExpression = parseBinaryOperation(tokenPrecedence + 1, std::move(rightExpression));
@@ -441,7 +520,7 @@ namespace Aryiele {
 
         while (true) {
             getNextToken();
-
+            
             if (m_currentToken.type == ParserToken_SeparatorCurlyBracketClosed)
                 break;
 
@@ -474,7 +553,7 @@ namespace Aryiele {
         auto identifier = m_currentToken.content;
 
         getNextToken();
-
+        
         if (m_currentToken.type == ParserToken_SeparatorRoundBracketOpen) {
             getNextToken();
 
@@ -492,7 +571,7 @@ namespace Aryiele {
 
                     if (m_currentToken.type != ParserToken_SeparatorComma)
                     {
-                        LOG_ERROR("Expected ')' or ',' in argument list")
+                        PARSER_ERROR("Expected ')' or ',' in argument list")
                     }
 
                     getNextToken();
@@ -510,7 +589,7 @@ namespace Aryiele {
 
     std::shared_ptr<Node> Parser::parseParenthese() {
         getNextToken();
-
+        
         auto expression = parseExpression();
 
         getNextToken();
@@ -520,19 +599,17 @@ namespace Aryiele {
 
     std::shared_ptr<Node> Parser::parseReturn() {
         getNextToken();
-
+        
         return std::make_shared<NodeStatementReturn>(parseExpression());
     }
 
     std::shared_ptr<Node> Parser::parseIf() {
         getNextToken();
-
-        auto condition = parseParenthese();
+        
+        auto condition = parseExpression();
 
         if (!condition) {
-            LOG_ERROR("Cannot parse if condition")
-
-            return nullptr;
+            PARSER_ERROR("cannot parse if condition")
         }
 
         PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketOpen)
@@ -543,10 +620,12 @@ namespace Aryiele {
 
         std::vector<std::shared_ptr<Node>> elseBody;
 
-        getNextToken();
-
-        if (m_currentToken.type == ParserToken_KeywordElse) {
+        if (m_tokens[m_currentTokenIndex + 1].type == ParserToken_KeywordElse) {
             getNextToken();
+    
+            getNextToken();
+    
+            PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketOpen)
 
             if (m_currentToken.type == ParserToken_KeywordIf) {
                 elseBody.emplace_back(parseIf());
@@ -560,9 +639,6 @@ namespace Aryiele {
 
                 PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketClosed)
             }
-        }
-        else {
-            getPreviousToken();
         }
 
         return std::make_shared<NodeStatementIf>(condition, ifBody, elseBody);

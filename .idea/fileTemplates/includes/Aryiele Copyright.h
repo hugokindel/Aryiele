@@ -1,6 +1,6 @@
 //==================================================================================//
 //                                                                                  //
-//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                       //
+//  Copyright (c) $YEAR Hugo Kindel <kindelhugo.pro@gmail.com>                      //
 //                                                                                  //
 //  This file is part of the Aryiele project.                                       //
 //  Licensed under MIT License:                                                     //
@@ -24,55 +24,3 @@
 //  SOFTWARE.                                                                       //
 //                                                                                  //
 //==================================================================================//
-
-#include <Aryiele/AST/Nodes/NodeFunction.h>
-
-namespace Aryiele {
-    NodeFunction::NodeFunction(const std::string& identifier,
-                               const std::string& type,
-                               std::vector<Argument> arguments,
-                               std::vector<std::shared_ptr<Node>> body) :
-        identifier(identifier), type(type), arguments(arguments), body(body) {
-
-    }
-
-    void NodeFunction::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
-        auto node = std::make_shared<ParserInformation>(parentNode, "Function");
-        auto argumentsNode = std::make_shared<ParserInformation>(node, "Arguments:");
-        auto valueNode = std::make_shared<ParserInformation>(node, "Body:");
-
-        for (auto& childNode : body)
-            childNode->dumpInformations(valueNode);
-
-        int i = 0;
-
-        for(auto& argument : arguments) {
-            auto argumentNode = std::make_shared<ParserInformation>(argumentsNode, std::to_string(i));
-
-            argumentNode->children.emplace_back(std::make_shared<ParserInformation>(
-                argumentNode, "Identifier: " + argument.identifier));
-            argumentNode->children.emplace_back(std::make_shared<ParserInformation>(
-                argumentNode, "Type: " + argument.type));
-
-            argumentsNode->children.emplace_back(argumentNode);
-
-            i++;
-        }
-
-        node->children.emplace_back(std::make_shared<ParserInformation>(node, "Identifier: " + identifier));
-        node->children.emplace_back(std::make_shared<ParserInformation>(node, "Type: " + type));
-        
-        if (!arguments.empty()) {
-            node->children.emplace_back(argumentsNode);
-        }
-        
-        node->children.emplace_back(valueNode);
-
-        parentNode->children.emplace_back(node);
-    }
-
-    NodeEnum NodeFunction::getType() {
-        return Node_FunctionPrototype;
-    }
-
-} /* Namespace Aryiele. */

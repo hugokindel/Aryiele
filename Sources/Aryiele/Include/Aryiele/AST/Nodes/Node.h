@@ -36,6 +36,7 @@ namespace Aryiele {
         Node_ConstantDouble,
         Node_ConstantInteger,
         Node_FunctionPrototype,
+        Node_Namespace,
         Node_OperationBinary,
         Node_StatementBlock,
         Node_StatementFunctionCall,

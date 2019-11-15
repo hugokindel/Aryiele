@@ -43,14 +43,13 @@ class Parser : public Vanir::Module<Parser> {
         Parser();
     
     std::vector<std::shared_ptr<Node>> parse(std::vector<ParserToken> tokens);
-        std::vector<ParserToken> convertTokens(std::vector<LexerToken> tokenizerTokens);
+        static std::vector<ParserToken> convertTokens(const std::vector<LexerToken>& tokenizerTokens);
         static std::string getTokenName(ParserTokenEnum tokenType);
         ParserToken getCurrentToken();
 
     private:
         ParserToken getNextToken();
-        ParserToken getPreviousToken();
-        int getOperatorPrecedence(const std::string& binaryOperator);
+        int getOperatorPrecedence(ParserTokenEnum binaryOperator);
         std::shared_ptr<NodeFunction> parseFunction();
         std::shared_ptr<Node> parsePrimary();
         std::shared_ptr<Node> parseExpression();
@@ -65,21 +64,27 @@ class Parser : public Vanir::Module<Parser> {
         std::shared_ptr<Node> parseBlock();
         std::shared_ptr<Node> parseVariableDeclaration();
     
-        std::map<std::string, int> m_binaryOperatorPrecedence;
+        std::map<ParserTokenEnum, int> m_binaryOperatorPrecedence;
         std::vector<std::shared_ptr<Node>> m_nodes;
         std::vector<ParserToken> m_tokens;
         ParserToken m_currentToken;
         int m_currentTokenIndex = -1;
+        int m_currentLine = 1;
+        int m_currentColumn = 1;
     };
     
     Parser &getParser();
 
 } /* Namespace Aryiele. */
 
+#define PARSER_ERROR(...) { \
+    LOG_ERROR(m_currentLine, ":", m_currentColumn, " ", __VA_ARGS__) \
+    return nullptr; \
+}
+
 #define PARSER_CHECKTOKEN(EXPECTEDTOKENTYPE) \
 if (getParser().getCurrentToken().type != EXPECTEDTOKENTYPE) { \
-    LOG_ERROR("wrong token, got '", Parser::getTokenName(m_currentToken.type), "' but expected '", Parser::getTokenName(EXPECTEDTOKENTYPE), "'"); \
-    return nullptr; \
+    PARSER_ERROR("wrong token, got '", Parser::getTokenName(m_currentToken.type), "' but expected '", Parser::getTokenName(EXPECTEDTOKENTYPE), "'"); \
 }
 
 #define PARSER_CHECKNEXTTOKEN(EXPECTEDTOKENTYPE) { \

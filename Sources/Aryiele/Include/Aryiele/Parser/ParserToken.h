@@ -69,8 +69,9 @@ namespace Aryiele {
         ParserToken_SeparatorSemicolon, // ;
         ParserToken_SeparatorComma, // ,
         ParserToken_SeparatorDot, // .
-        ParserToken_Keyword_TopLevel_Function, // function
+        ParserToken_KeywordFunction, // func
         ParserToken_KeywordVar, // var
+        ParserToken_KeywordLet, // let
         ParserToken_KeywordReturn, // return
         ParserToken_KeywordIf, // if
         ParserToken_KeywordElse, // else

@@ -25,54 +25,28 @@
 //                                                                                  //
 //==================================================================================//
 
-#include <Aryiele/AST/Nodes/NodeFunction.h>
+#ifndef ARYIELE_AST_NODES_NODENAMESPACE_H
+#define ARYIELE_AST_NODES_NODENAMESPACE_H
+
+#include <Aryiele/Common.h>
+#include <Aryiele/AST/Nodes/Node.h>
+#include <Aryiele/AST/Argument.h>
 
 namespace Aryiele {
-    NodeFunction::NodeFunction(const std::string& identifier,
-                               const std::string& type,
-                               std::vector<Argument> arguments,
-                               std::vector<std::shared_ptr<Node>> body) :
-        identifier(identifier), type(type), arguments(arguments), body(body) {
-
-    }
-
-    void NodeFunction::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
-        auto node = std::make_shared<ParserInformation>(parentNode, "Function");
-        auto argumentsNode = std::make_shared<ParserInformation>(node, "Arguments:");
-        auto valueNode = std::make_shared<ParserInformation>(node, "Body:");
-
-        for (auto& childNode : body)
-            childNode->dumpInformations(valueNode);
-
-        int i = 0;
-
-        for(auto& argument : arguments) {
-            auto argumentNode = std::make_shared<ParserInformation>(argumentsNode, std::to_string(i));
-
-            argumentNode->children.emplace_back(std::make_shared<ParserInformation>(
-                argumentNode, "Identifier: " + argument.identifier));
-            argumentNode->children.emplace_back(std::make_shared<ParserInformation>(
-                argumentNode, "Type: " + argument.type));
-
-            argumentsNode->children.emplace_back(argumentNode);
-
-            i++;
-        }
-
-        node->children.emplace_back(std::make_shared<ParserInformation>(node, "Identifier: " + identifier));
-        node->children.emplace_back(std::make_shared<ParserInformation>(node, "Type: " + type));
+    class NodeNamesapce : public Node {
+    public:
+        NodeNamesapce(const std::string& identifier,
+                     const std::vector<std::shared_ptr<Node>>& content);
         
-        if (!arguments.empty()) {
-            node->children.emplace_back(argumentsNode);
-        }
+        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        NodeEnum getType() override;
         
-        node->children.emplace_back(valueNode);
-
-        parentNode->children.emplace_back(node);
-    }
-
-    NodeEnum NodeFunction::getType() {
-        return Node_FunctionPrototype;
-    }
-
+        std::string identifier;
+        std::string type;
+        std::vector<Argument> arguments;
+        std::vector<std::shared_ptr<Node>> content;
+    };
+    
 } /* Namespace Aryiele. */
+
+#endif /* ARYIELE_AST_NODES_NODENAMESPACE_H. */

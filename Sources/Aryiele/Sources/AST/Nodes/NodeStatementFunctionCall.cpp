@@ -55,7 +55,11 @@ namespace Aryiele {
         }
 
         node->children.emplace_back(identifierNode);
-        node->children.emplace_back(argumentsNode);
+        
+        if (!arguments.empty()) {
+            node->children.emplace_back(argumentsNode);
+        }
+        
         parentNode->children.emplace_back(node);
     }
     
