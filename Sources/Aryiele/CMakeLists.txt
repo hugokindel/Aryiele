@@ -89,6 +89,9 @@ add_library(Aryiele
         Include/Aryiele/AST/Nodes/Node.h
         Include/Aryiele/AST/Nodes/NodeConstantDouble.h
         Include/Aryiele/AST/Nodes/NodeConstantInteger.h
+        Include/Aryiele/AST/Nodes/NodeConstantString.h
+        Include/Aryiele/AST/Nodes/NodeConstantCharacter.h
+        Include/Aryiele/AST/Nodes/NodeConstantBoolean.h
         Include/Aryiele/AST/Nodes/NodeFunction.h
         Include/Aryiele/AST/Nodes/NodeNamespace.h
         Include/Aryiele/AST/Nodes/NodeOperationBinary.h
@@ -114,6 +117,9 @@ add_library(Aryiele
         Sources/AST/Variable.cpp
         Sources/AST/Nodes/NodeConstantDouble.cpp
         Sources/AST/Nodes/NodeConstantInteger.cpp
+        Sources/AST/Nodes/NodeConstantString.cpp
+        Sources/AST/Nodes/NodeConstantCharacter.cpp
+        Sources/AST/Nodes/NodeConstantBoolean.cpp
         Sources/AST/Nodes/NodeFunction.cpp
         Sources/AST/Nodes/NodeNamespace.cpp
         Sources/AST/Nodes/NodeOperationBinary.cpp

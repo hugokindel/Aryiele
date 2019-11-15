@@ -25,53 +25,23 @@
 //                                                                                  //
 //==================================================================================//
 
-#include <Aryiele/AST/Nodes/NodeStatementFunctionCall.h>
+#ifndef ARYIELE_AST_NODES_NODECONSTANTBOOLEAN_H
+#define ARYIELE_AST_NODES_NODECONSTANTBOOLEAN_H
+
+#include <Aryiele/Common.h>
+#include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-
-    NodeStatementFunctionCall::NodeStatementFunctionCall(const std::string &identifier, std::vector<std::string> decorations,
-                                                           std::vector<std::shared_ptr<Node>> arguments) :
-        identifier(identifier), decorations(decorations), arguments(arguments) {
-
-    }
-
-    void NodeStatementFunctionCall::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
-        auto node = std::make_shared<ParserInformation>(parentNode, "Function Call");
+    class NodeConstantBoolean : public Node {
+    public:
+        explicit NodeConstantBoolean(bool value);
         
-        std::string decorationName;
+        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        NodeEnum getType() override;
         
-        for (const auto& i : decorations) {
-            decorationName += i + ".";
-        }
-        
-        auto identifierNode = std::make_shared<ParserInformation>(node, "Identifier: " + decorationName + identifier);
-        auto argumentsNode = std::make_shared<ParserInformation>(node, "Arguments:");
-
-        auto i = 0;
-
-        for(auto& argument : arguments) {
-            auto argumentNode = std::make_shared<ParserInformation>(argumentsNode, std::to_string(i));
-            auto body = std::make_shared<ParserInformation>(argumentNode, "Body:");
-
-            argument->dumpInformations(body);
-
-            argumentNode->children.emplace_back(body);
-            argumentsNode->children.emplace_back(argumentNode);
-
-            i++;
-        }
-
-        node->children.emplace_back(identifierNode);
-        
-        if (!arguments.empty()) {
-            node->children.emplace_back(argumentsNode);
-        }
-        
-        parentNode->children.emplace_back(node);
-    }
+        bool value;
+    };
     
-    NodeEnum NodeStatementFunctionCall::getType() {
-        return Node_StatementFunctionCall;
-    }
-
 } /* Namespace Aryiele. */
+
+#endif /* ARYIELE_AST_NODES_NODECONSTANTBOOLEAN_H. */

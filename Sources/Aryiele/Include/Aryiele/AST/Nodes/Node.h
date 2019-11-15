@@ -35,6 +35,9 @@ namespace Aryiele {
     enum NodeEnum {
         Node_ConstantDouble,
         Node_ConstantInteger,
+        Node_ConstantString,
+        Node_ConstantCharacter,
+        Node_ConstantBoolean,
         Node_FunctionPrototype,
         Node_Namespace,
         Node_OperationBinary,

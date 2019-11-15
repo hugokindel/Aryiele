@@ -36,12 +36,14 @@
 namespace Aryiele {
     class NodeStatementFunctionCall : public Node {
     public:
-        NodeStatementFunctionCall(const std::string& identifier, std::vector<std::shared_ptr<Node>> arguments);
+        NodeStatementFunctionCall(const std::string& identifier, std::vector<std::string> decorations,
+            std::vector<std::shared_ptr<Node>> arguments);
 
         void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
 
         std::string identifier;
+        std::vector<std::string> decorations;
         std::vector<std::shared_ptr<Node>> arguments;
     };
 

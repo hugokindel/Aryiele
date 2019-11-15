@@ -32,6 +32,10 @@
 #include <Aryiele/Parser/Parser.h>
 #include <Aryiele/AST/Nodes/NodeConstantDouble.h>
 #include <Aryiele/AST/Nodes/NodeConstantInteger.h>
+#include <Aryiele/AST/Nodes/NodeConstantString.h>
+#include <Aryiele/AST/Nodes/NodeConstantCharacter.h>
+#include <Aryiele/AST/Nodes/NodeConstantBoolean.h>
+#include <Aryiele/AST/Nodes/NodeConstantInteger.h>
 #include <Aryiele/AST/Nodes/NodeOperationBinary.h>
 #include <Aryiele/AST/Nodes/NodeStatementBlock.h>
 #include <Aryiele/AST/Nodes/NodeStatementFunctionCall.h>
@@ -460,6 +464,12 @@ namespace Aryiele {
                 return parseInteger();
             case ParserToken_LiteralValueDecimal:
                 return parseDouble();
+            case ParserToken_LiteralValueString:
+                return parseString();
+            case ParserToken_LiteralValueCharacter:
+                return parseCharacter();
+            case ParserToken_LiteralValueBoolean:
+                return parseBoolean();
             case ParserToken_SeparatorRoundBracketOpen:
                 return parseParenthese();
             case ParserToken_KeywordReturn:
@@ -548,29 +558,63 @@ namespace Aryiele {
 
         return result;
     }
+    
+    std::shared_ptr<Node> Parser::parseString() {
+        auto result = std::make_shared<NodeConstantString>(m_currentToken.content);
+        
+        getNextToken();
+        
+        return result;
+    }
+    
+    std::shared_ptr<Node> Parser::parseCharacter() {
+        auto result = std::make_shared<NodeConstantCharacter>(m_currentToken.content);
+        
+        getNextToken();
+        
+        return result;
+    }
+    
+    std::shared_ptr<Node> Parser::parseBoolean() {
+        auto result = std::make_shared<NodeConstantDouble>(m_currentToken.content == "true");
+        
+        getNextToken();
+        
+        return result;
+    }
 
     std::shared_ptr<Node> Parser::parseIdentifier() {
         auto identifier = m_currentToken.content;
-
+        
         getNextToken();
         
-        if (m_currentToken.type == ParserToken_SeparatorRoundBracketOpen) {
+        if (m_currentToken.type == ParserToken_SeparatorDot) {
+            getNextToken();
+            
+            auto result = parseIdentifier();
+            auto resultC = std::dynamic_pointer_cast<NodeStatementFunctionCall>(result);
+            
+            resultC->decorations.insert(resultC->decorations.begin(), identifier);
+            
+            return resultC;
+        } else if (m_currentToken.type == ParserToken_SeparatorRoundBracketOpen) {
             getNextToken();
 
             std::vector<std::shared_ptr<Node>> arguments;
 
             if (m_currentToken.type != ParserToken_SeparatorRoundBracketClosed) {
                 while (true) {
-                    if (auto arg = parseExpression())
+                    if (auto arg = parseExpression()) {
                         arguments.emplace_back(arg);
-                    else
+                    } else {
                         return nullptr;
+                    }
 
-                    if (m_currentToken.type == ParserToken_SeparatorRoundBracketClosed)
+                    if (m_currentToken.type == ParserToken_SeparatorRoundBracketClosed) {
                         break;
+                    }
 
-                    if (m_currentToken.type != ParserToken_SeparatorComma)
-                    {
+                    if (m_currentToken.type != ParserToken_SeparatorComma) {
                         PARSER_ERROR("Expected ')' or ',' in argument list")
                     }
 
@@ -579,12 +623,11 @@ namespace Aryiele {
             }
 
             getNextToken();
-
-            return std::make_shared<NodeStatementFunctionCall>(identifier, arguments);
+            
+            return std::make_shared<NodeStatementFunctionCall>(identifier, std::vector<std::string>(), arguments);
         }
-        else {
-            return std::make_shared<NodeVariable>(identifier);
-        }
+        
+        return std::make_shared<NodeVariable>(identifier);
     }
 
     std::shared_ptr<Node> Parser::parseParenthese() {
