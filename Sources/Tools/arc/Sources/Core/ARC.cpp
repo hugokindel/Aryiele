@@ -58,6 +58,9 @@ namespace ARC {
     bool ARC::m_verboseMode;
     bool ARC::m_keepAllFiles;
 #endif
+    bool ARC::m_doLexerPass = true;
+    bool ARC::m_doParserPass = false;
+    bool ARC::m_doCodeGeneratorPass = false;
 
     BuildType ARC::m_buildType = BuildType_Executable;
     
@@ -157,32 +160,36 @@ namespace ARC {
             else {
                 Vanir::Logger::resetCounters();
                 
-                auto lexerPass = doLexerPass(m_inputFilepath);
-                
-                ARC_RUN_CHECKERRORS()
-                
-                auto parserPass = doParserPass(lexerPass);
-                
-                ARC_RUN_CHECKERRORS()
-                
-                doCodeGeneratorPass(parserPass);
-                
-                if (m_buildType == BuildType_Object || m_buildType == BuildType_Executable) {
+                if (m_doLexerPass) {
+                    auto lexerPass = doLexerPass(m_inputFilepath);
+    
                     ARC_RUN_CHECKERRORS()
-                    
-                    doObjectGeneratorPass();
-                    
-                    if (!m_keepAllFiles)
-                        remove(m_tempIRFilepath.c_str());
-                }
-                
-                if (m_buildType == BuildType_Executable) {
-                    ARC_RUN_CHECKERRORS()
-                    
-                    doExecutableGeneratorPass();
-                    
-                    if (!m_keepAllFiles)
-                        remove(m_tempOBJFilepath.c_str());
+    
+                    if (m_doParserPass) {
+                        auto parserPass = doParserPass(lexerPass);
+    
+                        ARC_RUN_CHECKERRORS()
+    
+                        if (m_doCodeGeneratorPass) {
+                            doCodeGeneratorPass(parserPass);
+    
+                            ARC_RUN_CHECKERRORS()
+    
+                            if (m_buildType == BuildType_Object || m_buildType == BuildType_Executable) {
+                                doObjectGeneratorPass();
+        
+                                if (!m_keepAllFiles)
+                                    remove(m_tempIRFilepath.c_str());
+                            }
+    
+                            if (m_buildType == BuildType_Executable) {
+                                doExecutableGeneratorPass();
+        
+                                if (!m_keepAllFiles)
+                                    remove(m_tempOBJFilepath.c_str());
+                            }
+                        }
+                    }
                 }
             }
         }

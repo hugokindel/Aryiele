@@ -120,6 +120,9 @@ namespace ARC {
         static bool m_verboseMode;
         static bool m_keepAllFiles;
         static BuildType m_buildType;
+        static bool m_doLexerPass;
+        static bool m_doParserPass;
+        static bool m_doCodeGeneratorPass;
     };
 
 } /* Namespace ARC. */

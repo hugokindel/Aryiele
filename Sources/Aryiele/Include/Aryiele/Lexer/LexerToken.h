@@ -35,6 +35,7 @@ namespace Aryiele {
         LexerToken_Reject,
         LexerToken_Number,
         LexerToken_String,
+        LexerToken_Character,
         LexerToken_Operator,
         LexerToken_Separator,
         LexerToken_Identifier,

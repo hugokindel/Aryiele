@@ -105,7 +105,7 @@ namespace Aryiele {
                              lastToken.type != LexerToken_Identifier) &&
                              lastToken.content != "(" &&
                              lastToken.content != ")")
-                        tokens.emplace_back(token.content, ParserToken_OperatorArithmeticUnaryPlus);
+                        tokens.emplace_back(token.content, ParserToken_OperatorUnaryArithmeticPlus);
                     else if (token.content == "+")
                         tokens.emplace_back(token.content, ParserToken_OperatorArithmeticPlus);
                     else if ((token.content == "-" &&
@@ -113,7 +113,7 @@ namespace Aryiele {
                               lastToken.type != LexerToken_Identifier) &&
                               lastToken.content != "(" &&
                               lastToken.content != ")")
-                        tokens.emplace_back(token.content, ParserToken_OperatorArithmeticUnaryMinus);
+                        tokens.emplace_back(token.content, ParserToken_OperatorUnaryArithmeticMinus);
                     else if (token.content == "-")
                         tokens.emplace_back(token.content, ParserToken_OperatorArithmeticMinus);
                     else if (token.content == "*")
@@ -141,7 +141,7 @@ namespace Aryiele {
                     else if (token.content == "||")
                         tokens.emplace_back(token.content, ParserToken_OperatorLogicalOr);
                     else if (token.content == "!")
-                        tokens.emplace_back(token.content, ParserToken_OperatorLogicalNot);
+                        tokens.emplace_back(token.content, ParserToken_OperatorUnaryLogicalNot);
                     else
                         tokens.emplace_back(token.content, ParserToken_Unknown);
                     break;
@@ -211,12 +211,12 @@ namespace Aryiele {
                 return "OperatorEqual";
             case ParserToken_OperatorArithmeticPlus:
                 return "OperatorArithmeticPlus";
-            case ParserToken_OperatorArithmeticUnaryPlus:
-                return "OperatorArithmeticUnaryPlus";
             case ParserToken_OperatorArithmeticMinus:
                 return "OperatorArithmeticMinus";
-            case ParserToken_OperatorArithmeticUnaryMinus:
-                return "OperatorArithmeticUnaryMinus";
+            case ParserToken_OperatorUnaryArithmeticPlus:
+                return "OperatorUnaryArithmeticPlus";
+            case ParserToken_OperatorUnaryArithmeticMinus:
+                return "OperatorUnaryArithmeticMinus";
             case ParserToken_OperatorArithmeticMultiply:
                 return "OperatorArithmeticMultiply";
             case ParserToken_OperatorArithmeticDivide:
@@ -239,8 +239,8 @@ namespace Aryiele {
                 return "OperatorLogicalAnd";
             case ParserToken_OperatorLogicalOr:
                 return "OperatorLogicalOr";
-            case ParserToken_OperatorLogicalNot:
-                return "OperatorLogicalNot";
+            case ParserToken_OperatorUnaryLogicalNot:
+                return "OperatorUnaryLogicalNot";
             case ParserToken_SeparatorRoundBracketOpen:
                 return "SeparatorRoundBracketOpen";
             case ParserToken_SeparatorRoundBracketClosed:
@@ -312,7 +312,7 @@ namespace Aryiele {
         if (m_currentToken.type == ParserToken_Identifier)
             name = m_currentToken.content;
         else {
-            LOG_ERROR("Expected an identifier.");
+            LOG_ERROR("Expected an identifier.")
 
             return nullptr;
         }
@@ -320,7 +320,7 @@ namespace Aryiele {
         getNextToken();
 
         if (m_currentToken.type != ParserToken_SeparatorRoundBracketOpen) {
-            LOG_ERROR("Expected an opened round bracket.");
+            LOG_ERROR("Expected an opened round bracket.")
 
             return nullptr;
         }
@@ -334,10 +334,10 @@ namespace Aryiele {
                 auto identifier = m_currentToken.content;
 
                 getNextToken();
-                PARSER_CHECKTOKEN(ParserToken_SeparatorColon);
+                PARSER_CHECKTOKEN(ParserToken_SeparatorColon)
 
                 getNextToken();
-                PARSER_CHECKTOKEN(ParserToken_Identifier);
+                PARSER_CHECKTOKEN(ParserToken_Identifier)
 
                 arguments.emplace_back(Argument(identifier, m_currentToken.content));
             }
@@ -345,7 +345,7 @@ namespace Aryiele {
                 continue;
             }
             else {
-                LOG_ERROR("Expected either a closed round bracket or a variable.");
+                LOG_ERROR("Expected either a closed round bracket or a variable.")
 
                 return nullptr;
             }
@@ -353,21 +353,21 @@ namespace Aryiele {
 
         getNextToken();
 
-        PARSER_CHECKTOKEN(ParserToken_SeparatorColon);
+        PARSER_CHECKTOKEN(ParserToken_SeparatorColon)
 
         getNextToken();
 
         if (m_currentToken.type == ParserToken_Identifier)
             type = m_currentToken.content;
         else {
-            LOG_ERROR("Expected a type name.");
+            LOG_ERROR("Expected a type name.")
 
             return nullptr;
         }
 
         getNextToken();
 
-        PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketOpen);
+        PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketOpen)
 
         auto expressions = parseBody();
 
@@ -492,7 +492,7 @@ namespace Aryiele {
 
                     if (m_currentToken.type != ParserToken_SeparatorComma)
                     {
-                        LOG_ERROR("Expected ')' or ',' in argument list");
+                        LOG_ERROR("Expected ')' or ',' in argument list")
                     }
 
                     getNextToken();
@@ -530,16 +530,16 @@ namespace Aryiele {
         auto condition = parseParenthese();
 
         if (!condition) {
-            LOG_ERROR("Cannot parse if condition");
+            LOG_ERROR("Cannot parse if condition")
 
             return nullptr;
         }
 
-        PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketOpen);
+        PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketOpen)
 
         auto ifBody = parseBody();
 
-        PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketClosed);
+        PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketClosed)
 
         std::vector<std::shared_ptr<Node>> elseBody;
 
@@ -551,14 +551,14 @@ namespace Aryiele {
             if (m_currentToken.type == ParserToken_KeywordIf) {
                 elseBody.emplace_back(parseIf());
 
-                PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketClosed);
+                PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketClosed)
             }
             else {
-                PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketOpen);
+                PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketOpen)
 
                 elseBody = parseBody();
 
-                PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketClosed);
+                PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketClosed)
             }
         }
         else {
@@ -582,12 +582,12 @@ namespace Aryiele {
         std::vector<std::shared_ptr<Variable>> variables;
 
         while (true) {
-            PARSER_CHECKNEXTTOKEN(ParserToken_Identifier);
+            PARSER_CHECKNEXTTOKEN(ParserToken_Identifier)
 
             auto identifier = m_currentToken.content;
 
-            PARSER_CHECKNEXTTOKEN(ParserToken_SeparatorColon);
-            PARSER_CHECKNEXTTOKEN(ParserToken_Identifier);
+            PARSER_CHECKNEXTTOKEN(ParserToken_SeparatorColon)
+            PARSER_CHECKNEXTTOKEN(ParserToken_Identifier)
 
             auto type = m_currentToken.content;
 
