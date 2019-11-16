@@ -192,6 +192,8 @@ namespace Aryiele {
                         tokens.emplace_back("", ParserToken_KeywordFrom);
                     else if (token.content == "to")
                         tokens.emplace_back("", ParserToken_KeywordTo);
+                    else if (token.content == "by")
+                        tokens.emplace_back("", ParserToken_KeywordBy);
                     else if (token.content == "do")
                         tokens.emplace_back("", ParserToken_KeywordDo);
                     else if (token.content == "while")
@@ -326,6 +328,8 @@ namespace Aryiele {
                 return "KeywordFrom";
             case ParserToken_KeywordTo:
                 return "KeywordTo";
+            case ParserToken_KeywordBy:
+                return "KeywordBy";
             case ParserToken_KeywordDo:
                 return "KeywordDo";
             case ParserToken_KeywordWhile:
@@ -378,7 +382,7 @@ namespace Aryiele {
                 }
             }
         }
-
+        
         return m_currentToken;
     }
     
@@ -649,6 +653,15 @@ namespace Aryiele {
     std::shared_ptr<Node> Parser::parseIf() {
         getNextToken();
         
+        if (m_currentToken.type != ParserToken_Identifier &&
+            m_currentToken.type != ParserToken_LiteralValueInteger &&
+            m_currentToken.type != ParserToken_LiteralValueDecimal &&
+            m_currentToken.type != ParserToken_LiteralValueString &&
+            m_currentToken.type != ParserToken_LiteralValueCharacter &&
+            m_currentToken.type != ParserToken_LiteralValueBoolean) {
+            PARSER_ERROR("unexpected token after if")
+        }
+        
         auto condition = parseExpression();
 
         if (!condition) {
@@ -696,32 +709,40 @@ namespace Aryiele {
     }
 
     // TODO: PARSER: Define a variable with no default value (eg: var x: int;).
-    // TODO: PARSER: Define multiples variables at once (eg: var x: int = 0, y: int, z: int = 2, w: int = z;).
     std::shared_ptr<Node> Parser::parseVariableDeclaration() {
         std::vector<std::shared_ptr<Variable>> variables;
 
         while (true) {
-            PARSER_CHECKNEXTTOKEN(ParserToken_Identifier)
+            getNextToken();
+            PARSER_CHECKTOKEN(ParserToken_Identifier)
 
             auto identifier = m_currentToken.content;
-
-            PARSER_CHECKNEXTTOKEN(ParserToken_SeparatorColon)
-            PARSER_CHECKNEXTTOKEN(ParserToken_Identifier)
-
-            auto type = m_currentToken.content;
-
-            getNextToken();
-
+            auto type = std::string();
             std::shared_ptr<Node> value = nullptr;
+            
+            getNextToken();
+            
+            if (m_currentToken.type == ParserToken_SeparatorColon) {
+                getNextToken();
+                PARSER_CHECKTOKEN(ParserToken_Identifier)
+    
+                type = m_currentToken.content;
+    
+                getNextToken();
+            }
 
             if (m_currentToken.type == ParserToken_OperatorEqual) {
                 getNextToken();
-
+                
                 value = parseExpression();
+            } else if (type.empty() && value == nullptr) {
+                PARSER_ERROR("variable declaration has empty type and value")
             }
-
-            variables.emplace_back(std::make_shared<Variable>(identifier, type, value));
-
+    
+            if (!type.empty() || value != nullptr) {
+                variables.emplace_back(std::make_shared<Variable>(identifier, type, value));
+            }
+            
             if (m_currentToken.type != ParserToken_SeparatorComma)
                 break;
         }

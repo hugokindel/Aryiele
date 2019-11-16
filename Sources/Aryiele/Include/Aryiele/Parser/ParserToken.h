@@ -79,6 +79,7 @@ namespace Aryiele {
         ParserToken_KeywordFrom, // from
         ParserToken_KeywordTo, // to
         ParserToken_KeywordDo, // do
+        ParserToken_KeywordBy, // by
         ParserToken_KeywordWhile, // while
         ParserToken_KeywordSwitch, // switch
         ParserToken_KeywordCase, // case

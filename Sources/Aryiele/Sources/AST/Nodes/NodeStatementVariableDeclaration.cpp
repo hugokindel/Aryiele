@@ -44,7 +44,10 @@ namespace Aryiele {
 
             variableNode->children.emplace_back(std::make_shared<ParserInformation>(
                     variableNode, "Identifier: " + variable->identifier));
-            variableNode->children.emplace_back(std::make_shared<ParserInformation>(variableNode, "Type: " + variable->type));
+            
+            if (!variable->type.empty()) {
+                variableNode->children.emplace_back(std::make_shared<ParserInformation>(variableNode, "Type: " + variable->type));
+            }
 
             if (variable->expression) {
                 auto valueNode = std::make_shared<ParserInformation>(variableNode, "Expression:");
