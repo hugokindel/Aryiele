@@ -99,7 +99,7 @@ namespace Aryiele {
         auto nodePtr = node.get();
 
         switch (node->getType()) {
-            case Node_FunctionPrototype:
+            case Node_Function:
                 return generateCode((NodeFunction*)nodePtr);
             case Node_ConstantDouble:
                 return generateCode((NodeConstantDouble*)nodePtr);

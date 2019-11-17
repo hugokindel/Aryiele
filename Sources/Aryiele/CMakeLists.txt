@@ -96,6 +96,7 @@ add_library(Aryiele
         Include/Aryiele/AST/Nodes/NodeNamespace.h
         Include/Aryiele/AST/Nodes/NodeOperationBinary.h
         Include/Aryiele/AST/Nodes/NodeStatementBlock.h
+        Include/Aryiele/AST/Nodes/NodeStatementFor.h
         Include/Aryiele/AST/Nodes/NodeStatementFunctionCall.h
         Include/Aryiele/AST/Nodes/NodeStatementIf.h
         Include/Aryiele/AST/Nodes/NodeStatementReturn.h
@@ -124,6 +125,7 @@ add_library(Aryiele
         Sources/AST/Nodes/NodeNamespace.cpp
         Sources/AST/Nodes/NodeOperationBinary.cpp
         Sources/AST/Nodes/NodeStatementBlock.cpp
+        Sources/AST/Nodes/NodeStatementFor.cpp
         Sources/AST/Nodes/NodeStatementFunctionCall.cpp
         Sources/AST/Nodes/NodeStatementIf.cpp
         Sources/AST/Nodes/NodeStatementReturn.cpp

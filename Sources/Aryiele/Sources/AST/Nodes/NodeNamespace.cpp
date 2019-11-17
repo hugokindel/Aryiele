@@ -28,23 +28,24 @@
 #include <Aryiele/AST/Nodes/NodeNamespace.h>
 
 namespace Aryiele {
-    NodeNamesapce::NodeNamesapce(const std::string& identifier, const std::vector<std::shared_ptr<Node>>& content) :
+    NodeNamespace::NodeNamespace(const std::string& identifier, std::vector<std::shared_ptr<Node>> content) :
         identifier(identifier), content(content) {
     
     }
     
-    void NodeNamesapce::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeNamespace::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Namespace");
         auto bodyNode = std::make_shared<ParserInformation>(node, "Content:");
     
-        for (auto& statement : content)
+        for (auto& statement : content) {
             statement->dumpInformations(bodyNode);
+        }
     
         node->children.emplace_back(bodyNode);
         parentNode->children.emplace_back(node);
     }
     
-    NodeEnum NodeNamesapce::getType() {
+    NodeEnum NodeNamespace::getType() {
         return Node_Namespace;
     }
 } /* Namespace Aryiele. */

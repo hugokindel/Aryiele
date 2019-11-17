@@ -33,17 +33,15 @@
 #include <Aryiele/AST/Argument.h>
 
 namespace Aryiele {
-    class NodeNamesapce : public Node {
+    class NodeNamespace : public Node {
     public:
-        NodeNamesapce(const std::string& identifier,
-                     const std::vector<std::shared_ptr<Node>>& content);
+        NodeNamespace(const std::string& identifier,
+            std::vector<std::shared_ptr<Node>> content);
         
         void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
         
         std::string identifier;
-        std::string type;
-        std::vector<Argument> arguments;
         std::vector<std::shared_ptr<Node>> content;
     };
     
