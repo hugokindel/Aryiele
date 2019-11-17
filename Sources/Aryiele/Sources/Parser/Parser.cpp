@@ -42,6 +42,7 @@
 #include <Aryiele/AST/Nodes/NodeStatementIf.h>
 #include <Aryiele/AST/Nodes/NodeStatementReturn.h>
 #include <Aryiele/AST/Nodes/NodeStatementVariableDeclaration.h>
+#include <Aryiele/AST/Nodes/NodeStatementFor.h>
 #include <Aryiele/AST/Nodes/NodeVariable.h>
 
 namespace Aryiele {
@@ -174,6 +175,8 @@ namespace Aryiele {
                         tokens.emplace_back("", ParserToken_SeparatorComma);
                     else if (token.content == ".")
                         tokens.emplace_back("", ParserToken_SeparatorDot);
+                    else if (token.content == "...")
+                        tokens.emplace_back("", ParserToken_SeparatorTripleDot);
                     break;
                 case LexerToken_Identifier:
                     // Boolean
@@ -188,10 +191,8 @@ namespace Aryiele {
                         tokens.emplace_back("", ParserToken_KeywordLet);
                     else if (token.content == "for")
                         tokens.emplace_back("", ParserToken_KeywordFor);
-                    else if (token.content == "from")
-                        tokens.emplace_back("", ParserToken_KeywordFrom);
-                    else if (token.content == "to")
-                        tokens.emplace_back("", ParserToken_KeywordTo);
+                    else if (token.content == "until")
+                        tokens.emplace_back("", ParserToken_KeywordUntil);
                     else if (token.content == "by")
                         tokens.emplace_back("", ParserToken_KeywordBy);
                     else if (token.content == "do")
@@ -292,6 +293,10 @@ namespace Aryiele {
                 return "SeparatorColon";
             case ParserToken_SeparatorComma:
                 return "SeparatorComma";
+            case ParserToken_SeparatorDot:
+                return "SeparatorDot";
+            case ParserToken_SeparatorTripleDot:
+                return "SeparatorTripleDot";
             case ParserToken_SeparatorSemicolon:
                 return "SeparatorSemicolon";
             case ParserToken_KeywordFunction:
@@ -318,16 +323,12 @@ namespace Aryiele {
                 return "OperatorArithmeticDivideEqual";
             case ParserToken_OperatorArithmeticRemainderEqual:
                 return "OperatorArithmeticRemainderEqual";
-            case ParserToken_SeparatorDot:
-                return "SeparatorDot";
             case ParserToken_KeywordLet:
                 return "KeywordLet";
             case ParserToken_KeywordFor:
                 return "KeywordFor";
-            case ParserToken_KeywordFrom:
-                return "KeywordFrom";
-            case ParserToken_KeywordTo:
-                return "KeywordTo";
+            case ParserToken_KeywordUntil:
+                return "KeywordUntil";
             case ParserToken_KeywordBy:
                 return "KeywordBy";
             case ParserToken_KeywordDo:
@@ -354,21 +355,8 @@ namespace Aryiele {
         return m_currentToken;
     }
 
-    ParserToken Parser::getNextToken() {
-        m_currentToken = m_tokens[++m_currentTokenIndex];
-        
-        if (m_currentToken.type == ParserToken_Newline) {
-            m_currentLine++;
-            m_currentColumn = 0;
-        } else {
-            if (m_currentToken.content.empty()) {
-                m_currentColumn++;
-            } else {
-                m_currentColumn += m_currentToken.content.size();
-            }
-        }
-        
-        while (m_currentToken.type == ParserToken_Space) {
+    ParserToken Parser::getNextToken(bool incrementCounter) {
+        if (incrementCounter) {
             m_currentToken = m_tokens[++m_currentTokenIndex];
     
             if (m_currentToken.type == ParserToken_Newline) {
@@ -381,9 +369,33 @@ namespace Aryiele {
                     m_currentColumn += m_currentToken.content.size();
                 }
             }
-        }
+    
+            while (m_currentToken.type == ParserToken_Space) {
+                m_currentToken = m_tokens[++m_currentTokenIndex];
         
-        return m_currentToken;
+                if (m_currentToken.type == ParserToken_Newline) {
+                    m_currentLine++;
+                    m_currentColumn = 0;
+                } else {
+                    if (m_currentToken.content.empty()) {
+                        m_currentColumn++;
+                    } else {
+                        m_currentColumn += m_currentToken.content.size();
+                    }
+                }
+            }
+    
+            return m_currentToken;
+        } else {
+            auto counter = m_currentTokenIndex;
+            auto currentToken = m_tokens[++counter];
+    
+            while (currentToken.type == ParserToken_Space) {
+                currentToken = m_tokens[++counter];
+            }
+    
+            return currentToken;
+        }
     }
     
     int Parser::getOperatorPrecedence(ParserTokenEnum binaryOperator) {
@@ -480,6 +492,8 @@ namespace Aryiele {
                 return parseReturn();
             case ParserToken_KeywordIf:
                 return parseIf();
+            case ParserToken_KeywordFor:
+                return parseFor();
             case ParserToken_Identifier:
                 return parseIdentifier();
             case ParserToken_SeparatorCurlyBracketOpen:
@@ -653,13 +667,8 @@ namespace Aryiele {
     std::shared_ptr<Node> Parser::parseIf() {
         getNextToken();
         
-        if (m_currentToken.type != ParserToken_Identifier &&
-            m_currentToken.type != ParserToken_LiteralValueInteger &&
-            m_currentToken.type != ParserToken_LiteralValueDecimal &&
-            m_currentToken.type != ParserToken_LiteralValueString &&
-            m_currentToken.type != ParserToken_LiteralValueCharacter &&
-            m_currentToken.type != ParserToken_LiteralValueBoolean) {
-            PARSER_ERROR("unexpected token after if")
+        if (!isLiteralOrIdentifier(m_currentToken.type)) {
+            PARSER_ERROR("expected literal value or variable identifier")
         }
         
         auto condition = parseExpression();
@@ -675,14 +684,11 @@ namespace Aryiele {
         PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketClosed)
 
         std::vector<std::shared_ptr<Node>> elseBody;
-
-        if (m_tokens[m_currentTokenIndex + 1].type == ParserToken_KeywordElse) {
+        
+        if (getNextToken(false).type == ParserToken_KeywordElse) {
+            getNextToken();
             getNextToken();
     
-            getNextToken();
-    
-            PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketOpen)
-
             if (m_currentToken.type == ParserToken_KeywordIf) {
                 elseBody.emplace_back(parseIf());
 
@@ -699,21 +705,63 @@ namespace Aryiele {
 
         return std::make_shared<NodeStatementIf>(condition, ifBody, elseBody);
     }
-
-    std::shared_ptr<Node> Parser::parseBlock() {
-        auto block = std::make_shared<NodeStatementBlock>();
-
-        block->body = parseBody();
-
-        return block;
+    
+    std::shared_ptr<Node> Parser::parseFor() {
+        std::shared_ptr<Node> incrementationValue;
+        
+        getNextToken();
+    
+        if (m_currentToken.type != ParserToken_Identifier) {
+            PARSER_ERROR("expected variable declaration in for declaration")
+        }
+        
+        auto variable = parseVariableDeclaration(false, false);
+    
+        if (m_currentToken.type != ParserToken_KeywordUntil) {
+            PARSER_ERROR("expected 'until' in for declaration")
+        }
+        
+        getNextToken();
+    
+        if (!isLiteralOrIdentifier(m_currentToken.type)) {
+            PARSER_ERROR("expected literal value or identifier in for declaration")
+        }
+        
+        auto condition = parseExpression();
+        
+        if (m_currentToken.type == ParserToken_KeywordBy) {
+            getNextToken();
+    
+            if (!isLiteralOrIdentifier(m_currentToken.type)) {
+                PARSER_ERROR("expected literal value or identifier in by in for declaration")
+            }
+    
+            incrementationValue = parseExpression();
+        }
+        
+        if (m_currentToken.type != ParserToken_SeparatorCurlyBracketOpen) {
+            PARSER_ERROR("expected '{' in for declaration")
+        }
+    
+        auto body = parseBody();
+    
+        PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketClosed)
+        
+        return std::make_shared<NodeStatementFor>(condition, body, std::dynamic_pointer_cast<NodeStatementVariableDeclaration>(variable), incrementationValue);
     }
 
-    // TODO: PARSER: Define a variable with no default value (eg: var x: int;).
-    std::shared_ptr<Node> Parser::parseVariableDeclaration() {
+    std::shared_ptr<Node> Parser::parseBlock() {
+        return std::make_shared<NodeStatementBlock>(parseBody());
+    }
+
+    std::shared_ptr<Node> Parser::parseVariableDeclaration(bool passVar, bool multiple) {
         std::vector<std::shared_ptr<Variable>> variables;
 
         while (true) {
-            getNextToken();
+            if (passVar) {
+                getNextToken();
+            }
+            
             PARSER_CHECKTOKEN(ParserToken_Identifier)
 
             auto identifier = m_currentToken.content;
@@ -743,11 +791,23 @@ namespace Aryiele {
                 variables.emplace_back(std::make_shared<Variable>(identifier, type, value));
             }
             
-            if (m_currentToken.type != ParserToken_SeparatorComma)
+            if (!multiple || m_currentToken.type != ParserToken_SeparatorComma)
                 break;
         }
 
         return std::make_shared<NodeStatementVariableDeclaration>(variables);
+    }
+    
+    bool Parser::isLiteral(ParserTokenEnum type) {
+        return m_currentToken.type == ParserToken_LiteralValueInteger ||
+               m_currentToken.type == ParserToken_LiteralValueDecimal ||
+               m_currentToken.type == ParserToken_LiteralValueString ||
+               m_currentToken.type == ParserToken_LiteralValueCharacter ||
+               m_currentToken.type == ParserToken_LiteralValueBoolean;
+    }
+    
+    bool Parser::isLiteralOrIdentifier(ParserTokenEnum type) {
+        return m_currentToken.type == ParserToken_Identifier || isLiteral(type);
     }
     
     Parser &getParser() {
