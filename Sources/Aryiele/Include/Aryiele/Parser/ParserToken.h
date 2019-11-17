@@ -50,6 +50,8 @@ namespace Aryiele {
         ParserToken_OperatorArithmeticRemainderEqual, // %=
         ParserToken_OperatorUnaryArithmeticPlus, // +
         ParserToken_OperatorUnaryArithmeticMinus, // -
+        ParserToken_OperatorUnaryArithmeticIncrement, // ++
+        ParserToken_OperatorUnaryArithmeticDecrement, // --
         ParserToken_OperatorComparisonEqual, // ==
         ParserToken_OperatorComparisonNotEqual, // !=
         ParserToken_OperatorComparisonLessThan, // <
@@ -66,6 +68,7 @@ namespace Aryiele {
         ParserToken_SeparatorCurlyBracketOpen, // {
         ParserToken_SeparatorCurlyBracketClosed, // }
         ParserToken_SeparatorColon, // :
+        ParserToken_SeparatorQuestionMark, // ?
         ParserToken_SeparatorSemicolon, // ;
         ParserToken_SeparatorComma, // ,
         ParserToken_SeparatorDot, // .

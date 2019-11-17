@@ -42,6 +42,7 @@ namespace Aryiele {
         Node_Namespace,
         Node_Class,
         Node_OperationBinary,
+        Node_OperationUnary,
         Node_StatementBlock,
         Node_StatementFor,
         Node_StatementWhile,

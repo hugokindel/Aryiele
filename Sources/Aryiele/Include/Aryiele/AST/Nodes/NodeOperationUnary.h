@@ -1,6 +1,6 @@
 //==================================================================================//
 //                                                                                  //
-//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                      //
+//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                       //
 //                                                                                  //
 //  This file is part of the Aryiele project.                                       //
 //  Licensed under MIT License:                                                     //
@@ -25,46 +25,27 @@
 //                                                                                  //
 //==================================================================================//
 
-#include <Aryiele/AST/Nodes/NodeStatementFor.h>
+#ifndef ARYIELE_AST_NODES_NODEOPERATIONUNARY_H
+#define ARYIELE_AST_NODES_NODEOPERATIONUNARY_H
+
+#include <memory>
+#include <Aryiele/Common.h>
+#include <Aryiele/Parser/ParserToken.h>
+#include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-    NodeStatementFor::NodeStatementFor(std::shared_ptr<NodeStatementVariableDeclaration> variable, std::shared_ptr<Node> condition,
-        std::shared_ptr<Node> incrementalValue, std::vector<std::shared_ptr<Node>> body) :
-        variable(variable), condition(condition), incrementalValue(incrementalValue), body(body) {
+    class NodeOperationUnary : public Node {
+    public:
+        NodeOperationUnary(ParserTokenEnum operationType, std::shared_ptr<Node> expression, bool left = true);
         
-    }
-    
-    void NodeStatementFor::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
-        auto node = std::make_shared<ParserInformation>(parentNode, "For");
-        auto variableNode = std::make_shared<ParserInformation>(node, "Variable:");
-        auto conditionNode = std::make_shared<ParserInformation>(node, "Condition:");
-        auto incrementalValueNode = std::make_shared<ParserInformation>(node, "Incremental Value:");
-        auto bodyNode = std::make_shared<ParserInformation>(node, "Body:");
-    
-        variable->dumpInformations(variableNode);
-        condition->dumpInformations(conditionNode);
+        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        NodeEnum getType() override;
         
-        for (auto& i : body) {
-            i->dumpInformations(bodyNode);
-        }
-        
-        if (incrementalValue != nullptr) {
-            incrementalValue->dumpInformations(incrementalValueNode);
-        }
+        ParserTokenEnum operationType;
+        std::shared_ptr<Node> expression;
+        bool left;
+    };
     
-        node->children.emplace_back(variableNode);
-        node->children.emplace_back(conditionNode);
-    
-        if (incrementalValue != nullptr) {
-            node->children.emplace_back(incrementalValueNode);
-        }
-        
-        node->children.emplace_back(bodyNode);
-    
-        parentNode->children.emplace_back(node);
-    }
-    
-    NodeEnum NodeStatementFor::getType() {
-        return Node_StatementFor;
-    }
 } /* Namespace Aryiele. */
+
+#endif /* ARYIELE_AST_NODES_NODEOPERATIONUNARY_H. */

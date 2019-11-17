@@ -25,46 +25,26 @@
 //                                                                                  //
 //==================================================================================//
 
-#include <Aryiele/AST/Nodes/NodeStatementFor.h>
+#ifndef ARYIELE_NODESTATEMENTWHILE_H
+#define ARYIELE_NODESTATEMENTWHILE_H
+
+#include <Aryiele/Common.h>
+#include <Aryiele/AST/Nodes/Node.h>
+#include <Aryiele/AST/Variable.h>
 
 namespace Aryiele {
-    NodeStatementFor::NodeStatementFor(std::shared_ptr<NodeStatementVariableDeclaration> variable, std::shared_ptr<Node> condition,
-        std::shared_ptr<Node> incrementalValue, std::vector<std::shared_ptr<Node>> body) :
-        variable(variable), condition(condition), incrementalValue(incrementalValue), body(body) {
+    class NodeStatementWhile : public Node {
+    public:
+        NodeStatementWhile(bool doOnce, std::shared_ptr<Node> condition, std::vector<std::shared_ptr<Node>> body);
         
-    }
-    
-    void NodeStatementFor::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
-        auto node = std::make_shared<ParserInformation>(parentNode, "For");
-        auto variableNode = std::make_shared<ParserInformation>(node, "Variable:");
-        auto conditionNode = std::make_shared<ParserInformation>(node, "Condition:");
-        auto incrementalValueNode = std::make_shared<ParserInformation>(node, "Incremental Value:");
-        auto bodyNode = std::make_shared<ParserInformation>(node, "Body:");
-    
-        variable->dumpInformations(variableNode);
-        condition->dumpInformations(conditionNode);
+        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        NodeEnum getType() override;
         
-        for (auto& i : body) {
-            i->dumpInformations(bodyNode);
-        }
-        
-        if (incrementalValue != nullptr) {
-            incrementalValue->dumpInformations(incrementalValueNode);
-        }
+        bool doOnce;
+        std::shared_ptr<Node> condition;
+        std::vector<std::shared_ptr<Node>> body;
+    };
     
-        node->children.emplace_back(variableNode);
-        node->children.emplace_back(conditionNode);
-    
-        if (incrementalValue != nullptr) {
-            node->children.emplace_back(incrementalValueNode);
-        }
-        
-        node->children.emplace_back(bodyNode);
-    
-        parentNode->children.emplace_back(node);
-    }
-    
-    NodeEnum NodeStatementFor::getType() {
-        return Node_StatementFor;
-    }
 } /* Namespace Aryiele. */
+
+#endif /* ARYIELE_NODESTATEMENTWHILE_H. */

@@ -25,46 +25,32 @@
 //                                                                                  //
 //==================================================================================//
 
-#include <Aryiele/AST/Nodes/NodeStatementFor.h>
+#include <Aryiele/AST/Nodes/NodeOperationUnary.h>
+#include <Aryiele/Parser/Parser.h>
 
 namespace Aryiele {
-    NodeStatementFor::NodeStatementFor(std::shared_ptr<NodeStatementVariableDeclaration> variable, std::shared_ptr<Node> condition,
-        std::shared_ptr<Node> incrementalValue, std::vector<std::shared_ptr<Node>> body) :
-        variable(variable), condition(condition), incrementalValue(incrementalValue), body(body) {
-        
+    NodeOperationUnary::NodeOperationUnary(ParserTokenEnum operationType, std::shared_ptr<Node> expression, bool left) :
+        operationType(operationType), expression(expression), left(left) {
+    
     }
     
-    void NodeStatementFor::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
-        auto node = std::make_shared<ParserInformation>(parentNode, "For");
-        auto variableNode = std::make_shared<ParserInformation>(node, "Variable:");
-        auto conditionNode = std::make_shared<ParserInformation>(node, "Condition:");
-        auto incrementalValueNode = std::make_shared<ParserInformation>(node, "Incremental Value:");
-        auto bodyNode = std::make_shared<ParserInformation>(node, "Body:");
+    void NodeOperationUnary::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+        auto node = std::make_shared<ParserInformation>(parentNode, "Unary Operation");
+        auto sideNode = std::make_shared<ParserInformation>(node, std::string("Side:") + std::string(left ? "Left" : "Right"));
+        auto operationTypeNode = std::make_shared<ParserInformation>(
+            node, "Type: " + Parser::getTokenName(operationType));
+        auto expressionNode = std::make_shared<ParserInformation>(node, "Operand:");
     
-        variable->dumpInformations(variableNode);
-        condition->dumpInformations(conditionNode);
-        
-        for (auto& i : body) {
-            i->dumpInformations(bodyNode);
-        }
-        
-        if (incrementalValue != nullptr) {
-            incrementalValue->dumpInformations(incrementalValueNode);
-        }
+        expression->dumpInformations(expressionNode);
     
-        node->children.emplace_back(variableNode);
-        node->children.emplace_back(conditionNode);
-    
-        if (incrementalValue != nullptr) {
-            node->children.emplace_back(incrementalValueNode);
-        }
-        
-        node->children.emplace_back(bodyNode);
+        node->children.emplace_back(sideNode);
+        node->children.emplace_back(operationTypeNode);
+        node->children.emplace_back(expressionNode);
     
         parentNode->children.emplace_back(node);
     }
     
-    NodeEnum NodeStatementFor::getType() {
-        return Node_StatementFor;
+    NodeEnum NodeOperationUnary::getType() {
+        return Node_OperationUnary;
     }
 } /* Namespace Aryiele. */

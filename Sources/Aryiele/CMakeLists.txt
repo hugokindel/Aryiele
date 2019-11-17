@@ -95,13 +95,15 @@ add_library(Aryiele
         Include/Aryiele/AST/Nodes/NodeFunction.h
         Include/Aryiele/AST/Nodes/NodeNamespace.h
         Include/Aryiele/AST/Nodes/NodeOperationBinary.h
+        Include/Aryiele/AST/Nodes/NodeOperationUnary.h
         Include/Aryiele/AST/Nodes/NodeStatementBlock.h
         Include/Aryiele/AST/Nodes/NodeStatementFor.h
         Include/Aryiele/AST/Nodes/NodeStatementFunctionCall.h
         Include/Aryiele/AST/Nodes/NodeStatementIf.h
         Include/Aryiele/AST/Nodes/NodeStatementReturn.h
-        Include/Aryiele/AST/Nodes/NodeVariable.h
         Include/Aryiele/AST/Nodes/NodeStatementVariableDeclaration.h
+        Include/Aryiele/AST/Nodes/NodeStatementWhile.h
+        Include/Aryiele/AST/Nodes/NodeVariable.h
         Include/Aryiele/CodeGenerator/CodeGenerator.h
         Include/Aryiele/CodeGenerator/Block.h
         Include/Aryiele/CodeGenerator/BlockStack.h
@@ -124,13 +126,15 @@ add_library(Aryiele
         Sources/AST/Nodes/NodeFunction.cpp
         Sources/AST/Nodes/NodeNamespace.cpp
         Sources/AST/Nodes/NodeOperationBinary.cpp
+        Sources/AST/Nodes/NodeOperationUnary.cpp
         Sources/AST/Nodes/NodeStatementBlock.cpp
         Sources/AST/Nodes/NodeStatementFor.cpp
         Sources/AST/Nodes/NodeStatementFunctionCall.cpp
         Sources/AST/Nodes/NodeStatementIf.cpp
         Sources/AST/Nodes/NodeStatementReturn.cpp
-        Sources/AST/Nodes/NodeVariable.cpp
         Sources/AST/Nodes/NodeStatementVariableDeclaration.cpp
+        Sources/AST/Nodes/NodeStatementWhile.cpp
+        Sources/AST/Nodes/NodeVariable.cpp
         Sources/CodeGenerator/CodeGenerator.cpp
         Sources/CodeGenerator/Block.cpp
         Sources/CodeGenerator/BlockStack.cpp

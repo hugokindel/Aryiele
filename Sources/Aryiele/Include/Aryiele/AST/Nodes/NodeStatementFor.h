@@ -36,8 +36,8 @@
 namespace Aryiele {
     class NodeStatementFor : public Node {
     public:
-        NodeStatementFor(std::shared_ptr<Node> condition, std::vector<std::shared_ptr<Node>> body,
-            std::shared_ptr<NodeStatementVariableDeclaration> variable, std::shared_ptr<Node> incrementalValue);
+        NodeStatementFor(std::shared_ptr<NodeStatementVariableDeclaration> variable, std::shared_ptr<Node> condition,
+            std::shared_ptr<Node> incrementalValue, std::vector<std::shared_ptr<Node>> body);
     
         void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;

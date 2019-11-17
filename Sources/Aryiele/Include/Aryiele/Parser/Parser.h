@@ -54,6 +54,7 @@ class Parser : public Vanir::Module<Parser> {
         std::shared_ptr<Node> parsePrimary();
         std::shared_ptr<Node> parseExpression();
         std::shared_ptr<Node> parseBinaryOperation(int expressionPrecedence, std::shared_ptr<Node> leftExpression);
+        std::shared_ptr<Node> parseUnaryOperation();
         std::vector<std::shared_ptr<Node>> parseBody();
         std::shared_ptr<Node> parseInteger();
         std::shared_ptr<Node> parseDouble();
@@ -65,6 +66,7 @@ class Parser : public Vanir::Module<Parser> {
         std::shared_ptr<Node> parseReturn();
         std::shared_ptr<Node> parseIf();
         std::shared_ptr<Node> parseFor();
+        std::shared_ptr<Node> parseWhile(bool doOnce);
         std::shared_ptr<Node> parseBlock();
         std::shared_ptr<Node> parseVariableDeclaration(bool passVar = true, bool multiple = true);
         bool isLiteral(ParserTokenEnum type);

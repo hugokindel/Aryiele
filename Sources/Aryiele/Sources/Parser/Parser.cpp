@@ -42,12 +42,19 @@
 #include <Aryiele/AST/Nodes/NodeStatementIf.h>
 #include <Aryiele/AST/Nodes/NodeStatementReturn.h>
 #include <Aryiele/AST/Nodes/NodeStatementVariableDeclaration.h>
+#include <Aryiele/AST/Nodes/NodeStatementWhile.h>
 #include <Aryiele/AST/Nodes/NodeStatementFor.h>
+#include <Aryiele/AST/Nodes/NodeOperationUnary.h>
 #include <Aryiele/AST/Nodes/NodeVariable.h>
 
 namespace Aryiele {
     Parser::Parser() {
         m_binaryOperatorPrecedence[ParserToken_OperatorEqual] = 10;
+        m_binaryOperatorPrecedence[ParserToken_OperatorArithmeticPlusEqual] = 10;
+        m_binaryOperatorPrecedence[ParserToken_OperatorArithmeticMinusEqual] = 10;
+        m_binaryOperatorPrecedence[ParserToken_OperatorArithmeticMultiplyEqual] = 10;
+        m_binaryOperatorPrecedence[ParserToken_OperatorArithmeticDivideEqual] = 10;
+        m_binaryOperatorPrecedence[ParserToken_OperatorArithmeticRemainderEqual] = 10;
         m_binaryOperatorPrecedence[ParserToken_OperatorLogicalAnd] = 20;
         m_binaryOperatorPrecedence[ParserToken_OperatorLogicalOr] = 20;
         m_binaryOperatorPrecedence[ParserToken_OperatorComparisonLessThan] = 30;
@@ -115,16 +122,18 @@ namespace Aryiele {
                     else if ((token.content == "+" &&
                              lastToken.type != LexerToken_Number &&
                              lastToken.type != LexerToken_Identifier) &&
-                             lastToken.content != "(" && // TODO: Error ?
-                             lastToken.content != ")")
+                             lastToken.content != ")" &&
+                             lastToken.content != "++" &&
+                             lastToken.content != "--")
                         tokens.emplace_back("", ParserToken_OperatorUnaryArithmeticPlus);
                     else if (token.content == "+")
                         tokens.emplace_back("", ParserToken_OperatorArithmeticPlus);
                     else if ((token.content == "-" &&
                               lastToken.type != LexerToken_Number &&
                               lastToken.type != LexerToken_Identifier) &&
-                              lastToken.content != "(" && // TODO: Error ?
-                              lastToken.content != ")")
+                              lastToken.content != ")" &&
+                              lastToken.content != "++" &&
+                              lastToken.content != "--")
                         tokens.emplace_back("", ParserToken_OperatorUnaryArithmeticMinus);
                     else if (token.content == "-")
                         tokens.emplace_back("", ParserToken_OperatorArithmeticMinus);
@@ -152,6 +161,10 @@ namespace Aryiele {
                         tokens.emplace_back("", ParserToken_OperatorLogicalOr);
                     else if (token.content == "!")
                         tokens.emplace_back("", ParserToken_OperatorUnaryLogicalNot);
+                    else if (token.content == "++")
+                        tokens.emplace_back("", ParserToken_OperatorUnaryArithmeticIncrement);
+                    else if (token.content == "--")
+                        tokens.emplace_back("", ParserToken_OperatorUnaryArithmeticDecrement);
                     break;
                 case LexerToken_Separator:
                     // Separators
@@ -177,6 +190,8 @@ namespace Aryiele {
                         tokens.emplace_back("", ParserToken_SeparatorDot);
                     else if (token.content == "...")
                         tokens.emplace_back("", ParserToken_SeparatorTripleDot);
+                    else if (token.content == "?")
+                        tokens.emplace_back("", ParserToken_SeparatorQuestionMark);
                     break;
                 case LexerToken_Identifier:
                     // Boolean
@@ -259,6 +274,10 @@ namespace Aryiele {
                 return "OperatorArithmeticDivide";
             case ParserToken_OperatorArithmeticRemainder:
                 return "OperatorArithmeticRemainder";
+            case ParserToken_OperatorUnaryArithmeticIncrement:
+                return "OperatorUnaryArithmeticIncrement";
+            case ParserToken_OperatorUnaryArithmeticDecrement:
+                return "OperatorUnaryArithmeticDecrement";
             case ParserToken_OperatorComparisonEqual:
                 return "OperatorComparisonEqual";
             case ParserToken_OperatorComparisonNotEqual:
@@ -295,6 +314,8 @@ namespace Aryiele {
                 return "SeparatorComma";
             case ParserToken_SeparatorDot:
                 return "SeparatorDot";
+            case ParserToken_SeparatorQuestionMark:
+                return "SeparatorQuestionMark";
             case ParserToken_SeparatorTripleDot:
                 return "SeparatorTripleDot";
             case ParserToken_SeparatorSemicolon:
@@ -492,6 +513,10 @@ namespace Aryiele {
                 return parseReturn();
             case ParserToken_KeywordIf:
                 return parseIf();
+            case ParserToken_KeywordDo:
+                return parseWhile(true);
+            case ParserToken_KeywordWhile:
+                return parseWhile(false);
             case ParserToken_KeywordFor:
                 return parseFor();
             case ParserToken_Identifier:
@@ -500,6 +525,12 @@ namespace Aryiele {
                 return parseBlock();
             case ParserToken_KeywordVar:
                 return parseVariableDeclaration();
+            case ParserToken_OperatorUnaryArithmeticMinus:
+            case ParserToken_OperatorUnaryArithmeticPlus:
+            case ParserToken_OperatorUnaryArithmeticIncrement:
+            case ParserToken_OperatorUnaryArithmeticDecrement:
+            case ParserToken_OperatorUnaryLogicalNot:
+                return parseUnaryOperation();
             default:
                 return nullptr;
         }
@@ -510,7 +541,14 @@ namespace Aryiele {
     
         if (!leftExpression)
             return nullptr;
-
+    
+        if (m_currentToken.type == ParserToken_OperatorUnaryArithmeticIncrement ||
+            m_currentToken.type == ParserToken_OperatorUnaryArithmeticDecrement) {
+            auto unaryExpression = std::make_shared<NodeOperationUnary>(m_currentToken.type, leftExpression, false);
+            getNextToken();
+            return parseBinaryOperation(0, unaryExpression);
+        }
+        
         return parseBinaryOperation(0, leftExpression);
     }
 
@@ -522,7 +560,7 @@ namespace Aryiele {
                 return leftExpression;
     
             auto operationType = m_currentToken.type;
-
+            
             getNextToken();
     
             auto rightExpression = parsePrimary();
@@ -541,6 +579,23 @@ namespace Aryiele {
 
             leftExpression = std::make_shared<NodeOperationBinary>(operationType, std::move(leftExpression), rightExpression);
         }
+    }
+    
+    std::shared_ptr<Node> Parser::parseUnaryOperation() {
+        if (m_currentToken.type != ParserToken_OperatorUnaryArithmeticPlus &&
+            m_currentToken.type != ParserToken_OperatorUnaryArithmeticMinus &&
+            m_currentToken.type != ParserToken_OperatorUnaryArithmeticIncrement &&
+            m_currentToken.type != ParserToken_OperatorUnaryArithmeticDecrement) {
+            return parsePrimary();
+        }
+        
+        auto type = m_currentToken.type;
+        
+        getNextToken();
+        
+        auto operand = parseUnaryOperation();
+        
+        return std::make_shared<NodeOperationUnary>(type, operand);
     }
 
     std::vector<std::shared_ptr<Node>> Parser::parseBody() {
@@ -747,9 +802,47 @@ namespace Aryiele {
     
         PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketClosed)
         
-        return std::make_shared<NodeStatementFor>(condition, body, std::dynamic_pointer_cast<NodeStatementVariableDeclaration>(variable), incrementationValue);
+        return std::make_shared<NodeStatementFor>(std::dynamic_pointer_cast<NodeStatementVariableDeclaration>(variable),
+            condition, incrementationValue, body);
     }
-
+    
+    std::shared_ptr<Node> Parser::parseWhile(bool doOnce) {
+        std::vector<std::shared_ptr<Node>> body;
+        std::shared_ptr<Node> condition;
+    
+        getNextToken();
+        
+        if (doOnce) {
+            PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketOpen)
+            
+            getNextToken();
+            
+            body = parseBody();
+    
+            PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketClosed)
+            
+            getNextToken();
+            
+            PARSER_CHECKTOKEN(ParserToken_KeywordWhile)
+            
+            getNextToken();
+    
+            condition = parseExpression();
+        } else {
+            condition = parseExpression();
+    
+            PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketOpen)
+            
+            getNextToken();
+    
+            body = parseBody();
+    
+            PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketClosed)
+        }
+        
+        return std::make_shared<NodeStatementWhile>(doOnce, condition, body);
+    }
+    
     std::shared_ptr<Node> Parser::parseBlock() {
         return std::make_shared<NodeStatementBlock>(parseBody());
     }
