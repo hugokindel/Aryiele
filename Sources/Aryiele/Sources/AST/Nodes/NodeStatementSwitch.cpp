@@ -1,6 +1,6 @@
 //==================================================================================//
 //                                                                                  //
-//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                       //
+//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                      //
 //                                                                                  //
 //  This file is part of the Aryiele project.                                       //
 //  Licensed under MIT License:                                                     //
@@ -25,51 +25,60 @@
 //                                                                                  //
 //==================================================================================//
 
-#include <Aryiele/AST/Nodes/NodeStatementVariableDeclaration.h>
+#include <Aryiele/AST/Nodes/NodeStatementSwitch.h>
 
 namespace Aryiele {
-    NodeStatementVariableDeclaration::NodeStatementVariableDeclaration(
-            std::vector<std::shared_ptr<Variable>> variables) :
-        variables(variables) {
-
-    }
-
-    void NodeStatementVariableDeclaration::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
-        auto node = std::make_shared<ParserInformation>(parentNode, "Variable Declaration");
-        auto constantNode = std::make_shared<ParserInformation>(parentNode,
-            std::string("Constant") + std::string(variables.size() > 1 ? "s" : "") +
-            std::string(": ") + std::string(variables.at(0)->constant ? "true" : "false"));
     
-        node->children.emplace_back(constantNode);
+    NodeStatementSwitch::NodeStatementSwitch(std::shared_ptr<Node> expression,
+                                             std::vector<std::shared_ptr<Node>> casesExpression,
+                                             std::vector<std::vector<std::shared_ptr<Node>>> casesBody,
+                                             std::vector<std::shared_ptr<Node>> defaultBody) :
+        expression(expression), casesExpression(casesExpression), casesBody(casesBody), defaultBody(defaultBody) {
         
-        auto i = 0;
-
-        for (auto &variable : variables) {
-            auto variableNode = std::make_shared<ParserInformation>(node, std::to_string(i));
-
-            variableNode->children.emplace_back(std::make_shared<ParserInformation>(
-                    variableNode, "Identifier: " + variable->identifier));
-            
-            if (!variable->type.empty()) {
-                variableNode->children.emplace_back(std::make_shared<ParserInformation>(variableNode, "Type: " + variable->type));
+    }
+    
+    void NodeStatementSwitch::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+        auto node = std::make_shared<ParserInformation>(parentNode, "Switch");
+        auto expressionNode = std::make_shared<ParserInformation>(node, "Expression:");
+        auto casesNode = std::make_shared<ParserInformation>(node, "Cases:");
+        auto defaultNode = std::make_shared<ParserInformation>(node, "Default:");
+    
+        expression->dumpInformations(expressionNode);
+        
+        for (int i = 0; i < casesExpression.size(); i++) {
+            auto caseNode = std::make_shared<ParserInformation>(casesNode, std::to_string(i) + ": ");
+            auto caseExpressionNode = std::make_shared<ParserInformation>(caseNode, "Expression:");
+            auto caseBodyNode = std::make_shared<ParserInformation>(caseNode, "Body:");
+    
+            casesExpression.at(i)->dumpInformations(caseExpressionNode);
+    
+            for (auto& j : casesBody.at(i)) {
+                j->dumpInformations(caseBodyNode);
             }
-
-            if (variable->expression) {
-                auto valueNode = std::make_shared<ParserInformation>(variableNode, "Expression:");
-                variable->expression->dumpInformations(valueNode);
-                variableNode->children.emplace_back(valueNode);
-            }
-
-            node->children.emplace_back(variableNode);
-
-            i++;
+    
+            caseNode->children.emplace_back(caseExpressionNode);
+            caseNode->children.emplace_back(caseBodyNode);
+    
+            casesNode->children.emplace_back(caseNode);
         }
-
+    
+        if (!defaultBody.empty()) {
+            for (auto& i : defaultBody) {
+                i->dumpInformations(defaultNode);
+            }
+        }
+        
+        node->children.emplace_back(expressionNode);
+        node->children.emplace_back(casesNode);
+        
+        if (!defaultBody.empty()) {
+            node->children.emplace_back(defaultNode);
+        }
+        
         parentNode->children.emplace_back(node);
     }
     
-    NodeEnum NodeStatementVariableDeclaration::getType() {
-        return Node_StatementVariableDeclaration;
+    NodeEnum NodeStatementSwitch::getType() {
+        return Node_StatementSwitch;
     }
-
 } /* Namespace Aryiele. */

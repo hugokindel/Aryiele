@@ -1,6 +1,6 @@
 //==================================================================================//
 //                                                                                  //
-//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                       //
+//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                      //
 //                                                                                  //
 //  This file is part of the Aryiele project.                                       //
 //  Licensed under MIT License:                                                     //
@@ -25,12 +25,17 @@
 //                                                                                  //
 //==================================================================================//
 
-#include <Aryiele/AST/Variable.h>
+#include <Aryiele/AST/Nodes/NodeStatementBreak.h>
 
 namespace Aryiele {
-    Variable::Variable(const std::string &identifier, const std::string &type, bool constant, std::shared_ptr<Node> expression) :
-        identifier(identifier), type(type), constant(constant), expression(expression) {
-
+    void NodeStatementBreak::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+        auto node = std::make_shared<ParserInformation>(parentNode, "Break");
+        
+        parentNode->children.emplace_back(node);
     }
-
+    
+    NodeEnum NodeStatementBreak::getType() {
+        return Node_StatementBreak;
+    }
+    
 } /* Namespace Aryiele. */

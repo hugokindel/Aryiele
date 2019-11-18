@@ -1,6 +1,6 @@
 //==================================================================================//
 //                                                                                  //
-//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                       //
+//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                      //
 //                                                                                  //
 //  This file is part of the Aryiele project.                                       //
 //  Licensed under MIT License:                                                     //
@@ -25,12 +25,17 @@
 //                                                                                  //
 //==================================================================================//
 
-#include <Aryiele/AST/Variable.h>
+#include <Aryiele/AST/Nodes/NodeStatementContinue.h>
 
 namespace Aryiele {
-    Variable::Variable(const std::string &identifier, const std::string &type, bool constant, std::shared_ptr<Node> expression) :
-        identifier(identifier), type(type), constant(constant), expression(expression) {
-
+    void NodeStatementContinue::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+        auto node = std::make_shared<ParserInformation>(parentNode, "Continue");
+    
+        parentNode->children.emplace_back(node);
     }
-
+    
+    NodeEnum NodeStatementContinue::getType() {
+        return Node_StatementContinue;
+    }
+    
 } /* Namespace Aryiele. */

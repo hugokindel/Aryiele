@@ -46,6 +46,10 @@
 #include <Aryiele/AST/Nodes/NodeStatementFor.h>
 #include <Aryiele/AST/Nodes/NodeOperationUnary.h>
 #include <Aryiele/AST/Nodes/NodeVariable.h>
+#include <Aryiele/AST/Nodes/NodeNamespace.h>
+#include <Aryiele/AST/Nodes/NodeStatementBreak.h>
+#include <Aryiele/AST/Nodes/NodeStatementContinue.h>
+#include <Aryiele/AST/Nodes/NodeStatementSwitch.h>
 
 namespace Aryiele {
     Parser::Parser() {
@@ -77,10 +81,13 @@ namespace Aryiele {
         while (true) {
             getNextToken();
             
-            if (m_currentToken.type == ParserToken_EOF)
+            if (m_currentToken.type == ParserToken_EOF) {
                 break;
-            if (m_currentToken.type == ParserToken_KeywordFunction)
+            } else if (m_currentToken.type == ParserToken_KeywordFunction) {
                 m_nodes.emplace_back(parseFunction());
+            } else if (m_currentToken.type == ParserToken_KeywordNamespace) {
+                m_nodes.emplace_back(parseNamespace());
+            }
         }
         
         return m_nodes;
@@ -224,6 +231,14 @@ namespace Aryiele {
                         tokens.emplace_back("", ParserToken_KeywordIf);
                     else if (token.content == "else")
                         tokens.emplace_back("", ParserToken_KeywordElse);
+                    else if (token.content == "break")
+                        tokens.emplace_back("", ParserToken_KeywordBreak);
+                    else if (token.content == "continue")
+                        tokens.emplace_back("", ParserToken_KeywordContinue);
+                    else if (token.content == "namespace")
+                        tokens.emplace_back("", ParserToken_KeywordNamespace);
+                    else if (token.content == "default")
+                        tokens.emplace_back("", ParserToken_KeywordDefault);
                     else
                         tokens.emplace_back(token.content, ParserToken_Identifier);
                     break;
@@ -330,6 +345,10 @@ namespace Aryiele {
                 return "KeywordIf";
             case ParserToken_KeywordElse:
                 return "KeywordElse";
+            case ParserToken_KeywordBreak:
+                return "KeywordBreak";
+            case ParserToken_KeywordContinue:
+                return "KeywordContinue";
             case ParserToken_Identifier:
                 return "Identifier";
             case ParserToken_LiteralValueCharacter:
@@ -360,6 +379,10 @@ namespace Aryiele {
                 return "KeywordSwitch";
             case ParserToken_KeywordCase:
                 return "KeywordCase";
+            case ParserToken_KeywordNamespace:
+                return "KeywordNamespace";
+            case ParserToken_KeywordDefault:
+                return "KeywordDefault";
             case ParserToken_Space:
                 return "Space";
             case ParserToken_Newline:
@@ -494,6 +517,43 @@ namespace Aryiele {
 
         return std::make_shared<NodeFunction>(name, type, arguments, expressions);
     }
+    
+    std::shared_ptr<Node> Parser::parseNamespace() {
+        auto identifier = std::string();
+        std::vector<std::shared_ptr<Node>> nodes;
+        
+        getNextToken();
+        
+        if (m_currentToken.type != ParserToken_Identifier) {
+            PARSER_ERROR("expected identifier in namespace declaration")
+        }
+        
+        identifier = m_currentToken.content;
+        
+        getNextToken();
+        
+        if (m_currentToken.type != ParserToken_SeparatorCurlyBracketOpen) {
+            PARSER_ERROR("expected opened curly bracket after namespace declaration")
+        }
+        
+        while (true) {
+            getNextToken();
+            
+            while (m_currentToken.type == ParserToken_Newline) {
+                getNextToken();
+            }
+            
+            if (m_currentToken.type == ParserToken_KeywordFunction) {
+                nodes.emplace_back(parseFunction());
+            } else if (m_currentToken.type == ParserToken_KeywordNamespace) {
+                nodes.emplace_back(parseNamespace());
+            } else {
+                break;
+            }
+        }
+        
+        return std::make_shared<NodeNamespace>(identifier, nodes);
+    }
 
     std::shared_ptr<Node> Parser::parsePrimary() {
         switch (m_currentToken.type) {
@@ -513,6 +573,8 @@ namespace Aryiele {
                 return parseReturn();
             case ParserToken_KeywordIf:
                 return parseIf();
+            case ParserToken_KeywordSwitch:
+                return parseSwitch();
             case ParserToken_KeywordDo:
                 return parseWhile(true);
             case ParserToken_KeywordWhile:
@@ -525,6 +587,12 @@ namespace Aryiele {
                 return parseBlock();
             case ParserToken_KeywordVar:
                 return parseVariableDeclaration();
+            case ParserToken_KeywordLet:
+                return parseVariableDeclaration(true);
+            case ParserToken_KeywordBreak:
+                return parseBreak();
+            case ParserToken_KeywordContinue:
+                return parseContinue();
             case ParserToken_OperatorUnaryArithmeticMinus:
             case ParserToken_OperatorUnaryArithmeticPlus:
             case ParserToken_OperatorUnaryArithmeticIncrement:
@@ -585,7 +653,8 @@ namespace Aryiele {
         if (m_currentToken.type != ParserToken_OperatorUnaryArithmeticPlus &&
             m_currentToken.type != ParserToken_OperatorUnaryArithmeticMinus &&
             m_currentToken.type != ParserToken_OperatorUnaryArithmeticIncrement &&
-            m_currentToken.type != ParserToken_OperatorUnaryArithmeticDecrement) {
+            m_currentToken.type != ParserToken_OperatorUnaryArithmeticDecrement &&
+            m_currentToken.type != ParserToken_OperatorUnaryLogicalNot) {
             return parsePrimary();
         }
         
@@ -613,6 +682,26 @@ namespace Aryiele {
                 expressions.emplace_back(expression);
         }
 
+        return expressions;
+    }
+    
+    std::vector<std::shared_ptr<Node>> Parser::parseCase() {
+        std::vector<std::shared_ptr<Node>> expressions;
+    
+        while (true) {
+            getNextToken();
+        
+            if (m_currentToken.type == ParserToken_SeparatorCurlyBracketClosed ||
+                m_currentToken.type == ParserToken_KeywordCase ||
+                m_currentToken.type == ParserToken_KeywordDefault)
+                break;
+        
+            auto expression = parseExpression();
+        
+            if (expression)
+                expressions.emplace_back(expression);
+        }
+    
         return expressions;
     }
 
@@ -770,7 +859,7 @@ namespace Aryiele {
             PARSER_ERROR("expected variable declaration in for declaration")
         }
         
-        auto variable = parseVariableDeclaration(false, false);
+        auto variable = parseVariableDeclaration(false, false, false);
     
         if (m_currentToken.type != ParserToken_KeywordUntil) {
             PARSER_ERROR("expected 'until' in for declaration")
@@ -846,8 +935,69 @@ namespace Aryiele {
     std::shared_ptr<Node> Parser::parseBlock() {
         return std::make_shared<NodeStatementBlock>(parseBody());
     }
-
-    std::shared_ptr<Node> Parser::parseVariableDeclaration(bool passVar, bool multiple) {
+    
+    std::shared_ptr<Node> Parser::parseBreak() {
+        getNextToken();
+        
+        return std::make_shared<NodeStatementBreak>();
+    }
+    
+    std::shared_ptr<Node> Parser::parseContinue() {
+        getNextToken();
+        
+        return std::make_shared<NodeStatementContinue>();
+    }
+    
+    std::shared_ptr<Node> Parser::parseSwitch() {
+        std::shared_ptr<Node> expression;
+        std::vector<std::shared_ptr<Node>> casesExpression;
+        std::vector<std::vector<std::shared_ptr<Node>>> casesBody;
+        std::vector<std::shared_ptr<Node>> defaultBody;
+        
+        getNextToken();
+    
+        expression = parseExpression();
+    
+        PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketOpen)
+    
+        getNextToken();
+        
+        while (true) {
+            if (m_currentToken.type == ParserToken_SeparatorCurlyBracketClosed) {
+                break;
+            } else if (m_currentToken.type == ParserToken_Newline) {
+                getNextToken();
+            } else if (m_currentToken.type == ParserToken_KeywordCase) {
+                    getNextToken();
+                    
+                    casesExpression.emplace_back(parseExpression());
+                    
+                    PARSER_CHECKTOKEN(ParserToken_SeparatorColon);
+                    
+                    getNextToken();
+                    
+                    casesBody.emplace_back(parseCase());
+            } else if (m_currentToken.type == ParserToken_KeywordDefault) {
+                if (defaultBody.size() > 0) {
+                    PARSER_ERROR("default already defined in switch")
+                } else {
+                    getNextToken();
+                    
+                    PARSER_CHECKTOKEN(ParserToken_SeparatorColon);
+                    
+                    getNextToken();
+    
+                    defaultBody = parseCase();
+                }
+            } else {
+                PARSER_ERROR("unexpected token in switch declaration")
+            }
+        }
+        
+        return std::make_shared<NodeStatementSwitch>(expression, casesExpression, casesBody, defaultBody);
+    }
+    
+    std::shared_ptr<Node> Parser::parseVariableDeclaration(bool constant, bool passVar, bool multiple) {
         std::vector<std::shared_ptr<Variable>> variables;
 
         while (true) {
@@ -881,7 +1031,7 @@ namespace Aryiele {
             }
     
             if (!type.empty() || value != nullptr) {
-                variables.emplace_back(std::make_shared<Variable>(identifier, type, value));
+                variables.emplace_back(std::make_shared<Variable>(identifier, type, constant, value));
             }
             
             if (!multiple || m_currentToken.type != ParserToken_SeparatorComma)

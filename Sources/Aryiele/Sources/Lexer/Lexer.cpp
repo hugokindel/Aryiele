@@ -243,6 +243,36 @@ namespace Aryiele {
         m_tokens.clear();
         
         m_tokens = tokens;
+    
+        
+        currentToken = LexerToken();
+        tokens = std::vector<LexerToken>();
+        bool isUnary = false;
+    
+        for (auto& token : m_tokens) {
+            const auto lastToken = currentToken;
+            currentToken = token;
+            
+            if (isUnary) {
+                if (currentToken.type == LexerToken_Number && lastToken.content == "-") {
+                    currentToken.content = "-" + currentToken.content;
+                } else {
+                    tokens.emplace_back(lastToken);
+                }
+                isUnary = false;
+                tokens.emplace_back(currentToken);
+            } else if (((token.content == "+" || token.content == "-") &&
+                lastToken.type != LexerToken_Number && lastToken.type != LexerToken_Identifier) &&
+                lastToken.content != ")" && lastToken.content != "++" && lastToken.content != "--") {
+                isUnary = true;
+            } else {
+                tokens.emplace_back(currentToken);
+            }
+        }
+    
+        m_tokens.clear();
+    
+        m_tokens = tokens;
     }
     
     void Lexer::stateSpaces() {

@@ -1,6 +1,6 @@
 //==================================================================================//
 //                                                                                  //
-//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                       //
+//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                      //
 //                                                                                  //
 //  This file is part of the Aryiele project.                                       //
 //  Licensed under MIT License:                                                     //
@@ -25,12 +25,27 @@
 //                                                                                  //
 //==================================================================================//
 
-#include <Aryiele/AST/Variable.h>
+#ifndef ARYIELE_NODESTATEMENTSWITCH_H
+#define ARYIELE_NODESTATEMENTSWITCH_H
+
+#include <Aryiele/Common.h>
+#include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-    Variable::Variable(const std::string &identifier, const std::string &type, bool constant, std::shared_ptr<Node> expression) :
-        identifier(identifier), type(type), constant(constant), expression(expression) {
-
-    }
-
+    class NodeStatementSwitch : public Node {
+    public:
+        NodeStatementSwitch(std::shared_ptr<Node> expression, std::vector<std::shared_ptr<Node>> casesExpression,
+            std::vector<std::vector<std::shared_ptr<Node>>> casesBody, std::vector<std::shared_ptr<Node>> defaultBody);
+        
+        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        NodeEnum getType() override;
+        
+        std::shared_ptr<Node> expression;
+        std::vector<std::shared_ptr<Node>> casesExpression;
+        std::vector<std::vector<std::shared_ptr<Node>>> casesBody;
+        std::vector<std::shared_ptr<Node>> defaultBody;
+    };
+    
 } /* Namespace Aryiele. */
+
+#endif /* ARYIELE_NODESTATEMENTSWITCH_H. */

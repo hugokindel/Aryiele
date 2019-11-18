@@ -74,6 +74,7 @@ namespace Aryiele {
         ParserToken_SeparatorDot, // .
         ParserToken_SeparatorTripleDot, // ...
         ParserToken_KeywordFunction, // func
+        ParserToken_KeywordNamespace, // namespace
         ParserToken_KeywordVar, // var
         ParserToken_KeywordLet, // let
         ParserToken_KeywordReturn, // return
@@ -83,7 +84,10 @@ namespace Aryiele {
         ParserToken_KeywordUntil, // until
         ParserToken_KeywordDo, // do
         ParserToken_KeywordBy, // by
+        ParserToken_KeywordContinue, // continue
+        ParserToken_KeywordBreak, // break
         ParserToken_KeywordWhile, // while
+        ParserToken_KeywordDefault, // default
         ParserToken_KeywordSwitch, // switch
         ParserToken_KeywordCase, // case
         ParserToken_Identifier, // Any characters sequence other than a keyword.

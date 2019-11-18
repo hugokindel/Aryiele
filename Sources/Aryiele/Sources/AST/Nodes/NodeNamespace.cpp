@@ -35,13 +35,16 @@ namespace Aryiele {
     
     void NodeNamespace::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Namespace");
+        auto identifierNode = std::make_shared<ParserInformation>(node, "Identifier: " + identifier);
         auto bodyNode = std::make_shared<ParserInformation>(node, "Content:");
     
         for (auto& statement : content) {
             statement->dumpInformations(bodyNode);
         }
     
+        node->children.emplace_back(identifierNode);
         node->children.emplace_back(bodyNode);
+        
         parentNode->children.emplace_back(node);
     }
     

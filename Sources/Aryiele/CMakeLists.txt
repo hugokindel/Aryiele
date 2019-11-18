@@ -97,10 +97,13 @@ add_library(Aryiele
         Include/Aryiele/AST/Nodes/NodeOperationBinary.h
         Include/Aryiele/AST/Nodes/NodeOperationUnary.h
         Include/Aryiele/AST/Nodes/NodeStatementBlock.h
+        Include/Aryiele/AST/Nodes/NodeStatementBreak.h
+        Include/Aryiele/AST/Nodes/NodeStatementContinue.h
         Include/Aryiele/AST/Nodes/NodeStatementFor.h
         Include/Aryiele/AST/Nodes/NodeStatementFunctionCall.h
         Include/Aryiele/AST/Nodes/NodeStatementIf.h
         Include/Aryiele/AST/Nodes/NodeStatementReturn.h
+        Include/Aryiele/AST/Nodes/NodeStatementSwitch.h
         Include/Aryiele/AST/Nodes/NodeStatementVariableDeclaration.h
         Include/Aryiele/AST/Nodes/NodeStatementWhile.h
         Include/Aryiele/AST/Nodes/NodeVariable.h
@@ -128,10 +131,13 @@ add_library(Aryiele
         Sources/AST/Nodes/NodeOperationBinary.cpp
         Sources/AST/Nodes/NodeOperationUnary.cpp
         Sources/AST/Nodes/NodeStatementBlock.cpp
+        Sources/AST/Nodes/NodeStatementBreak.cpp
+        Sources/AST/Nodes/NodeStatementContinue.cpp
         Sources/AST/Nodes/NodeStatementFor.cpp
         Sources/AST/Nodes/NodeStatementFunctionCall.cpp
         Sources/AST/Nodes/NodeStatementIf.cpp
         Sources/AST/Nodes/NodeStatementReturn.cpp
+        Sources/AST/Nodes/NodeStatementSwitch.cpp
         Sources/AST/Nodes/NodeStatementVariableDeclaration.cpp
         Sources/AST/Nodes/NodeStatementWhile.cpp
         Sources/AST/Nodes/NodeVariable.cpp

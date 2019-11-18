@@ -40,18 +40,18 @@ namespace Aryiele {
         Node_ConstantBoolean,
         Node_Function,
         Node_Namespace,
-        Node_Class,
         Node_OperationBinary,
         Node_OperationUnary,
         Node_StatementBlock,
         Node_StatementFor,
         Node_StatementWhile,
-        Node_StatementDoWhile,
         Node_StatementSwitch,
         Node_StatementFunctionCall,
         Node_StatementIf,
         Node_StatementReturn,
         Node_StatementVariableDeclaration,
+        Node_StatementBreak,
+        Node_StatementContinue,
         Node_Variable
     };
     
