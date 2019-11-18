@@ -30,16 +30,17 @@
 
 #include <Aryiele/Common.h>
 #include <Aryiele/AST/Nodes/Node.h>
+#include <Aryiele/AST/Nodes/NodeParentIdentifier.h>
 
 namespace Aryiele {
-    class NodeVariable : public Node {
+    class NodeVariable : public NodeParentIdentifier {
     public:
-        explicit NodeVariable(const std::string& identifier);
+        explicit NodeVariable(const std::string& identifier, std::shared_ptr<Node> subExpression = nullptr);
 
         void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
-
-        std::string identifier;
+    
+        std::shared_ptr<Node> subExpression;
     };
 
 } /* Namespace Aryiele. */

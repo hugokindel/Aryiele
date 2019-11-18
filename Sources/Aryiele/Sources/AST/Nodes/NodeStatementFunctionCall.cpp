@@ -29,23 +29,17 @@
 
 namespace Aryiele {
 
-    NodeStatementFunctionCall::NodeStatementFunctionCall(const std::string &identifier, std::vector<std::string> decorations,
-                                                           std::vector<std::shared_ptr<Node>> arguments) :
-        identifier(identifier), decorations(decorations), arguments(arguments) {
+    NodeStatementFunctionCall::NodeStatementFunctionCall(const std::string &identifier,
+        std::vector<std::shared_ptr<Node>> arguments, std::shared_ptr<Node> subExpression) :
+        NodeParentIdentifier(identifier) , arguments(arguments), subExpression(subExpression) {
 
     }
 
     void NodeStatementFunctionCall::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Function Call");
-        
-        std::string decorationName;
-        
-        for (const auto& i : decorations) {
-            decorationName += i + ".";
-        }
-        
-        auto identifierNode = std::make_shared<ParserInformation>(node, "Identifier: " + decorationName + identifier);
+        auto identifierNode = std::make_shared<ParserInformation>(node, "Identifier: " + identifier);
         auto argumentsNode = std::make_shared<ParserInformation>(node, "Arguments:");
+        auto subExpressionNode = std::make_shared<ParserInformation>(node, "Subexpression:");
 
         auto i = 0;
 
@@ -65,6 +59,11 @@ namespace Aryiele {
         
         if (!arguments.empty()) {
             node->children.emplace_back(argumentsNode);
+        }
+        
+        if (subExpression) {
+            subExpression->dumpInformations(subExpressionNode);
+            node->children.emplace_back(subExpressionNode);
         }
         
         parentNode->children.emplace_back(node);

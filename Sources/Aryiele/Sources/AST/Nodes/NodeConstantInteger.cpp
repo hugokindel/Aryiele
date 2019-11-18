@@ -28,7 +28,7 @@
 #include <Aryiele/AST/Nodes/NodeConstantInteger.h>
 
 namespace Aryiele {
-    NodeConstantInteger::NodeConstantInteger(int value) :
+    NodeConstantInteger::NodeConstantInteger(long value) :
             value(value) {
 
     }

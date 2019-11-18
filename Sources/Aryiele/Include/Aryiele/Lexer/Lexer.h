@@ -52,6 +52,8 @@ class Lexer : public Vanir::Module<Lexer> {
         void stateSpaces();
         // Sixth pass of the Lexer (identify some operators).
         void stateOperators();
+        // Seventh pass of the Lexer (identifier).
+        void stateIdentifiers();
         static LexerTokenEnum getTransitionTableColumn(char currentCharacter);
 
         std::vector<LexerToken> m_tokens;

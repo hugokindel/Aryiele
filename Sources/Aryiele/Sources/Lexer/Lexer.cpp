@@ -48,6 +48,7 @@ namespace Aryiele {
         stateNumbers();
         stateSpaces();
         stateOperators();
+        stateIdentifiers();
 
         return m_tokens;
     }
@@ -332,7 +333,42 @@ namespace Aryiele {
     
         m_tokens = tokens;
     }
-
+    
+    void Lexer::stateIdentifiers() {
+        LexerToken currentToken;
+        std::vector<LexerToken> tokens;
+        bool inName = false;
+        std::string identifier;
+    
+        for (auto& token : m_tokens) {
+            const auto lastToken = currentToken;
+            currentToken = token;
+            
+            if (inName) {
+                if ((currentToken.type == LexerToken_Identifier && identifier.back() == '.') ||
+                    (currentToken.content == "." && identifier.back() != '.')) {
+                    identifier += currentToken.content;
+                } else {
+                    tokens.emplace_back(LexerToken(identifier, LexerToken_Identifier));
+                    tokens.emplace_back(currentToken);
+                    inName = false;
+                    identifier = "";
+                }
+            } else if (currentToken.type == LexerToken_Identifier) {
+                inName = true;
+                identifier += currentToken.content;
+            } else {
+                inName = false;
+                identifier = "";
+                tokens.emplace_back(currentToken);
+            }
+        }
+    
+        m_tokens.clear();
+    
+        m_tokens = tokens;
+    }
+    
     LexerTokenEnum Lexer::getTransitionTableColumn(char currentCharacter) {
         if (currentCharacter == '{' || currentCharacter == '}' ||
             currentCharacter == '[' || currentCharacter == ']' ||

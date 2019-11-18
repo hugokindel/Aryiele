@@ -60,7 +60,7 @@ namespace ARC {
 #endif
     bool ARC::m_doLexerPass = true;
     bool ARC::m_doParserPass = true;
-    bool ARC::m_doCodeGeneratorPass = false;
+    bool ARC::m_doCodeGeneratorPass = true;
 
     BuildType ARC::m_buildType = BuildType_Executable;
     

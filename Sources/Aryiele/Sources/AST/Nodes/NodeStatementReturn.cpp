@@ -36,11 +36,14 @@ namespace Aryiele {
 
     void NodeStatementReturn::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Return");
-        auto bodyNode = std::make_shared<ParserInformation>(node, "Body:");
+        
+        if (expression) {
+            auto bodyNode = std::make_shared<ParserInformation>(node, "Body:");
+    
+            expression->dumpInformations(bodyNode);
+            node->children.emplace_back(bodyNode);
+        }
 
-        expression->dumpInformations(bodyNode);
-
-        node->children.emplace_back(bodyNode);
         parentNode->children.emplace_back(node);
     }
     

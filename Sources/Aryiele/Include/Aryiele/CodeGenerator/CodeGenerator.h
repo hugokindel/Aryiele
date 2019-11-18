@@ -71,7 +71,9 @@ namespace Aryiele {
         std::shared_ptr<llvm::Module> getModule();
 
     private:
-        llvm::Value* castType(llvm::Value *value, llvm::Type *returnType);
+        llvm::Type* getType(const std::string& type);
+        llvm::Value* getTypeDefaultValue(const std::string& type);
+        llvm::Value* castType(llvm::Value *value, llvm::Type *returnType, bool isSigned = true);
         llvm::AllocaInst *createEntryBlockAllocation(
             llvm::Function *function, const std::string &identifier, llvm::Type *type = nullptr);
         GenerationError generateCode(std::shared_ptr<Node> node);

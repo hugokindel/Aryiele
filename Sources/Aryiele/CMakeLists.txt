@@ -87,6 +87,7 @@ add_library(Aryiele
         Include/Aryiele/AST/Argument.h
         Include/Aryiele/AST/Variable.h
         Include/Aryiele/AST/Nodes/Node.h
+        Include/Aryiele/AST/Nodes/NodeConstantArray.h
         Include/Aryiele/AST/Nodes/NodeConstantDouble.h
         Include/Aryiele/AST/Nodes/NodeConstantInteger.h
         Include/Aryiele/AST/Nodes/NodeConstantString.h
@@ -96,6 +97,8 @@ add_library(Aryiele
         Include/Aryiele/AST/Nodes/NodeNamespace.h
         Include/Aryiele/AST/Nodes/NodeOperationBinary.h
         Include/Aryiele/AST/Nodes/NodeOperationUnary.h
+        Include/Aryiele/AST/Nodes/NodeParentIdentifier.h
+        Include/Aryiele/AST/Nodes/NodeStatementArrayCall.h
         Include/Aryiele/AST/Nodes/NodeStatementBlock.h
         Include/Aryiele/AST/Nodes/NodeStatementBreak.h
         Include/Aryiele/AST/Nodes/NodeStatementContinue.h
@@ -121,6 +124,7 @@ add_library(Aryiele
         Sources/Parser/ParserInformation.cpp
         Sources/AST/Argument.cpp
         Sources/AST/Variable.cpp
+        Sources/AST/Nodes/NodeConstantArray.cpp
         Sources/AST/Nodes/NodeConstantDouble.cpp
         Sources/AST/Nodes/NodeConstantInteger.cpp
         Sources/AST/Nodes/NodeConstantString.cpp
@@ -130,6 +134,8 @@ add_library(Aryiele
         Sources/AST/Nodes/NodeNamespace.cpp
         Sources/AST/Nodes/NodeOperationBinary.cpp
         Sources/AST/Nodes/NodeOperationUnary.cpp
+        Sources/AST/Nodes/NodeParentIdentifier.cpp
+        Sources/AST/Nodes/NodeStatementArrayCall.cpp
         Sources/AST/Nodes/NodeStatementBlock.cpp
         Sources/AST/Nodes/NodeStatementBreak.cpp
         Sources/AST/Nodes/NodeStatementContinue.cpp

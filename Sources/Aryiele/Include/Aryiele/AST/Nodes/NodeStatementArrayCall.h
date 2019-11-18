@@ -25,27 +25,25 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_AST_NODES_NODESTATEMENTFUNCTIONCALL_H
-#define ARYIELE_AST_NODES_NODESTATEMENTFUNCTIONCALL_H
+#ifndef ARYIELE_AST_NODES_NODESTATEMENTARRAYCALL_H
+#define ARYIELE_AST_NODES_NODESTATEMENTARRAYCALL_H
 
-#include <memory>
-#include <vector>
 #include <Aryiele/Common.h>
 #include <Aryiele/AST/Nodes/Node.h>
-#include <Aryiele/AST/Nodes/NodeParentIdentifier.h>
 
 namespace Aryiele {
-    class NodeStatementFunctionCall : public NodeParentIdentifier {
+    class NodeStatementArrayCall : public Node {
     public:
-        NodeStatementFunctionCall(const std::string& identifier, std::vector<std::shared_ptr<Node>> arguments, std::shared_ptr<Node> subExpression = nullptr);
-
+        explicit NodeStatementArrayCall(std::shared_ptr<Node> arrayElementExpression,
+            std::shared_ptr<Node> subExpression = nullptr);
+        
         void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
-        
-        std::vector<std::shared_ptr<Node>> arguments;
+    
+        std::shared_ptr<Node> element;
         std::shared_ptr<Node> subExpression;
     };
-
+    
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_AST_NODES_NODESTATEMENTFUNCTIONCALL_H. */
+#endif /* ARYIELE_AST_NODES_NODESTATEMENTARRAYCALL_H. */

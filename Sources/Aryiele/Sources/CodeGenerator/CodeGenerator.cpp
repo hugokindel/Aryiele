@@ -31,6 +31,7 @@
 #include <Aryiele/CodeGenerator/CodeGenerator.h>
 #include <Aryiele/Parser/Parser.h>
 #include <Aryiele/AST/Nodes/Node.h>
+#include <cfloat>
 
 namespace Aryiele {
     CodeGenerator::CodeGenerator() {
@@ -40,13 +41,9 @@ namespace Aryiele {
     }
 
     void CodeGenerator::generateCode(std::vector<std::shared_ptr<Node>> nodes) {
-        // PRINTF TODO: Extern
         std::vector<llvm::Type *> Doubles(1, llvm::Type::getInt32Ty(m_context));
-        llvm::FunctionType *FT =
-            llvm::FunctionType::get(llvm::Type::getInt32Ty(m_context), Doubles, false);
-
-        llvm::Function *F =
-            llvm::Function::Create(FT, llvm::Function::ExternalLinkage, "print", m_module.get());
+        llvm::FunctionType *FT = llvm::FunctionType::get(llvm::Type::getInt32Ty(m_context), Doubles, false);
+        llvm::Function *F = llvm::Function::Create(FT, llvm::Function::ExternalLinkage, "print", m_module.get());
 
         // Set names for all arguments.
         unsigned Idx = 0;
@@ -65,26 +62,70 @@ namespace Aryiele {
     std::shared_ptr<llvm::Module> CodeGenerator::getModule() {
         return m_module;
     }
+    
+    llvm::Type* CodeGenerator::getType(const std::string &type) {
+        if (type == "Int8") {
+            return llvm::Type::getInt8Ty(m_context);
+        } else if (type == "Int16" || type == "UInt8") {
+            return llvm::Type::getInt16Ty(m_context);
+        } else if (type == "Int32" || type == "UInt16") {
+            return llvm::Type::getInt32Ty(m_context);
+        } else if (type == "Int64" || type == "Int" || type == "UInt32") {
+            return llvm::Type::getInt64Ty(m_context);
+        } else if (type == "UInt64") {
+            return llvm::Type::getInt128Ty(m_context);
+        } else if (type == "Float") {
+            return llvm::Type::getFloatTy(m_context);
+        } else if (type == "Double") {
+            return llvm::Type::getDoubleTy(m_context);
+        } else if (type == "String" || type == "Character") {
+            return llvm::Type::getInt8PtrTy(m_context);
+        } else if (type == "Void") {
+            return llvm::Type::getVoidTy(m_context);
+        } else if (type == "Boolean") {
+            return llvm::Type::getIntNTy(m_context, 1);
+        }
+        
+        return nullptr;
+    }
+    
+    llvm::Value *CodeGenerator::getTypeDefaultValue(const std::string &type) {
+        if (type == "Int8" || type == "Boolean") {
+            return llvm::ConstantInt::get(m_context, llvm::APInt(8, 0));
+        } else if (type == "Int16" || type == "UInt8") {
+            return llvm::ConstantInt::get(m_context, llvm::APInt(16, 0));
+        } else if (type == "Int32" || type == "UInt16") {
+            return llvm::ConstantInt::get(m_context, llvm::APInt(32, 0));
+        } else if (type == "Int64" || type == "Int" || type == "UInt32") {
+            return llvm::ConstantInt::get(m_context, llvm::APInt(64, 0));
+        } else if (type == "UInt64") {
+            return llvm::ConstantInt::get(m_context, llvm::APInt(128, 0));
+        } else if (type == "Float") {
+            return llvm::ConstantFP::get(m_context, llvm::APFloat(0.0f));
+        } else if (type == "Double") {
+            return llvm::ConstantFP::get(m_context, llvm::APFloat(0.0));
+        } else if (type == "String") {
+            return m_builder.CreateGlobalString(llvm::StringRef(""));
+        }
+    
+        return nullptr;
+    }
 
-    llvm::Value *CodeGenerator::castType(llvm::Value *value, llvm::Type *returnType) {
+    llvm::Value *CodeGenerator::castType(llvm::Value *value, llvm::Type *returnType, bool isSigned) {
         if (value->getType()->isIntegerTy() && returnType->isIntegerTy()) {
             auto *ival = (llvm::IntegerType *)value->getType();
             auto *ito  = (llvm::IntegerType *)returnType;
 
-            if(ival->getBitWidth() < ito->getBitWidth())
-                return m_builder.CreateZExtOrBitCast(value, returnType);
-        }
-        else if(value->getType()->isIntegerTy() && returnType->isDoubleTy()) {
+            return m_builder.CreateIntCast(value, returnType, isSigned);
+        } else if((value->getType()->isIntegerTy() && returnType->isDoubleTy()) ||
+                  (value->getType()->isIntegerTy() && returnType->isFloatTy())) {
             return m_builder.CreateSIToFP(value, returnType);
-        }
-        else if(value->getType()->isDoubleTy() && returnType->isIntegerTy()) {
+        } else if((value->getType()->isDoubleTy() && returnType->isIntegerTy()) ||
+                  (value->getType()->isFloatTy() && returnType->isIntegerTy())) {
             return m_builder.CreateFPToSI(value, returnType);
         }
-        else if(returnType->isVoidTy()) {
-            return value;
-        }
-
-        return m_builder.CreateTruncOrBitCast(value, returnType);
+        
+        return value;
     }
     
     // Definition code from https://llvm.org/docs/tutorial/LangImpl07.html
@@ -133,10 +174,10 @@ namespace Aryiele {
             llvm::Type* functionTypeValue;
 
             for (const auto &argument : node->arguments) {
-                arguments.emplace_back(llvm::Type::getInt32Ty(m_context));
+                arguments.emplace_back(getType(argument.type));
             }
 
-            functionTypeValue = llvm::Type::getInt32Ty(m_context);
+            functionTypeValue = getType(node->type);
 
             llvm::FunctionType *functionType = llvm::FunctionType::get(functionTypeValue, arguments, false);
 
@@ -169,7 +210,7 @@ namespace Aryiele {
             if (!error.success) {
                 function->eraseFromParent();
 
-                LOG_ERROR("cannot generate the body of a function: ", node->identifier);
+                LOG_ERROR("cannot generate the body of a function: ", node->identifier)
 
                 return GenerationError();
             }
@@ -187,7 +228,7 @@ namespace Aryiele {
             auto lhs = std::static_pointer_cast<NodeVariable>(node->lhs);
 
             if (!lhs) {
-                LOG_ERROR("cannot generate a binary operation: lhs: expecting a variable");
+                LOG_ERROR("cannot generate a binary operation: lhs: expecting a variable")
 
                 return GenerationError();
             }
@@ -195,7 +236,7 @@ namespace Aryiele {
             auto rhsValue = generateCode(node->rhs);
 
             if (!rhsValue.success) {
-                LOG_ERROR("cannot generate a binary operation: rhs: generation failed");
+                LOG_ERROR("cannot generate a binary operation: rhs: generation failed")
 
                 return GenerationError();
             }
@@ -203,7 +244,7 @@ namespace Aryiele {
             llvm::Value *variable = m_blockStack->findVariable(lhs->identifier);
 
             if (!variable) {
-                LOG_ERROR("cannot generate a binary operation: lhs: unknown variable '" + lhs->identifier + "'");
+                LOG_ERROR("cannot generate a binary operation: lhs: unknown variable '" + lhs->identifier + "'")
 
                 return GenerationError();
             }
@@ -255,7 +296,7 @@ namespace Aryiele {
                 value = m_builder.CreateICmpNE(lhsValue.value, rhsValue.value, "icmpeq");
                 break;
             default: {
-                LOG_ERROR("unknown binary operator: ", Parser::getTokenName(node->operationType));
+                LOG_ERROR("unknown binary operator: ", Parser::getTokenName(node->operationType))
 
                 return GenerationError();
             }
@@ -265,18 +306,34 @@ namespace Aryiele {
     }
 
     GenerationError CodeGenerator::generateCode(NodeConstantDouble* node) {
-        return GenerationError(true, llvm::ConstantFP::get(m_context, llvm::APFloat(node->value)));
+        if (node->value >= FLT_MIN && node->value <= FLT_MAX) {
+            return GenerationError(true, llvm::ConstantFP::get(m_context, llvm::APFloat((float)node->value)));
+        } else if (node->value >= DBL_MIN && node->value <= DBL_MAX) {
+            return GenerationError(true, llvm::ConstantFP::get(m_context, llvm::APFloat(node->value)));
+        }
+        
+        return GenerationError(false);
     }
 
     GenerationError CodeGenerator::generateCode(NodeConstantInteger* node) {
-        return GenerationError(true, llvm::ConstantInt::get(m_context, llvm::APInt(32, node->value)));
+        if (node->value >= CHAR_MIN && node->value <= CHAR_MAX) {
+            return GenerationError(true, llvm::ConstantInt::get(m_builder.getInt8Ty(), node->value));
+        } else if (node->value >= SHRT_MIN && node->value <= SHRT_MAX) {
+            return GenerationError(true, llvm::ConstantInt::get(m_builder.getInt16Ty(), node->value));
+        } else if (node->value >= INT_MIN && node->value <= INT_MAX) {
+            return GenerationError(true, llvm::ConstantInt::get(m_builder.getInt32Ty(), node->value));
+        } else if (node->value >= LONG_MIN && node->value <= LONG_MAX) {
+            return GenerationError(true, llvm::ConstantInt::get(m_builder.getInt64Ty(), node->value));
+        }
+    
+        return GenerationError(false);
     }
 
     GenerationError CodeGenerator::generateCode(NodeVariable* node) {
         llvm::Value *value = m_blockStack->findVariable(node->identifier);
 
         if (!value) {
-            LOG_ERROR("unknown variable: ", node->identifier);
+            LOG_ERROR("unknown variable: ", node->identifier)
         }
 
         return GenerationError(true, m_builder.CreateLoad(value, node->identifier.c_str()));
@@ -287,14 +344,14 @@ namespace Aryiele {
         llvm::Function *calledFunction = m_module->getFunction(node->identifier);
 
         if (!calledFunction) {
-            LOG_ERROR("unknown function referenced: ", node->identifier);
+            LOG_ERROR("unknown function referenced: ", node->identifier)
 
             return GenerationError();
         }
 
         if (calledFunction->arg_size() != node->arguments.size()) {
             LOG_ERROR("incorrect number of argument passed: ",
-                      node->arguments.size(), " while expecting ", calledFunction->arg_size());
+                      node->arguments.size(), " while expecting ", calledFunction->arg_size())
 
             return GenerationError();
         }
@@ -361,16 +418,26 @@ namespace Aryiele {
     }
 
     GenerationError CodeGenerator::generateCode(NodeStatementReturn* node) {
+        if (node->expression == nullptr) {
+            m_builder.CreateRetVoid();
+            
+            return GenerationError(true);
+        }
+    
         auto error = generateCode(node->expression);
-
+    
         if (!error.success) {
-            LOG_ERROR("cannot generate return value");
-
+            LOG_ERROR("cannot generate return value")
+        
             return GenerationError();
         }
-
+    
+        if (error.value->getType() != m_builder.getCurrentFunctionReturnType()) {
+            error.value = castType(error.value, m_builder.getCurrentFunctionReturnType(), true);
+        }
+    
         m_builder.CreateRet(error.value);
-
+    
         return GenerationError(true, error.value);
     }
 
@@ -381,7 +448,7 @@ namespace Aryiele {
             auto error = generateCode(statement);
 
             if (!error.success) {
-                LOG_ERROR("cannot generate the body of a block in function");
+                LOG_ERROR("cannot generate the body of a block in function")
             }
         }
 
@@ -401,13 +468,13 @@ namespace Aryiele {
                 error = generateCode(variable->expression);
 
                 if (!error.success) {
-                    LOG_ERROR("cannot generate declaration of a variable");
+                    LOG_ERROR("cannot generate declaration of a variable")
 
                     return GenerationError();
                 }
             }
             else {
-                error.value = llvm::ConstantInt::get(m_context, llvm::APInt(32, 0));
+                error.value = getTypeDefaultValue(variable->type);
             }
 
             llvm::AllocaInst *allocationInstance = createEntryBlockAllocation(function, variable->identifier);

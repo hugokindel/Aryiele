@@ -63,6 +63,8 @@ class Parser : public Vanir::Module<Parser> {
         std::shared_ptr<Node> parseString();
         std::shared_ptr<Node> parseCharacter();
         std::shared_ptr<Node> parseBoolean();
+        std::shared_ptr<Node> parseArray();
+        std::shared_ptr<Node> parseArrayCall();
         std::shared_ptr<Node> parseIdentifier();
         std::shared_ptr<Node> parseParenthese();
         std::shared_ptr<Node> parseReturn();

@@ -1,6 +1,6 @@
 //==================================================================================//
 //                                                                                  //
-//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                       //
+//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                      //
 //                                                                                  //
 //  This file is part of the Aryiele project.                                       //
 //  Licensed under MIT License:                                                     //
@@ -25,27 +25,33 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_AST_NODES_NODESTATEMENTFUNCTIONCALL_H
-#define ARYIELE_AST_NODES_NODESTATEMENTFUNCTIONCALL_H
-
-#include <memory>
-#include <vector>
-#include <Aryiele/Common.h>
-#include <Aryiele/AST/Nodes/Node.h>
-#include <Aryiele/AST/Nodes/NodeParentIdentifier.h>
+#include <Aryiele/AST/Nodes/NodeStatementArrayCall.h>
 
 namespace Aryiele {
-    class NodeStatementFunctionCall : public NodeParentIdentifier {
-    public:
-        NodeStatementFunctionCall(const std::string& identifier, std::vector<std::shared_ptr<Node>> arguments, std::shared_ptr<Node> subExpression = nullptr);
-
-        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
-        NodeEnum getType() override;
+    
+    NodeStatementArrayCall::NodeStatementArrayCall(std::shared_ptr<Node> element, std::shared_ptr<Node> subExpression) :
+        element(element), subExpression(subExpression) {
         
-        std::vector<std::shared_ptr<Node>> arguments;
-        std::shared_ptr<Node> subExpression;
-    };
-
+    }
+    
+    void NodeStatementArrayCall::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+        auto node = std::make_shared<ParserInformation>(parentNode, "Array Call");
+        auto elementsNode = std::make_shared<ParserInformation>(node, "Element:");
+        auto subExpressionNode = std::make_shared<ParserInformation>(node, "Subexpression:");
+    
+        element->dumpInformations(elementsNode);
+        
+        node->children.emplace_back(elementsNode);
+    
+        if (subExpression) {
+            subExpression->dumpInformations(subExpressionNode);
+            node->children.emplace_back(subExpressionNode);
+        }
+        
+        parentNode->children.emplace_back(node);
+    }
+    
+    NodeEnum NodeStatementArrayCall::getType() {
+        return Node_StatementArrayCall;
+    }
 } /* Namespace Aryiele. */
-
-#endif /* ARYIELE_AST_NODES_NODESTATEMENTFUNCTIONCALL_H. */

@@ -34,12 +34,12 @@
 namespace Aryiele {
     class NodeConstantInteger : public Node {
     public:
-        explicit NodeConstantInteger(int value);
+        explicit NodeConstantInteger(long value);
 
         void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
 
-        int value;
+        long value;
     };
 
 } /* Namespace Aryiele. */

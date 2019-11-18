@@ -1,6 +1,6 @@
 //==================================================================================//
 //                                                                                  //
-//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                       //
+//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                      //
 //                                                                                  //
 //  This file is part of the Aryiele project.                                       //
 //  Licensed under MIT License:                                                     //
@@ -25,27 +25,35 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_AST_NODES_NODESTATEMENTFUNCTIONCALL_H
-#define ARYIELE_AST_NODES_NODESTATEMENTFUNCTIONCALL_H
-
-#include <memory>
-#include <vector>
-#include <Aryiele/Common.h>
-#include <Aryiele/AST/Nodes/Node.h>
-#include <Aryiele/AST/Nodes/NodeParentIdentifier.h>
+#include <Aryiele/AST/Nodes/NodeConstantArray.h>
 
 namespace Aryiele {
-    class NodeStatementFunctionCall : public NodeParentIdentifier {
-    public:
-        NodeStatementFunctionCall(const std::string& identifier, std::vector<std::shared_ptr<Node>> arguments, std::shared_ptr<Node> subExpression = nullptr);
-
-        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
-        NodeEnum getType() override;
+    
+    NodeConstantArray::NodeConstantArray(std::vector<std::shared_ptr<Node>> elements) :
+        elements(elements) {
+    
+    }
+    
+    void NodeConstantArray::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+        auto node = std::make_shared<ParserInformation>(parentNode, "Array");
+        auto elementsNode = std::make_shared<ParserInformation>(node, "Elements:");
         
-        std::vector<std::shared_ptr<Node>> arguments;
-        std::shared_ptr<Node> subExpression;
-    };
-
+        for (int i = 0; i < elements.size(); i++) {
+            auto elementNode = std::make_shared<ParserInformation>(elementsNode, std::to_string(i) + ": ");
+            auto elementExpressionNode = std::make_shared<ParserInformation>(elementNode, "Expression:");
+    
+            elements.at(i)->dumpInformations(elementExpressionNode);
+    
+            elementNode->children.emplace_back(elementExpressionNode);
+    
+            elementsNode->children.emplace_back(elementNode);
+        }
+    
+        node->children.emplace_back(elementsNode);
+        parentNode->children.emplace_back(node);
+    }
+    
+    NodeEnum NodeConstantArray::getType() {
+        return Node_ConstantArray;
+    }
 } /* Namespace Aryiele. */
-
-#endif /* ARYIELE_AST_NODES_NODESTATEMENTFUNCTIONCALL_H. */
