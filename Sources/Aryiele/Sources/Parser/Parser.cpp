@@ -615,8 +615,9 @@ namespace Aryiele {
     std::shared_ptr<Node> Parser::parseExpression() {
         auto leftExpression = parsePrimary();
     
-        if (!leftExpression)
+        if (!leftExpression) {
             return nullptr;
+        }
     
         if (m_currentToken.type == ParserToken_OperatorUnaryArithmeticIncrement ||
             m_currentToken.type == ParserToken_OperatorUnaryArithmeticDecrement) {
@@ -701,13 +702,15 @@ namespace Aryiele {
         
             if (m_currentToken.type == ParserToken_SeparatorCurlyBracketClosed ||
                 m_currentToken.type == ParserToken_KeywordCase ||
-                m_currentToken.type == ParserToken_KeywordDefault)
+                m_currentToken.type == ParserToken_KeywordDefault) {
                 break;
+            }
         
             auto expression = parseExpression();
         
-            if (expression)
+            if (expression) {
                 expressions.emplace_back(expression);
+            }
         }
     
         return expressions;
@@ -1091,8 +1094,9 @@ namespace Aryiele {
                 variables.emplace_back(std::make_shared<Variable>(identifier, type, constant, value));
             }
             
-            if (!multiple || m_currentToken.type != ParserToken_SeparatorComma)
+            if (!multiple || m_currentToken.type != ParserToken_SeparatorComma) {
                 break;
+            }
         }
 
         return std::make_shared<NodeStatementVariableDeclaration>(variables);

@@ -215,6 +215,10 @@ namespace Aryiele {
                 return GenerationError();
             }
         }
+        
+        if (function->getReturnType() == m_builder.getVoidTy() && node->body.back()->getType() != Node_StatementReturn) {
+            m_builder.CreateRetVoid();
+        }
 
         m_blockStack->escapeCurrent();
 
@@ -261,9 +265,11 @@ namespace Aryiele {
             return GenerationError();
 
         llvm::Value *value = nullptr;
-
-        // TODO: CODEGENERATOR: Only support integers for now
-        // TODO: CODEGENERATOR: Only support signed numbers for now
+        
+        if (lhsValue.value->getType() != rhsValue.value->getType()) {
+            rhsValue.value = castType(rhsValue.value, lhsValue.value->getType());
+        }
+        
         switch (node->operationType) {
             case ParserToken_OperatorArithmeticPlus:
                 value = m_builder.CreateAdd(lhsValue.value, rhsValue.value, "add");
@@ -361,12 +367,17 @@ namespace Aryiele {
         for (unsigned i = 0, e = static_cast<unsigned int>(node->arguments.size()); i != e; ++i) {
             auto error = generateCode(node->arguments[i]);
 
-            if (!error.success)
+            if (!error.success) {
                 return GenerationError();
+            }
+            
+            if (error.value->getType() != calledFunction->getArg(i)->getType()) {
+                error.value = castType(error.value, calledFunction->getArg(i)->getType());
+            }
 
             argumentsValues.push_back(error.value);
         }
-
+        
         return GenerationError(true, m_builder.CreateCall(calledFunction, argumentsValues, "calltmp"));
     }
 
