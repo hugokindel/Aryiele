@@ -25,23 +25,26 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_AST_NODES_NODECONSTANTDOUBLE_H
-#define ARYIELE_AST_NODES_NODECONSTANTDOUBLE_H
+#ifndef ARYIELE_AST_NODES_NODETOPNAMESPACE_H
+#define ARYIELE_AST_NODES_NODETOPNAMESPACE_H
 
 #include <Aryiele/Common.h>
 #include <Aryiele/AST/Nodes/Node.h>
+#include <Aryiele/AST/Argument.h>
 
 namespace Aryiele {
-    class NodeConstantDouble : public Node {
+    class NodeTopNamespace : public Node {
     public:
-        explicit NodeConstantDouble(double value);
-
+        NodeTopNamespace(const std::string& identifier,
+                         std::vector<std::shared_ptr<Node>> content);
+        
         void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
-
-        double value;
+        
+        std::string identifier;
+        std::vector<std::shared_ptr<Node>> content;
     };
-
+    
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_AST_NODES_NODECONSTANTDOUBLE_H. */
+#endif /* ARYIELE_AST_NODES_NODETOPNAMESPACE_H. */

@@ -1,6 +1,6 @@
 //==================================================================================//
 //                                                                                  //
-//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                       //
+//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                      //
 //                                                                                  //
 //  This file is part of the Aryiele project.                                       //
 //  Licensed under MIT License:                                                     //
@@ -25,23 +25,35 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_AST_NODES_NODECONSTANTBOOLEAN_H
-#define ARYIELE_AST_NODES_NODECONSTANTBOOLEAN_H
-
-#include <Aryiele/Common.h>
-#include <Aryiele/AST/Nodes/Node.h>
+#include <Aryiele/AST/Nodes/NodeLiteralArray.h>
 
 namespace Aryiele {
-    class NodeConstantBoolean : public Node {
-    public:
-        explicit NodeConstantBoolean(bool value);
-        
-        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
-        NodeEnum getType() override;
-        
-        bool value;
-    };
     
+    NodeLiteralArray::NodeLiteralArray(std::vector<std::shared_ptr<Node>> elements) :
+        elements(elements) {
+    
+    }
+    
+    void NodeLiteralArray::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+        auto node = std::make_shared<ParserInformation>(parentNode, "Array");
+        auto elementsNode = std::make_shared<ParserInformation>(node, "Elements:");
+        
+        for (int i = 0; i < elements.size(); i++) {
+            auto elementNode = std::make_shared<ParserInformation>(elementsNode, std::to_string(i) + ": ");
+            auto elementExpressionNode = std::make_shared<ParserInformation>(elementNode, "Expression:");
+    
+            elements.at(i)->dumpInformations(elementExpressionNode);
+    
+            elementNode->children.emplace_back(elementExpressionNode);
+    
+            elementsNode->children.emplace_back(elementNode);
+        }
+    
+        node->children.emplace_back(elementsNode);
+        parentNode->children.emplace_back(node);
+    }
+    
+    NodeEnum NodeLiteralArray::getType() {
+        return Node_LiteralArray;
+    }
 } /* Namespace Aryiele. */
-
-#endif /* ARYIELE_AST_NODES_NODECONSTANTBOOLEAN_H. */

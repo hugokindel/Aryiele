@@ -47,16 +47,16 @@
 #include <llvm/IR/LegacyPassManager.h>
 #include <Vanir/Module/Module.h>
 #include <Aryiele/Common.h>
-#include <Aryiele/AST/Nodes/NodeConstantDouble.h>
-#include <Aryiele/AST/Nodes/NodeConstantInteger.h>
-#include <Aryiele/AST/Nodes/NodeFunction.h>
+#include <Aryiele/AST/Nodes/NodeLiteralNumberFloating.h>
+#include <Aryiele/AST/Nodes/NodeLiteralNumberInteger.h>
+#include <Aryiele/AST/Nodes/NodeTopFunction.h>
 #include <Aryiele/AST/Nodes/NodeOperationBinary.h>
 #include <Aryiele/AST/Nodes/NodeStatementBlock.h>
 #include <Aryiele/AST/Nodes/NodeStatementFunctionCall.h>
 #include <Aryiele/AST/Nodes/NodeStatementIf.h>
 #include <Aryiele/AST/Nodes/NodeStatementReturn.h>
 #include <Aryiele/AST/Nodes/NodeStatementVariableDeclaration.h>
-#include <Aryiele/AST/Nodes/NodeVariable.h>
+#include <Aryiele/AST/Nodes/NodeStatementVariable.h>
 #include <Aryiele/CodeGenerator/BlockStack.h>
 #include <Aryiele/CodeGenerator/GenerationError.h>
 
@@ -77,11 +77,11 @@ namespace Aryiele {
         llvm::AllocaInst *createEntryBlockAllocation(
             llvm::Function *function, const std::string &identifier, llvm::Type *type = nullptr);
         GenerationError generateCode(std::shared_ptr<Node> node);
-        GenerationError generateCode(NodeFunction* node);
+        GenerationError generateCode(NodeTopFunction* node);
         GenerationError generateCode(NodeOperationBinary* node);
-        GenerationError generateCode(NodeConstantDouble* node);
-        GenerationError generateCode(NodeConstantInteger* node);
-        GenerationError generateCode(NodeVariable* node);
+        GenerationError generateCode(NodeLiteralNumberFloating* node);
+        GenerationError generateCode(NodeLiteralNumberInteger* node);
+        GenerationError generateCode(NodeStatementVariable* node);
         GenerationError generateCode(NodeStatementFunctionCall* node);
         GenerationError generateCode(NodeStatementIf* node);
         GenerationError generateCode(NodeStatementReturn* node);

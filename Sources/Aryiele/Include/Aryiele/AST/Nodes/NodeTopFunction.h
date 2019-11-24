@@ -1,6 +1,6 @@
 //==================================================================================//
 //                                                                                  //
-//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                      //
+//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                       //
 //                                                                                  //
 //  This file is part of the Aryiele project.                                       //
 //  Licensed under MIT License:                                                     //
@@ -25,20 +25,30 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_NODEPARENTIDENTIFIER_H
-#define ARYIELE_NODEPARENTIDENTIFIER_H
+#ifndef ARYIELE_AST_NODES_NODETOPFUNCTION_H
+#define ARYIELE_AST_NODES_NODETOPFUNCTION_H
 
 #include <Aryiele/Common.h>
 #include <Aryiele/AST/Nodes/Node.h>
+#include <Aryiele/AST/Argument.h>
 
 namespace Aryiele {
-    class NodeParentIdentifier : public Node {
+    class NodeTopFunction : public Node {
     public:
-        NodeParentIdentifier(const std::string& identifier);
-        
+        NodeTopFunction(const std::string& identifier,
+                        const std::string& type,
+                        std::vector<Argument> argumentsName,
+                        std::vector<std::shared_ptr<Node>> body);
+
+        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        NodeEnum getType() override;
+
         std::string identifier;
+        std::string type;
+        std::vector<Argument> arguments;
+        std::vector<std::shared_ptr<Node>> body;
     };
-    
+
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_NODEPARENTIDENTIFIER_H. */
+#endif /* ARYIELE_AST_NODES_NODETOPFUNCTION_H. */

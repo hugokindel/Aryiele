@@ -25,24 +25,54 @@
 //                                                                                  //
 //==================================================================================//
 
-#include <Aryiele/AST/Nodes/NodeConstantDouble.h>
+#include <Aryiele/AST/Nodes/NodeTopFunction.h>
 
 namespace Aryiele {
-    NodeConstantDouble::NodeConstantDouble(double value) :
-        value(value) {
+    NodeTopFunction::NodeTopFunction(const std::string& identifier,
+                                     const std::string& type,
+                                     std::vector<Argument> arguments,
+                                     std::vector<std::shared_ptr<Node>> body) :
+        identifier(identifier), type(type), arguments(arguments), body(body) {
 
     }
 
-    void NodeConstantDouble::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
-        auto node = std::make_shared<ParserInformation>(parentNode, "Double");
-        auto bodyNode = std::make_shared<ParserInformation>(node, "Value: " + std::to_string(value));
+    void NodeTopFunction::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+        auto node = std::make_shared<ParserInformation>(parentNode, "Function");
+        auto argumentsNode = std::make_shared<ParserInformation>(node, "Arguments:");
+        auto valueNode = std::make_shared<ParserInformation>(node, "Body:");
 
-        node->children.emplace_back(bodyNode);
+        for (auto& childNode : body)
+            childNode->dumpInformations(valueNode);
+
+        int i = 0;
+
+        for(auto& argument : arguments) {
+            auto argumentNode = std::make_shared<ParserInformation>(argumentsNode, std::to_string(i));
+
+            argumentNode->children.emplace_back(std::make_shared<ParserInformation>(
+                argumentNode, "Identifier: " + argument.identifier));
+            argumentNode->children.emplace_back(std::make_shared<ParserInformation>(
+                argumentNode, "Type: " + argument.type));
+
+            argumentsNode->children.emplace_back(argumentNode);
+
+            i++;
+        }
+
+        node->children.emplace_back(std::make_shared<ParserInformation>(node, "Identifier: " + identifier));
+        node->children.emplace_back(std::make_shared<ParserInformation>(node, "Type: " + type));
+        
+        if (!arguments.empty()) {
+            node->children.emplace_back(argumentsNode);
+        }
+        
+        node->children.emplace_back(valueNode);
+
         parentNode->children.emplace_back(node);
     }
-    
-    NodeEnum NodeConstantDouble::getType() {
-        return Node_ConstantDouble;
+
+    NodeEnum NodeTopFunction::getType() {
+        return Node_TopFunction;
     }
 
 } /* Namespace Aryiele. */

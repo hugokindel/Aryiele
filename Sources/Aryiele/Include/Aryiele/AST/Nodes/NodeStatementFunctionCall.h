@@ -32,16 +32,16 @@
 #include <vector>
 #include <Aryiele/Common.h>
 #include <Aryiele/AST/Nodes/Node.h>
-#include <Aryiele/AST/Nodes/NodeParentIdentifier.h>
 
 namespace Aryiele {
-    class NodeStatementFunctionCall : public NodeParentIdentifier {
+    class NodeStatementFunctionCall : public Node {
     public:
-        NodeStatementFunctionCall(const std::string& identifier, std::vector<std::shared_ptr<Node>> arguments, std::shared_ptr<Node> subExpression = nullptr);
+        NodeStatementFunctionCall(const std::string& identifier, std::vector<std::shared_ptr<Node>> arguments = std::vector<std::shared_ptr<Node>>(), std::shared_ptr<Node> subExpression = nullptr);
 
         void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
         
+        std::string identifier;
         std::vector<std::shared_ptr<Node>> arguments;
         std::shared_ptr<Node> subExpression;
     };

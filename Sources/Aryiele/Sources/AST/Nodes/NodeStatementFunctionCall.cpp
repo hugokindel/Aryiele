@@ -31,7 +31,7 @@ namespace Aryiele {
 
     NodeStatementFunctionCall::NodeStatementFunctionCall(const std::string &identifier,
         std::vector<std::shared_ptr<Node>> arguments, std::shared_ptr<Node> subExpression) :
-        NodeParentIdentifier(identifier) , arguments(arguments), subExpression(subExpression) {
+        identifier(identifier) , arguments(arguments), subExpression(subExpression) {
 
     }
 

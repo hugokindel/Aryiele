@@ -25,24 +25,23 @@
 //                                                                                  //
 //==================================================================================//
 
-#include <Aryiele/AST/Nodes/NodeConstantInteger.h>
+#ifndef ARYIELE_AST_NODES_NODELITERALARRAY_H
+#define ARYIELE_AST_NODES_NODELITERALARRAY_H
+
+#include <Aryiele/Common.h>
+#include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-    NodeConstantInteger::NodeConstantInteger(long value) :
-            value(value) {
-
-    }
-
-    void NodeConstantInteger::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
-        auto node = std::make_shared<ParserInformation>(parentNode, "Integer");
-        auto bodyNode = std::make_shared<ParserInformation>(node, "Value: " + std::to_string(value));
-
-        node->children.emplace_back(bodyNode);
-        parentNode->children.emplace_back(node);
-    }
+    class NodeLiteralArray : public Node {
+    public:
+        explicit NodeLiteralArray(std::vector<std::shared_ptr<Node>> elements);
+        
+        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        NodeEnum getType() override;
+        
+        std::vector<std::shared_ptr<Node>> elements;
+    };
     
-    NodeEnum NodeConstantInteger::getType() {
-        return Node_ConstantInteger;
-    }
-
 } /* Namespace Aryiele. */
+
+#endif /* ARYIELE_AST_NODES_NODELITERALARRAY_H. */

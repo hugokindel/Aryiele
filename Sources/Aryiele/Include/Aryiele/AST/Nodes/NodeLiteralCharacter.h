@@ -25,24 +25,23 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_AST_NODES_NODEVARIABLE_H
-#define ARYIELE_AST_NODES_NODEVARIABLE_H
+#ifndef ARYIELE_AST_NODES_NODELITERALCHARACTER_H
+#define ARYIELE_AST_NODES_NODELITERALCHARACTER_H
 
 #include <Aryiele/Common.h>
 #include <Aryiele/AST/Nodes/Node.h>
-#include <Aryiele/AST/Nodes/NodeParentIdentifier.h>
 
 namespace Aryiele {
-    class NodeVariable : public NodeParentIdentifier {
+    class NodeLiteralCharacter : public Node {
     public:
-        explicit NodeVariable(const std::string& identifier, std::shared_ptr<Node> subExpression = nullptr);
-
+        explicit NodeLiteralCharacter(const std::string& value);
+        
         void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
-    
-        std::shared_ptr<Node> subExpression;
+        
+        std::string value;
     };
-
+    
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_AST_NODES_NODEVARIABLE_H. */
+#endif /* ARYIELE_AST_NODES_NODELITERALCHARACTER_H. */

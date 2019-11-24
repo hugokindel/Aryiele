@@ -25,31 +25,23 @@
 //                                                                                  //
 //==================================================================================//
 
-#include <Aryiele/AST/Nodes/NodeVariable.h>
+#ifndef ARYIELE_AST_NODES_NODELITERALNUMBERINTEGER_H
+#define ARYIELE_AST_NODES_NODELITERALNUMBERINTEGER_H
+
+#include <Aryiele/Common.h>
+#include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-    NodeVariable::NodeVariable(const std::string& identifier, std::shared_ptr<Node> subExpression) :
-            NodeParentIdentifier(identifier), subExpression(subExpression) {
+    class NodeLiteralNumberInteger : public Node {
+    public:
+        explicit NodeLiteralNumberInteger(long value);
 
-    }
+        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        NodeEnum getType() override;
 
-    void NodeVariable::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
-        auto node = std::make_shared<ParserInformation>(parentNode, "Variable");
-        auto bodyNode = std::make_shared<ParserInformation>(node, "Identifier: " + identifier);
-        auto subExpressionNode = std::make_shared<ParserInformation>(node, "Subexpression:");
-
-        node->children.emplace_back(bodyNode);
-        
-        if (subExpression) {
-            subExpression->dumpInformations(subExpressionNode);
-            node->children.emplace_back(subExpressionNode);
-        }
-        
-        parentNode->children.emplace_back(node);
-    }
-    
-    NodeEnum NodeVariable::getType() {
-        return Node_Variable;
-    }
+        long value;
+    };
 
 } /* Namespace Aryiele. */
+
+#endif /* ARYIELE_AST_NODES_NODELITERALNUMBERINTEGER_H. */

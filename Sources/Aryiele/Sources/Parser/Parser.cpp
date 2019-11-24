@@ -30,12 +30,12 @@
 #include <utility>
 #include <llvm/ADT/STLExtras.h>
 #include <Aryiele/Parser/Parser.h>
-#include <Aryiele/AST/Nodes/NodeConstantDouble.h>
-#include <Aryiele/AST/Nodes/NodeConstantInteger.h>
-#include <Aryiele/AST/Nodes/NodeConstantString.h>
-#include <Aryiele/AST/Nodes/NodeConstantCharacter.h>
-#include <Aryiele/AST/Nodes/NodeConstantBoolean.h>
-#include <Aryiele/AST/Nodes/NodeConstantInteger.h>
+#include <Aryiele/AST/Nodes/NodeLiteralNumberFloating.h>
+#include <Aryiele/AST/Nodes/NodeLiteralNumberInteger.h>
+#include <Aryiele/AST/Nodes/NodeLiteralString.h>
+#include <Aryiele/AST/Nodes/NodeLiteralCharacter.h>
+#include <Aryiele/AST/Nodes/NodeLiteralBoolean.h>
+#include <Aryiele/AST/Nodes/NodeLiteralNumberInteger.h>
 #include <Aryiele/AST/Nodes/NodeOperationBinary.h>
 #include <Aryiele/AST/Nodes/NodeStatementBlock.h>
 #include <Aryiele/AST/Nodes/NodeStatementFunctionCall.h>
@@ -45,12 +45,12 @@
 #include <Aryiele/AST/Nodes/NodeStatementWhile.h>
 #include <Aryiele/AST/Nodes/NodeStatementFor.h>
 #include <Aryiele/AST/Nodes/NodeOperationUnary.h>
-#include <Aryiele/AST/Nodes/NodeVariable.h>
-#include <Aryiele/AST/Nodes/NodeNamespace.h>
+#include <Aryiele/AST/Nodes/NodeStatementVariable.h>
+#include <Aryiele/AST/Nodes/NodeTopNamespace.h>
 #include <Aryiele/AST/Nodes/NodeStatementBreak.h>
 #include <Aryiele/AST/Nodes/NodeStatementContinue.h>
 #include <Aryiele/AST/Nodes/NodeStatementSwitch.h>
-#include <Aryiele/AST/Nodes/NodeConstantArray.h>
+#include <Aryiele/AST/Nodes/NodeLiteralArray.h>
 #include <Aryiele/AST/Nodes/NodeStatementArrayCall.h>
 
 namespace Aryiele {
@@ -451,7 +451,7 @@ namespace Aryiele {
             return m_binaryOperatorPrecedence[binaryOperator] <= 0 ? -1 : m_binaryOperatorPrecedence[binaryOperator];
     }
 
-    std::shared_ptr<NodeFunction> Parser::parseFunction() {
+    std::shared_ptr<NodeTopFunction> Parser::parseFunction() {
         std::string name;
         std::string type;
         std::vector<Argument> arguments;
@@ -519,9 +519,24 @@ namespace Aryiele {
         } else {
             PARSER_ERROR("expected either identifier or opened curly bracket")
         }
+        
         auto expressions = parseBody();
+        
+        if (type == "Void") {
+            bool hasReturn = false;
+            
+            for (auto& statement : expressions) {
+                if (statement->getType() == Node_StatementReturn) {
+                    hasReturn = true;
+                }
+            }
+            
+            if (!hasReturn) {
+                expressions.emplace_back(std::make_shared<NodeStatementReturn>());
+            }
+        }
 
-        return std::make_shared<NodeFunction>(name, type, arguments, expressions);
+        return std::make_shared<NodeTopFunction>(name, type, arguments, expressions);
     }
     
     std::shared_ptr<Node> Parser::parseNamespace() {
@@ -558,7 +573,7 @@ namespace Aryiele {
             }
         }
         
-        return std::make_shared<NodeNamespace>(identifier, nodes);
+        return std::make_shared<NodeTopNamespace>(identifier, nodes);
     }
 
     std::shared_ptr<Node> Parser::parsePrimary() {
@@ -717,7 +732,7 @@ namespace Aryiele {
     }
 
     std::shared_ptr<Node> Parser::parseInteger() {
-        auto result = std::make_shared<NodeConstantInteger>(std::stoi(m_currentToken.content));
+        auto result = std::make_shared<NodeLiteralNumberInteger>(std::stoi(m_currentToken.content));
 
         getNextToken();
 
@@ -725,7 +740,7 @@ namespace Aryiele {
     }
 
     std::shared_ptr<Node> Parser::parseDouble() {
-        auto result = std::make_shared<NodeConstantDouble>(std::stod(m_currentToken.content));
+        auto result = std::make_shared<NodeLiteralNumberFloating>(std::stod(m_currentToken.content));
 
         getNextToken();
 
@@ -733,7 +748,7 @@ namespace Aryiele {
     }
     
     std::shared_ptr<Node> Parser::parseString() {
-        auto result = std::make_shared<NodeConstantString>(m_currentToken.content);
+        auto result = std::make_shared<NodeLiteralString>(m_currentToken.content);
         
         getNextToken();
         
@@ -741,7 +756,7 @@ namespace Aryiele {
     }
     
     std::shared_ptr<Node> Parser::parseCharacter() {
-        auto result = std::make_shared<NodeConstantCharacter>(m_currentToken.content);
+        auto result = std::make_shared<NodeLiteralCharacter>(m_currentToken.content);
         
         getNextToken();
         
@@ -749,7 +764,7 @@ namespace Aryiele {
     }
     
     std::shared_ptr<Node> Parser::parseBoolean() {
-        auto result = std::make_shared<NodeConstantDouble>(m_currentToken.content == "true");
+        auto result = std::make_shared<NodeLiteralNumberFloating>(m_currentToken.content == "true");
         
         getNextToken();
         
@@ -770,7 +785,7 @@ namespace Aryiele {
             }
         }
         
-        return std::make_shared<NodeConstantArray>(elements);
+        return std::make_shared<NodeLiteralArray>(elements);
     }
     
     std::shared_ptr<Node> Parser::parseArrayCall() {
@@ -836,7 +851,7 @@ namespace Aryiele {
             subExpression = parseArrayCall();
         }
         
-        return std::make_shared<NodeVariable>(identifier, subExpression);
+        return std::make_shared<NodeStatementVariable>(identifier, subExpression);
     }
 
     std::shared_ptr<Node> Parser::parseParenthese() {

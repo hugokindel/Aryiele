@@ -25,26 +25,24 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_AST_NODES_NODENAMESPACE_H
-#define ARYIELE_AST_NODES_NODENAMESPACE_H
-
-#include <Aryiele/Common.h>
-#include <Aryiele/AST/Nodes/Node.h>
-#include <Aryiele/AST/Argument.h>
+#include <Aryiele/AST/Nodes/NodeLiteralCharacter.h>
 
 namespace Aryiele {
-    class NodeNamespace : public Node {
-    public:
-        NodeNamespace(const std::string& identifier,
-            std::vector<std::shared_ptr<Node>> content);
+    NodeLiteralCharacter::NodeLiteralCharacter(const std::string& value) :
+        value(value) {
         
-        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
-        NodeEnum getType() override;
+    }
+    
+    void NodeLiteralCharacter::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+        auto node = std::make_shared<ParserInformation>(parentNode, "Character");
+        auto bodyNode = std::make_shared<ParserInformation>(node, "Value: " + value);
         
-        std::string identifier;
-        std::vector<std::shared_ptr<Node>> content;
-    };
+        node->children.emplace_back(bodyNode);
+        parentNode->children.emplace_back(node);
+    }
+    
+    NodeEnum NodeLiteralCharacter::getType() {
+        return Node_LiteralCharacter;
+    }
     
 } /* Namespace Aryiele. */
-
-#endif /* ARYIELE_AST_NODES_NODENAMESPACE_H. */

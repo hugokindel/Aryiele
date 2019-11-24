@@ -33,7 +33,7 @@
 #include <Aryiele/Common.h>
 #include <Aryiele/Lexer/LexerToken.h>
 #include <Aryiele/AST/Nodes/Node.h>
-#include <Aryiele/AST/Nodes/NodeFunction.h>
+#include <Aryiele/AST/Nodes/NodeTopFunction.h>
 #include <Aryiele/Parser/ParserToken.h>
 #include <Aryiele/Parser/ParserInformation.h>
 
@@ -50,7 +50,7 @@ class Parser : public Vanir::Module<Parser> {
     private:
         ParserToken getNextToken(bool incrementCounter = true);
         int getOperatorPrecedence(ParserTokenEnum binaryOperator);
-        std::shared_ptr<NodeFunction> parseFunction();
+        std::shared_ptr<NodeTopFunction> parseFunction();
         std::shared_ptr<Node> parseNamespace();
         std::shared_ptr<Node> parsePrimary();
         std::shared_ptr<Node> parseExpression();

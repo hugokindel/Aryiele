@@ -72,7 +72,7 @@ namespace Aryiele {
             return llvm::Type::getInt32Ty(m_context);
         } else if (type == "Int64" || type == "Int" || type == "UInt32") {
             return llvm::Type::getInt64Ty(m_context);
-        } else if (type == "UInt64") {
+        } else if (type == "UInt64" || type == "UInt") {
             return llvm::Type::getInt128Ty(m_context);
         } else if (type == "Float") {
             return llvm::Type::getFloatTy(m_context);
@@ -98,7 +98,7 @@ namespace Aryiele {
             return llvm::ConstantInt::get(m_context, llvm::APInt(32, 0));
         } else if (type == "Int64" || type == "Int" || type == "UInt32") {
             return llvm::ConstantInt::get(m_context, llvm::APInt(64, 0));
-        } else if (type == "UInt64") {
+        } else if (type == "UInt64" ) {
             return llvm::ConstantInt::get(m_context, llvm::APInt(128, 0));
         } else if (type == "Float") {
             return llvm::ConstantFP::get(m_context, llvm::APFloat(0.0f));
@@ -140,14 +140,14 @@ namespace Aryiele {
         auto nodePtr = node.get();
 
         switch (node->getType()) {
-            case Node_Function:
-                return generateCode((NodeFunction*)nodePtr);
-            case Node_ConstantDouble:
-                return generateCode((NodeConstantDouble*)nodePtr);
-            case Node_ConstantInteger:
-                return generateCode((NodeConstantInteger*)nodePtr);
-            case Node_Variable:
-                return generateCode((NodeVariable*)nodePtr);
+            case Node_TopFunction:
+                return generateCode((NodeTopFunction*)nodePtr);
+            case Node_LiteralNumberFloating:
+                return generateCode((NodeLiteralNumberFloating*)nodePtr);
+            case Node_LiteralNumberInteger:
+                return generateCode((NodeLiteralNumberInteger*)nodePtr);
+            case Node_StatementVariable:
+                return generateCode((NodeStatementVariable*)nodePtr);
             case Node_OperationBinary:
                 return generateCode((NodeOperationBinary*)nodePtr);
             case Node_StatementFunctionCall:
@@ -166,7 +166,7 @@ namespace Aryiele {
     }
 
     // TODO: Return + Types
-    GenerationError CodeGenerator::generateCode(NodeFunction* node) {
+    GenerationError CodeGenerator::generateCode(NodeTopFunction* node) {
         llvm::Function *function = m_module->getFunction(node->identifier);
 
         if (!function) {
@@ -216,10 +216,6 @@ namespace Aryiele {
             }
         }
         
-        if (function->getReturnType() == m_builder.getVoidTy() && node->body.back()->getType() != Node_StatementReturn) {
-            m_builder.CreateRetVoid();
-        }
-
         m_blockStack->escapeCurrent();
 
         verifyFunction(*function);
@@ -229,7 +225,7 @@ namespace Aryiele {
 
     GenerationError CodeGenerator::generateCode(NodeOperationBinary* node) {
         if (node->operationType == ParserToken_OperatorEqual) {
-            auto lhs = std::static_pointer_cast<NodeVariable>(node->lhs);
+            auto lhs = std::static_pointer_cast<NodeStatementVariable>(node->lhs);
 
             if (!lhs) {
                 LOG_ERROR("cannot generate a binary operation: lhs: expecting a variable")
@@ -311,7 +307,7 @@ namespace Aryiele {
         return GenerationError(true, value);
     }
 
-    GenerationError CodeGenerator::generateCode(NodeConstantDouble* node) {
+    GenerationError CodeGenerator::generateCode(NodeLiteralNumberFloating* node) {
         if (node->value >= FLT_MIN && node->value <= FLT_MAX) {
             return GenerationError(true, llvm::ConstantFP::get(m_context, llvm::APFloat((float)node->value)));
         } else if (node->value >= DBL_MIN && node->value <= DBL_MAX) {
@@ -321,7 +317,7 @@ namespace Aryiele {
         return GenerationError(false);
     }
 
-    GenerationError CodeGenerator::generateCode(NodeConstantInteger* node) {
+    GenerationError CodeGenerator::generateCode(NodeLiteralNumberInteger* node) {
         if (node->value >= CHAR_MIN && node->value <= CHAR_MAX) {
             return GenerationError(true, llvm::ConstantInt::get(m_builder.getInt8Ty(), node->value));
         } else if (node->value >= SHRT_MIN && node->value <= SHRT_MAX) {
@@ -335,7 +331,7 @@ namespace Aryiele {
         return GenerationError(false);
     }
 
-    GenerationError CodeGenerator::generateCode(NodeVariable* node) {
+    GenerationError CodeGenerator::generateCode(NodeStatementVariable* node) {
         llvm::Value *value = m_blockStack->findVariable(node->identifier);
 
         if (!value) {
@@ -381,7 +377,6 @@ namespace Aryiele {
         return GenerationError(true, m_builder.CreateCall(calledFunction, argumentsValues, "calltmp"));
     }
 
-    // TODO: CODEGENERATOR: Support for no "Else" statement
     GenerationError CodeGenerator::generateCode(NodeStatementIf* node) {
         auto conditionValue = generateCode(node->condition);
 

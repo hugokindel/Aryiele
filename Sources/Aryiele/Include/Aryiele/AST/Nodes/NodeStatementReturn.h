@@ -34,7 +34,7 @@
 namespace Aryiele {
     class NodeStatementReturn : public Node {
     public:
-        NodeStatementReturn(std::shared_ptr<Node> expression);
+        NodeStatementReturn(std::shared_ptr<Node> expression = nullptr);
 
         void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;

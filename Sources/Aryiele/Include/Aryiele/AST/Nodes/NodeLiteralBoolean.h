@@ -1,6 +1,6 @@
 //==================================================================================//
 //                                                                                  //
-//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                      //
+//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                       //
 //                                                                                  //
 //  This file is part of the Aryiele project.                                       //
 //  Licensed under MIT License:                                                     //
@@ -25,12 +25,23 @@
 //                                                                                  //
 //==================================================================================//
 
-#include <Aryiele/AST/Nodes/NodeParentIdentifier.h>
+#ifndef ARYIELE_AST_NODES_NODELITERALBOOLEAN_H
+#define ARYIELE_AST_NODES_NODELITERALBOOLEAN_H
+
+#include <Aryiele/Common.h>
+#include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-    NodeParentIdentifier::NodeParentIdentifier(const std::string &identifier) :
-        identifier(identifier) {
+    class NodeLiteralBoolean : public Node {
+    public:
+        explicit NodeLiteralBoolean(bool value);
         
-    }
+        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        NodeEnum getType() override;
+        
+        bool value;
+    };
     
 } /* Namespace Aryiele. */
+
+#endif /* ARYIELE_AST_NODES_NODELITERALBOOLEAN_H. */

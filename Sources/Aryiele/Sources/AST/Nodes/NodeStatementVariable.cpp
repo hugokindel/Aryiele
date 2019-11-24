@@ -25,30 +25,31 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_AST_NODES_NODEFUNCTION_H
-#define ARYIELE_AST_NODES_NODEFUNCTION_H
-
-#include <Aryiele/Common.h>
-#include <Aryiele/AST/Nodes/Node.h>
-#include <Aryiele/AST/Argument.h>
+#include <Aryiele/AST/Nodes/NodeStatementVariable.h>
 
 namespace Aryiele {
-    class NodeFunction : public Node {
-    public:
-        NodeFunction(const std::string& identifier,
-                     const std::string& type,
-                     std::vector<Argument> argumentsName,
-                     std::vector<std::shared_ptr<Node>> body);
+    NodeStatementVariable::NodeStatementVariable(const std::string& identifier, std::shared_ptr<Node> subExpression) :
+            identifier(identifier), subExpression(subExpression) {
 
-        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
-        NodeEnum getType() override;
+    }
 
-        std::string identifier;
-        std::string type;
-        std::vector<Argument> arguments;
-        std::vector<std::shared_ptr<Node>> body;
-    };
+    void NodeStatementVariable::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+        auto node = std::make_shared<ParserInformation>(parentNode, "Variable");
+        auto bodyNode = std::make_shared<ParserInformation>(node, "Identifier: " + identifier);
+        auto subExpressionNode = std::make_shared<ParserInformation>(node, "Subexpression:");
+
+        node->children.emplace_back(bodyNode);
+        
+        if (subExpression) {
+            subExpression->dumpInformations(subExpressionNode);
+            node->children.emplace_back(subExpressionNode);
+        }
+        
+        parentNode->children.emplace_back(node);
+    }
+    
+    NodeEnum NodeStatementVariable::getType() {
+        return Node_StatementVariable;
+    }
 
 } /* Namespace Aryiele. */
-
-#endif /* ARYIELE_AST_NODES_NODEFUNCTION_H. */

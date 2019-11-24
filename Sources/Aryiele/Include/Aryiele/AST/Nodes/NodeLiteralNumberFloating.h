@@ -25,24 +25,23 @@
 //                                                                                  //
 //==================================================================================//
 
-#include <Aryiele/AST/Nodes/NodeConstantString.h>
+#ifndef ARYIELE_AST_NODES_NODELITERALNUMBERFLOATING_H
+#define ARYIELE_AST_NODES_NODELITERALNUMBERFLOATING_H
+
+#include <Aryiele/Common.h>
+#include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-    NodeConstantString::NodeConstantString(const std::string& value) :
-        value(value) {
-        
-    }
-    
-    void NodeConstantString::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
-        auto node = std::make_shared<ParserInformation>(parentNode, "String");
-        auto bodyNode = std::make_shared<ParserInformation>(node, "Value: " + value);
-        
-        node->children.emplace_back(bodyNode);
-        parentNode->children.emplace_back(node);
-    }
-    
-    NodeEnum NodeConstantString::getType() {
-        return Node_ConstantString;
-    }
-    
+    class NodeLiteralNumberFloating : public Node {
+    public:
+        explicit NodeLiteralNumberFloating(double value);
+
+        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        NodeEnum getType() override;
+
+        double value;
+    };
+
 } /* Namespace Aryiele. */
+
+#endif /* ARYIELE_AST_NODES_NODELITERALNUMBERFLOATING_H. */

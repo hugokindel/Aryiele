@@ -33,28 +33,31 @@
 
 namespace Aryiele {
     enum NodeEnum {
-        Node_ConstantDouble,
-        Node_ConstantInteger,
-        Node_ConstantString,
-        Node_ConstantCharacter,
-        Node_ConstantBoolean,
-        Node_ConstantArray,
-        Node_Function,
-        Node_Namespace,
+        Node_TopFunction,
+        Node_TopNamespace,
+    
+        Node_LiteralArray,
+        Node_LiteralBoolean,
+        Node_LiteralCharacter,
+        Node_LiteralNumberFloating,
+        Node_LiteralNumberInteger,
+        Node_LiteralString,
+        
         Node_OperationBinary,
         Node_OperationUnary,
-        Node_StatementBlock,
-        Node_StatementFor,
-        Node_StatementWhile,
-        Node_StatementSwitch,
-        Node_StatementFunctionCall,
+    
         Node_StatementArrayCall,
-        Node_StatementIf,
-        Node_StatementReturn,
-        Node_StatementVariableDeclaration,
+        Node_StatementBlock,
         Node_StatementBreak,
         Node_StatementContinue,
-        Node_Variable
+        Node_StatementFor,
+        Node_StatementFunctionCall,
+        Node_StatementIf,
+        Node_StatementReturn,
+        Node_StatementSwitch,
+        Node_StatementVariable,
+        Node_StatementVariableDeclaration,
+        Node_StatementWhile
     };
     
     class Node {

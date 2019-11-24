@@ -25,23 +25,24 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_AST_NODES_NODECONSTANTINTEGER_H
-#define ARYIELE_AST_NODES_NODECONSTANTINTEGER_H
+#ifndef ARYIELE_AST_NODES_NODESTATEMENTVARIABLE_H
+#define ARYIELE_AST_NODES_NODESTATEMENTVARIABLE_H
 
 #include <Aryiele/Common.h>
 #include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-    class NodeConstantInteger : public Node {
+    class NodeStatementVariable : public Node {
     public:
-        explicit NodeConstantInteger(long value);
+        explicit NodeStatementVariable(const std::string& identifier, std::shared_ptr<Node> subExpression = nullptr);
 
         void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
-
-        long value;
+    
+        std::string identifier;
+        std::shared_ptr<Node> subExpression;
     };
 
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_AST_NODES_NODECONSTANTINTEGER_H. */
+#endif /* ARYIELE_AST_NODES_NODESTATEMENTVARIABLE_H. */

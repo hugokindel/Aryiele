@@ -25,15 +25,15 @@
 //                                                                                  //
 //==================================================================================//
 
-#include <Aryiele/AST/Nodes/NodeNamespace.h>
+#include <Aryiele/AST/Nodes/NodeTopNamespace.h>
 
 namespace Aryiele {
-    NodeNamespace::NodeNamespace(const std::string& identifier, std::vector<std::shared_ptr<Node>> content) :
+    NodeTopNamespace::NodeTopNamespace(const std::string& identifier, std::vector<std::shared_ptr<Node>> content) :
         identifier(identifier), content(content) {
     
     }
     
-    void NodeNamespace::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeTopNamespace::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Namespace");
         auto identifierNode = std::make_shared<ParserInformation>(node, "Identifier: " + identifier);
         auto bodyNode = std::make_shared<ParserInformation>(node, "Content:");
@@ -48,7 +48,7 @@ namespace Aryiele {
         parentNode->children.emplace_back(node);
     }
     
-    NodeEnum NodeNamespace::getType() {
-        return Node_Namespace;
+    NodeEnum NodeTopNamespace::getType() {
+        return Node_TopNamespace;
     }
 } /* Namespace Aryiele. */
