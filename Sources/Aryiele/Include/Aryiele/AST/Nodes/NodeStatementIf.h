@@ -35,9 +35,7 @@ namespace Aryiele {
     struct NodeStatementIf : public Node {
         NodeStatementIf(std::shared_ptr<Node> condition,
                          std::vector<std::shared_ptr<Node>> ifBody,
-                         std::vector<std::shared_ptr<Node>> elseBody = std::vector<std::shared_ptr<Node>>(),
-                         std::vector<std::vector<std::shared_ptr<Node>>> elseIfBody =
-                                 std::vector<std::vector<std::shared_ptr<Node>>>());
+                         std::vector<std::shared_ptr<Node>> elseBody = std::vector<std::shared_ptr<Node>>());
 
         void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
@@ -45,7 +43,6 @@ namespace Aryiele {
         std::shared_ptr<Node> condition;
         std::vector<std::shared_ptr<Node>> ifBody;
         std::vector<std::shared_ptr<Node>> elseBody;
-        std::vector<std::vector<std::shared_ptr<Node>>> elseIfBody;
     };
 
 } /* Namespace Aryiele. */

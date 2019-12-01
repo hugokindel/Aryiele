@@ -69,7 +69,7 @@ namespace Aryiele {
         
         void generateCode(std::vector<std::shared_ptr<Node>> nodes);
         std::shared_ptr<llvm::Module> getModule();
-
+        
     private:
         llvm::Type* getType(const std::string& type);
         llvm::Value* getTypeDefaultValue(const std::string& type);
@@ -87,6 +87,8 @@ namespace Aryiele {
         GenerationError generateCode(NodeStatementReturn* node);
         GenerationError generateCode(NodeStatementBlock* node);
         GenerationError generateCode(NodeStatementVariableDeclaration* node);
+        static bool allPathsReturn(std::shared_ptr<Node> node);
+        static bool allPathsReturn(std::vector<std::shared_ptr<Node>> node);
 
         llvm::LLVMContext m_context;
         llvm::IRBuilder<> m_builder = llvm::IRBuilder<>(m_context);

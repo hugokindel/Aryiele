@@ -123,6 +123,7 @@ add_library(Aryiele
         Sources/Parser/ParserInformation.cpp
         Sources/AST/Argument.cpp
         Sources/AST/Variable.cpp
+        Sources/AST/Nodes/Node.cpp
         Sources/AST/Nodes/NodeLiteralArray.cpp
         Sources/AST/Nodes/NodeLiteralNumberFloating.cpp
         Sources/AST/Nodes/NodeLiteralNumberInteger.cpp

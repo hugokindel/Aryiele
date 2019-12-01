@@ -877,12 +877,14 @@ namespace Aryiele {
     std::shared_ptr<Node> Parser::parseIf() {
         getNextToken();
         
-        if (!isLiteralOrIdentifier(m_currentToken.type)) {
-            PARSER_ERROR("expected literal value or variable identifier")
+        std::shared_ptr<Node> condition;
+        
+        if (m_currentToken.type == ParserToken_SeparatorRoundBracketOpen) {
+            condition = parseParenthese();
+        } else {
+            condition = parseExpression();
         }
         
-        auto condition = parseExpression();
-
         if (!condition) {
             PARSER_ERROR("cannot parse if condition")
         }
@@ -920,6 +922,10 @@ namespace Aryiele {
         std::shared_ptr<Node> incrementationValue;
         
         getNextToken();
+        
+        if (m_currentToken.type == ParserToken_SeparatorRoundBracketOpen) {
+            getNextToken();
+        }
     
         if (m_currentToken.type != ParserToken_Identifier) {
             PARSER_ERROR("expected variable declaration in for declaration")
@@ -947,6 +953,10 @@ namespace Aryiele {
             }
     
             incrementationValue = parseExpression();
+        }
+    
+        if (m_currentToken.type == ParserToken_SeparatorRoundBracketClosed) {
+            getNextToken();
         }
         
         if (m_currentToken.type != ParserToken_SeparatorCurlyBracketOpen) {
@@ -982,9 +992,17 @@ namespace Aryiele {
             
             getNextToken();
     
-            condition = parseExpression();
+            if (m_currentToken.type == ParserToken_SeparatorRoundBracketOpen) {
+                condition = parseParenthese();
+            } else {
+                condition = parseExpression();
+            }
         } else {
-            condition = parseExpression();
+            if (m_currentToken.type == ParserToken_SeparatorRoundBracketOpen) {
+                condition = parseParenthese();
+            } else {
+                condition = parseExpression();
+            }
     
             PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketOpen)
             
@@ -1022,8 +1040,12 @@ namespace Aryiele {
         
         getNextToken();
     
-        expression = parseExpression();
-    
+        if (m_currentToken.type == ParserToken_SeparatorRoundBracketOpen) {
+            expression = parseParenthese();
+        } else {
+            expression = parseExpression();
+        }
+        
         PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketOpen)
     
         getNextToken();
@@ -1035,8 +1057,12 @@ namespace Aryiele {
                 getNextToken();
             } else if (m_currentToken.type == ParserToken_KeywordCase) {
                     getNextToken();
-                    
-                    casesExpression.emplace_back(parseExpression());
+    
+                    if (m_currentToken.type == ParserToken_SeparatorRoundBracketOpen) {
+                        casesExpression.emplace_back(parseParenthese());
+                    } else {
+                        casesExpression.emplace_back(parseExpression());
+                    }
                     
                     PARSER_CHECKTOKEN(ParserToken_SeparatorColon);
                     

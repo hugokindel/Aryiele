@@ -41,6 +41,12 @@ namespace Aryiele {
     }
 
     void CodeGenerator::generateCode(std::vector<std::shared_ptr<Node>> nodes) {
+        for (auto& node : nodes) {
+            if (!allPathsReturn(node)) {
+                LOG_ERROR(node->getTypeName(), ": ", "not all code paths return a value")
+            }
+        }
+        
         std::vector<llvm::Type *> Doubles(1, llvm::Type::getInt32Ty(m_context));
         llvm::FunctionType *FT = llvm::FunctionType::get(llvm::Type::getInt32Ty(m_context), Doubles, false);
         llvm::Function *F = llvm::Function::Create(FT, llvm::Function::ExternalLinkage, "print", m_module.get());
@@ -384,12 +390,22 @@ namespace Aryiele {
             return GenerationError();
 
         llvm::Function *function = m_builder.GetInsertBlock()->getParent();
-
+        llvm::BasicBlock *entryBlock = m_builder.GetInsertBlock();
+        llvm::BasicBlock::iterator entryBlockIterator = m_builder.GetInsertPoint();
         llvm::BasicBlock *ifBasicBlock = llvm::BasicBlock::Create(m_context, "if", function);
-        llvm::BasicBlock *elseBasicBlock = llvm::BasicBlock::Create(m_context, "else", function);
-        llvm::BasicBlock *mergeBasicBlock = llvm::BasicBlock::Create(m_context, "merge", function);
+        llvm::BasicBlock *elseBasicBlock = nullptr;
+        llvm::BasicBlock *mergeBasicBlock = nullptr;
+        
+        if (!node->elseBody.empty()) {
+            elseBasicBlock = llvm::BasicBlock::Create(m_context, "else", function);
+        }
+    
+        if (!allPathsReturn(node->ifBody) || node->elseBody.empty() || (!node->elseBody.empty() && !allPathsReturn(node->elseBody))) {
+            mergeBasicBlock = llvm::BasicBlock::Create(m_context, "merge", function);
+        }
 
-        m_builder.CreateCondBr(conditionValue.value, ifBasicBlock, elseBasicBlock);
+        m_builder.CreateCondBr(conditionValue.value, ifBasicBlock, !node->elseBody.empty() ? elseBasicBlock : mergeBasicBlock);
+        
         m_builder.SetInsertPoint(ifBasicBlock);
         m_blockStack->create();
 
@@ -401,10 +417,13 @@ namespace Aryiele {
         }
 
         m_blockStack->escapeCurrent();
-        m_builder.CreateBr(mergeBasicBlock);
-        m_builder.SetInsertPoint(elseBasicBlock);
-
-        if (!node->elseBody.empty()) {
+        
+        if (!allPathsReturn(node->ifBody)) {
+            m_builder.CreateBr(mergeBasicBlock);
+        }
+    
+        if (elseBasicBlock) {
+            m_builder.SetInsertPoint(elseBasicBlock);
             m_blockStack->create();
 
             for (auto &statement : node->elseBody) {
@@ -415,10 +434,17 @@ namespace Aryiele {
             }
 
             m_blockStack->escapeCurrent();
+    
+            if (!allPathsReturn(node->elseBody)) {
+                m_builder.CreateBr(mergeBasicBlock);
+            }
         }
-
-        m_builder.CreateBr(mergeBasicBlock);
-        m_builder.SetInsertPoint(mergeBasicBlock);
+    
+        if (mergeBasicBlock) {
+            m_builder.SetInsertPoint(mergeBasicBlock);
+        } else {
+            m_builder.SetInsertPoint(entryBlock, entryBlockIterator);
+        }
 
         return GenerationError(true);
     }
@@ -491,6 +517,51 @@ namespace Aryiele {
         }
 
         return GenerationError(true);
+    }
+    
+    bool CodeGenerator::allPathsReturn(std::shared_ptr<Node> node) {
+        if (node->getType() == Node_TopFunction) {
+            auto functionNode = std::dynamic_pointer_cast<NodeTopFunction>(node);
+            
+            if (functionNode->type == "Void" || allPathsReturn(functionNode->body)) {
+                return true;
+            }
+        } else if (node->getType() == Node_StatementIf) {
+            auto ifNode = std::dynamic_pointer_cast<NodeStatementIf>(node);
+            
+            bool ifReturns = false;
+            bool elseReturns = false;
+            
+            if (allPathsReturn(ifNode->ifBody)) {
+                ifReturns = true;
+            }
+            
+            if (allPathsReturn(ifNode->elseBody)) {
+                elseReturns = true;
+            }
+            
+            if (ifReturns && elseReturns) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    bool CodeGenerator::allPathsReturn(std::vector<std::shared_ptr<Node>> nodes) {
+        for (auto& statement : nodes) {
+            if (statement->getType() == Node_StatementReturn) {
+                return true;
+            } else if (statement->getType() == Node_StatementIf) {
+                auto ifNode = std::dynamic_pointer_cast<NodeStatementIf>(statement);
+                
+                if (!ifNode->elseBody.empty() && allPathsReturn(statement)) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     }
     
     CodeGenerator &getCodeGenerator() {

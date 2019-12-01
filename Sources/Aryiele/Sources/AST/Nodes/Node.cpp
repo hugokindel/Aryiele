@@ -1,6 +1,6 @@
 //==================================================================================//
 //                                                                                  //
-//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                       //
+//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                      //
 //                                                                                  //
 //  This file is part of the Aryiele project.                                       //
 //  Licensed under MIT License:                                                     //
@@ -25,47 +25,62 @@
 //                                                                                  //
 //==================================================================================//
 
-#include <Aryiele/AST/Nodes/NodeStatementIf.h>
+#include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-    NodeStatementIf::NodeStatementIf(std::shared_ptr<Node> condition,
-                                     std::vector<std::shared_ptr<Node>> ifBody,
-                                     std::vector<std::shared_ptr<Node>> elseBody) :
-        condition(condition), ifBody(ifBody), elseBody(elseBody) {
-
-    }
-
-    void NodeStatementIf::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
-        auto node = std::make_shared<ParserInformation>(parentNode, "If/Else");
-        auto ifNode = std::make_shared<ParserInformation>(node, "If");
-        auto ifConditionNode = std::make_shared<ParserInformation>(ifNode, "Condition:");
-        auto ifBodyNode = std::make_shared<ParserInformation>(ifNode, "Body:");
-
-        condition->dumpInformations(ifConditionNode);
-
-        for (auto& i : ifBody)
-            i->dumpInformations(ifBodyNode);
-
-        ifNode->children.emplace_back(ifConditionNode);
-        ifNode->children.emplace_back(ifBodyNode);
-        node->children.emplace_back(ifNode);
-
-        if (!elseBody.empty()) {
-            auto elseNode = std::make_shared<ParserInformation>(node, "Else");
-            auto elseBodyNode = std::make_shared<ParserInformation>(elseNode, "Body:");
-
-            for (auto& i : elseBody)
-                i->dumpInformations(elseBodyNode);
-
-            elseNode->children.emplace_back(elseBodyNode);
-            node->children.emplace_back(elseNode);
-        }
-
-        parentNode->children.emplace_back(node);
+    std::string Node::getTypeName() {
+        return getTypeName(getType());
     }
     
-    NodeEnum NodeStatementIf::getType() {
-        return Node_StatementIf;
+    std::string Node::getTypeName(NodeEnum nodeType) {
+        switch (nodeType) {
+            case Node_TopFunction:
+                return "TopFunction";
+            case Node_TopNamespace:
+                return "TopNamespace";
+            case Node_LiteralArray:
+                return "LiteralArray";
+            case Node_LiteralBoolean:
+                return "LiteralBoolean";
+            case Node_LiteralCharacter:
+                return "LiteralCharacter";
+            case Node_LiteralNumberFloating:
+                return "LiteralNumberFloating";
+            case Node_LiteralNumberInteger:
+                return "LiteralNumberInteger";
+            case Node_LiteralString:
+                return "LiteralString";
+            case Node_OperationBinary:
+                return "OperationBinary";
+            case Node_OperationUnary:
+                return "OperationUnary";
+            case Node_StatementArrayCall:
+                return "StatementArrayCall";
+            case Node_StatementBlock:
+                return "StatementBlock";
+            case Node_StatementBreak:
+                return "StatementBreak";
+            case Node_StatementContinue:
+                return "StatementContinue";
+            case Node_StatementFor:
+                return "StatementFor";
+            case Node_StatementFunctionCall:
+                return "StatementFunctionCall";
+            case Node_StatementIf:
+                return "StatementIf";
+            case Node_StatementReturn:
+                return "StatementReturn";
+            case Node_StatementSwitch:
+                return "StatementSwitch";
+            case Node_StatementVariable:
+                return "StatementVariable";
+            case Node_StatementVariableDeclaration:
+                return "StatementVariableDeclaration";
+            case Node_StatementWhile:
+                return "StatementWhile";
+            default:
+                return "Unknown";
+        }
     }
-
+    
 } /* Namespace Aryiele. */

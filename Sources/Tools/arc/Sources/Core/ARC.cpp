@@ -239,16 +239,16 @@ namespace ARC {
         }
         
         auto nodes = parser->parse(parserTokens);
-        
+    
         if (m_verboseMode) {
             auto dumpNode = std::make_shared<Aryiele::ParserInformation>(nullptr, "AST");
-            
+        
             // TODO: Small memory leak coming from here (see valgrind)
             for (auto& node : nodes)
                 node->dumpInformations(dumpNode);
-            
+        
             dumpASTInformations(dumpNode, " ");
-            
+        
             dumpNode.reset();
         }
         
@@ -262,8 +262,7 @@ namespace ARC {
         
         if (::Vanir::Logger::errorCount > 0) {
             LOG_ERROR("ir code generation failed with ", ::Vanir::Logger::errorCount, " errors")
-        }
-        else {
+        } else {
             if (m_verboseMode) {
                 LOG_VERBOSE("ir code generated with success")
             }
