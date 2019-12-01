@@ -32,9 +32,8 @@
 #include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-    class NodeLiteralBoolean : public Node {
-    public:
-        explicit NodeLiteralBoolean(bool value);
+    struct NodeLiteralBoolean : public Node {
+        explicit NodeLiteralBoolean(bool value = false);
         
         void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;

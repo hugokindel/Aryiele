@@ -32,8 +32,7 @@
 #include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-    class NodeStatementVariable : public Node {
-    public:
+    struct NodeStatementVariable : public Node {
         explicit NodeStatementVariable(const std::string& identifier, std::shared_ptr<Node> subExpression = nullptr);
 
         void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;

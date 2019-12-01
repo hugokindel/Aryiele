@@ -32,9 +32,8 @@
 #include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-    class NodeLiteralString : public Node {
-    public:
-        explicit NodeLiteralString(const std::string& value);
+    struct NodeLiteralString : public Node {
+        explicit NodeLiteralString(std::string value = "");
         
         void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;

@@ -32,8 +32,7 @@
 #include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-    class NodeStatementIf : public Node {
-    public:
+    struct NodeStatementIf : public Node {
         NodeStatementIf(std::shared_ptr<Node> condition,
                          std::vector<std::shared_ptr<Node>> ifBody,
                          std::vector<std::shared_ptr<Node>> elseBody = std::vector<std::shared_ptr<Node>>(),

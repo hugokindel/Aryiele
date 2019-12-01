@@ -32,8 +32,7 @@
 #include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-    class NodeStatementArrayCall : public Node {
-    public:
+    struct NodeStatementArrayCall : public Node {
         explicit NodeStatementArrayCall(std::shared_ptr<Node> arrayElementExpression,
             std::shared_ptr<Node> subExpression = nullptr);
         

@@ -32,8 +32,7 @@
 #include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-    class NodeStatementSwitch : public Node {
-    public:
+    struct NodeStatementSwitch : public Node {
         NodeStatementSwitch(std::shared_ptr<Node> expression, std::vector<std::shared_ptr<Node>> casesExpression,
             std::vector<std::vector<std::shared_ptr<Node>>> casesBody, std::vector<std::shared_ptr<Node>> defaultBody);
         

@@ -32,8 +32,7 @@
 #include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-    class NodeStatementBlock : public Node {
-    public:
+    struct NodeStatementBlock : public Node {
         explicit NodeStatementBlock(std::vector<std::shared_ptr<Node>> body = std::vector<std::shared_ptr<Node>>());
 
         void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;

@@ -32,9 +32,8 @@
 #include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-    class NodeLiteralNumberFloating : public Node {
-    public:
-        explicit NodeLiteralNumberFloating(double value);
+    struct NodeLiteralNumberFloating : public Node {
+        explicit NodeLiteralNumberFloating(double value = 0.0);
 
         void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;

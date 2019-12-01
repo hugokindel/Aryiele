@@ -32,8 +32,7 @@
 #include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-    class NodeStatementReturn : public Node {
-    public:
+    struct NodeStatementReturn : public Node {
         NodeStatementReturn(std::shared_ptr<Node> expression = nullptr);
 
         void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;

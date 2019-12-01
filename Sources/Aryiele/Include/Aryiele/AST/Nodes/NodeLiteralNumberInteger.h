@@ -32,9 +32,8 @@
 #include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-    class NodeLiteralNumberInteger : public Node {
-    public:
-        explicit NodeLiteralNumberInteger(long value);
+    struct NodeLiteralNumberInteger : public Node {
+        explicit NodeLiteralNumberInteger(long value = 0);
 
         void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;

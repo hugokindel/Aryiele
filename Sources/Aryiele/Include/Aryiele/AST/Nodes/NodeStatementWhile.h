@@ -33,8 +33,7 @@
 #include <Aryiele/AST/Variable.h>
 
 namespace Aryiele {
-    class NodeStatementWhile : public Node {
-    public:
+    struct NodeStatementWhile : public Node {
         NodeStatementWhile(bool doOnce, std::shared_ptr<Node> condition, std::vector<std::shared_ptr<Node>> body);
         
         void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;

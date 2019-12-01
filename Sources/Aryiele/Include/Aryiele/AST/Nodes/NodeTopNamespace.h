@@ -33,8 +33,7 @@
 #include <Aryiele/AST/Argument.h>
 
 namespace Aryiele {
-    class NodeTopNamespace : public Node {
-    public:
+    struct NodeTopNamespace : public Node {
         NodeTopNamespace(const std::string& identifier,
                          std::vector<std::shared_ptr<Node>> content);
         

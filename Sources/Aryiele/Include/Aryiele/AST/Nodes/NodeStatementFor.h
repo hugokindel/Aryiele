@@ -34,8 +34,7 @@
 #include <Aryiele/AST/Variable.h>
 
 namespace Aryiele {
-    class NodeStatementFor : public Node {
-    public:
+    struct NodeStatementFor : public Node {
         NodeStatementFor(std::shared_ptr<NodeStatementVariableDeclaration> variable, std::shared_ptr<Node> condition,
             std::shared_ptr<Node> incrementalValue, std::vector<std::shared_ptr<Node>> body);
     

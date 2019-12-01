@@ -34,8 +34,7 @@
 #include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-    class NodeStatementFunctionCall : public Node {
-    public:
+    struct NodeStatementFunctionCall : public Node {
         NodeStatementFunctionCall(const std::string& identifier, std::vector<std::shared_ptr<Node>> arguments = std::vector<std::shared_ptr<Node>>(), std::shared_ptr<Node> subExpression = nullptr);
 
         void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;

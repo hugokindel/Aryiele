@@ -60,10 +60,7 @@ namespace Aryiele {
         Node_StatementWhile
     };
     
-    class Node {
-    public:
-        virtual ~Node() = default;
-
+    struct Node {
         virtual void dumpInformations(std::shared_ptr<ParserInformation> parentNode) = 0;
         virtual NodeEnum getType() = 0;
     };

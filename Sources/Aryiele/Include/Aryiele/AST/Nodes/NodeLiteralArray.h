@@ -32,9 +32,8 @@
 #include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-    class NodeLiteralArray : public Node {
-    public:
-        explicit NodeLiteralArray(std::vector<std::shared_ptr<Node>> elements);
+    struct NodeLiteralArray : public Node {
+        explicit NodeLiteralArray(std::vector<std::shared_ptr<Node>> elements = std::vector<std::shared_ptr<Node>>());
         
         void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;

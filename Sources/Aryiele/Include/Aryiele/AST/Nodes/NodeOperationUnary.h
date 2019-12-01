@@ -34,8 +34,7 @@
 #include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-    class NodeOperationUnary : public Node {
-    public:
+    struct NodeOperationUnary : public Node {
         NodeOperationUnary(ParserTokenEnum operationType, std::shared_ptr<Node> expression, bool left = true);
         
         void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;

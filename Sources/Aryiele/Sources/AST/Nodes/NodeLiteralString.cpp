@@ -28,7 +28,7 @@
 #include <Aryiele/AST/Nodes/NodeLiteralString.h>
 
 namespace Aryiele {
-    NodeLiteralString::NodeLiteralString(const std::string& value) :
+    NodeLiteralString::NodeLiteralString(std::string value) :
         value(value) {
         
     }

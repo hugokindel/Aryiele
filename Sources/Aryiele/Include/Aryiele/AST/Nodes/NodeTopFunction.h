@@ -33,8 +33,7 @@
 #include <Aryiele/AST/Argument.h>
 
 namespace Aryiele {
-    class NodeTopFunction : public Node {
-    public:
+    struct NodeTopFunction : public Node {
         NodeTopFunction(const std::string& identifier,
                         const std::string& type,
                         std::vector<Argument> argumentsName,
