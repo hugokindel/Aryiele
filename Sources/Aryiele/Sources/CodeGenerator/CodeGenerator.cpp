@@ -119,10 +119,17 @@ namespace Aryiele {
 
     llvm::Value *CodeGenerator::castType(llvm::Value *value, llvm::Type *returnType, bool isSigned) {
         if (value->getType()->isIntegerTy() && returnType->isIntegerTy()) {
-            auto *ival = (llvm::IntegerType *)value->getType();
-            auto *ito  = (llvm::IntegerType *)returnType;
-
             return m_builder.CreateIntCast(value, returnType, isSigned);
+        } else if (value->getType()->isIntegerTy() && returnType->isIntOrPtrTy()) {
+            if (returnType->getContainedType(0)->isIntegerTy(8)) {
+                return m_builder.CreateIntCast(value, m_builder.getInt8Ty(), isSigned);
+            } else if (returnType->getContainedType(0)->isIntegerTy(16)) {
+                return m_builder.CreateIntCast(value, m_builder.getInt16Ty(), isSigned);
+            } else if (returnType->getContainedType(0)->isIntegerTy(32)) {
+                return m_builder.CreateIntCast(value, m_builder.getInt32Ty(), isSigned);
+            }
+            
+            return m_builder.CreateIntCast(value, m_builder.getInt64Ty(), isSigned);
         } else if((value->getType()->isIntegerTy() && returnType->isDoubleTy()) ||
                   (value->getType()->isIntegerTy() && returnType->isFloatTy())) {
             return m_builder.CreateSIToFP(value, returnType);
@@ -391,7 +398,6 @@ namespace Aryiele {
 
         llvm::Function *function = m_builder.GetInsertBlock()->getParent();
         llvm::BasicBlock *entryBlock = m_builder.GetInsertBlock();
-        llvm::BasicBlock::iterator entryBlockIterator = m_builder.GetInsertPoint();
         llvm::BasicBlock *ifBasicBlock = llvm::BasicBlock::Create(m_context, "if", function);
         llvm::BasicBlock *elseBasicBlock = nullptr;
         llvm::BasicBlock *mergeBasicBlock = nullptr;
@@ -443,12 +449,56 @@ namespace Aryiele {
         if (mergeBasicBlock) {
             m_builder.SetInsertPoint(mergeBasicBlock);
         } else {
-            m_builder.SetInsertPoint(entryBlock, entryBlockIterator);
+            m_builder.SetInsertPoint(entryBlock);
         }
 
         return GenerationError(true);
     }
-
+    
+    GenerationError CodeGenerator::generateCode(NodeStatementFor *node) {
+        auto function = m_builder.GetInsertBlock()->getParent();
+        auto entryBlock = m_builder.GetInsertBlock();
+    
+        m_blockStack->create();
+        
+        llvm::AllocaInst* alloca = createEntryBlockAllocation(m_builder.GetInsertBlock()->getParent(), node->variable->variables[0]->identifier);
+        auto startValue = generateCode(node->variable->variables[0]->expression).value;
+        m_builder.CreateStore(startValue, alloca);
+    
+        llvm::BasicBlock *forBasicBlock = llvm::BasicBlock::Create(m_context, "for", m_builder.GetInsertBlock()->getParent());
+        
+        m_builder.CreateBr(forBasicBlock);
+        m_builder.SetInsertPoint(forBasicBlock);
+    
+        m_blockStack->current->variables[node->variable->variables[0]->identifier] = alloca;
+        
+        generateCode(node->body);
+        
+        llvm::Value* stepValue = nullptr;
+        
+        if (node->incrementalValue) {
+            stepValue = generateCode(node->incrementalValue).value;
+        } else {
+            stepValue = getTypeDefaultValue(node->variable->variables[0]->type);
+        }
+        
+        auto endCondition = generateCode(node->condition).value;
+    
+        auto currentVar = m_builder.CreateLoad(alloca, node->variable->variables[0]->identifier);
+        auto nextVar = m_builder.CreateFAdd(currentVar, stepValue, "nextvar");
+        m_builder.CreateStore(nextVar, alloca);
+    
+        endCondition = m_builder.CreateFCmpONE(endCondition, getTypeDefaultValue(node->variable->variables[0]->type), "loopcond");
+    
+        auto afterForBasicBlock = llvm::BasicBlock::Create(m_context, "afterloop", function);
+        m_builder.CreateCondBr(endCondition, forBasicBlock, afterForBasicBlock);
+        m_builder.SetInsertPoint(afterForBasicBlock);
+    
+        m_blockStack->escapeCurrent();
+        
+        return GenerationError(true);
+    }
+    
     GenerationError CodeGenerator::generateCode(NodeStatementReturn* node) {
         if (node->expression == nullptr) {
             m_builder.CreateRetVoid();
@@ -489,9 +539,9 @@ namespace Aryiele {
         return GenerationError(true);
     }
 
-    // TODO: CODEGENERATOR: Support other variable types (for now only int32).
     GenerationError CodeGenerator::generateCode(NodeStatementVariableDeclaration *node) {
         llvm::Function *function = m_builder.GetInsertBlock()->getParent();
+        llvm::Value* value;
 
         for (auto &variable : node->variables) {
             GenerationError error;
@@ -511,7 +561,7 @@ namespace Aryiele {
 
             llvm::AllocaInst *allocationInstance = createEntryBlockAllocation(function, variable->identifier);
 
-            m_builder.CreateStore(error.value, allocationInstance);
+            m_builder.CreateStore(castType(error.value, allocationInstance->getType()), allocationInstance);
 
             m_blockStack->current->variables[variable->identifier] = allocationInstance;
         }
@@ -542,6 +592,12 @@ namespace Aryiele {
             
             if (ifReturns && elseReturns) {
                 return true;
+            } else if (node->getType() == Node_StatementFor) {
+                auto forNode = std::dynamic_pointer_cast<NodeStatementFor>(node);
+                
+                if (allPathsReturn(forNode->body)) {
+                    return true;
+                }
             }
         }
         
@@ -556,6 +612,12 @@ namespace Aryiele {
                 auto ifNode = std::dynamic_pointer_cast<NodeStatementIf>(statement);
                 
                 if (!ifNode->elseBody.empty() && allPathsReturn(statement)) {
+                    return true;
+                }
+            } else if (statement->getType() == Node_StatementFor) {
+                auto forNode = std::dynamic_pointer_cast<NodeStatementFor>(statement);
+    
+                if (allPathsReturn(forNode)) {
                     return true;
                 }
             }

@@ -54,6 +54,7 @@
 #include <Aryiele/AST/Nodes/NodeStatementBlock.h>
 #include <Aryiele/AST/Nodes/NodeStatementFunctionCall.h>
 #include <Aryiele/AST/Nodes/NodeStatementIf.h>
+#include <Aryiele/AST/Nodes/NodeStatementFor.h>
 #include <Aryiele/AST/Nodes/NodeStatementReturn.h>
 #include <Aryiele/AST/Nodes/NodeStatementVariableDeclaration.h>
 #include <Aryiele/AST/Nodes/NodeStatementVariable.h>
@@ -84,6 +85,7 @@ namespace Aryiele {
         GenerationError generateCode(NodeStatementVariable* node);
         GenerationError generateCode(NodeStatementFunctionCall* node);
         GenerationError generateCode(NodeStatementIf* node);
+        GenerationError generateCode(NodeStatementFor* node);
         GenerationError generateCode(NodeStatementReturn* node);
         GenerationError generateCode(NodeStatementBlock* node);
         GenerationError generateCode(NodeStatementVariableDeclaration* node);
