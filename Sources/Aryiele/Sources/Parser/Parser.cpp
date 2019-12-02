@@ -215,8 +215,6 @@ namespace Aryiele {
                         tokens.emplace_back("", ParserToken_KeywordLet);
                     else if (token.content == "for")
                         tokens.emplace_back("", ParserToken_KeywordFor);
-                    else if (token.content == "until")
-                        tokens.emplace_back("", ParserToken_KeywordUntil);
                     else if (token.content == "by")
                         tokens.emplace_back("", ParserToken_KeywordBy);
                     else if (token.content == "do")
@@ -369,8 +367,6 @@ namespace Aryiele {
                 return "KeywordLet";
             case ParserToken_KeywordFor:
                 return "KeywordFor";
-            case ParserToken_KeywordUntil:
-                return "KeywordUntil";
             case ParserToken_KeywordBy:
                 return "KeywordBy";
             case ParserToken_KeywordDo:
@@ -933,8 +929,8 @@ namespace Aryiele {
         
         auto variable = parseVariableDeclaration(false, false, false);
     
-        if (m_currentToken.type != ParserToken_KeywordUntil) {
-            PARSER_ERROR("expected 'until' in for declaration")
+        if (m_currentToken.type != ParserToken_KeywordWhile) {
+            PARSER_ERROR("expected 'while' in for declaration")
         }
         
         getNextToken();

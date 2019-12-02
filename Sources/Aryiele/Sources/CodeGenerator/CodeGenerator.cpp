@@ -167,6 +167,8 @@ namespace Aryiele {
                 return generateCode((NodeStatementFunctionCall*)nodePtr);
             case Node_StatementIf:
                 return generateCode((NodeStatementIf*)nodePtr);
+            case Node_StatementFor:
+                return generateCode((NodeStatementFor*)nodePtr);
             case Node_StatementReturn:
                 return generateCode((NodeStatementReturn*)nodePtr);
             case Node_StatementBlock:
@@ -463,7 +465,7 @@ namespace Aryiele {
         
         llvm::AllocaInst* alloca = createEntryBlockAllocation(m_builder.GetInsertBlock()->getParent(), node->variable->variables[0]->identifier);
         auto startValue = generateCode(node->variable->variables[0]->expression).value;
-        m_builder.CreateStore(startValue, alloca);
+        m_builder.CreateStore(castType(startValue, alloca->getType()), alloca);
     
         llvm::BasicBlock *forBasicBlock = llvm::BasicBlock::Create(m_context, "for", m_builder.GetInsertBlock()->getParent());
         
@@ -472,23 +474,23 @@ namespace Aryiele {
     
         m_blockStack->current->variables[node->variable->variables[0]->identifier] = alloca;
         
-        generateCode(node->body);
+        for (auto& statement : node->body) {
+            generateCode(statement);
+        }
         
         llvm::Value* stepValue = nullptr;
         
         if (node->incrementalValue) {
             stepValue = generateCode(node->incrementalValue).value;
         } else {
-            stepValue = getTypeDefaultValue(node->variable->variables[0]->type);
+            stepValue = llvm::ConstantInt::get(m_context, llvm::APInt(32, 1));
         }
-        
+    
         auto endCondition = generateCode(node->condition).value;
     
         auto currentVar = m_builder.CreateLoad(alloca, node->variable->variables[0]->identifier);
-        auto nextVar = m_builder.CreateFAdd(currentVar, stepValue, "nextvar");
+        auto nextVar = m_builder.CreateAdd(currentVar, stepValue, "nextvar");
         m_builder.CreateStore(nextVar, alloca);
-    
-        endCondition = m_builder.CreateFCmpONE(endCondition, getTypeDefaultValue(node->variable->variables[0]->type), "loopcond");
     
         auto afterForBasicBlock = llvm::BasicBlock::Create(m_context, "afterloop", function);
         m_builder.CreateCondBr(endCondition, forBasicBlock, afterForBasicBlock);

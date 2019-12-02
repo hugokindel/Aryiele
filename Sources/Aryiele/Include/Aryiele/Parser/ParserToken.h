@@ -81,7 +81,6 @@ namespace Aryiele {
         ParserToken_KeywordIf, // if
         ParserToken_KeywordElse, // else
         ParserToken_KeywordFor, // for
-        ParserToken_KeywordUntil, // until
         ParserToken_KeywordDo, // do
         ParserToken_KeywordBy, // by
         ParserToken_KeywordContinue, // continue
