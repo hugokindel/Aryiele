@@ -37,6 +37,7 @@ namespace Aryiele {
         ParserToken_LiteralValueString, // A string
         ParserToken_LiteralValueCharacter, // A character
         ParserToken_LiteralValueBoolean, // A boolean
+        
         ParserToken_OperatorEqual, // =
         ParserToken_OperatorArithmeticPlus, // +
         ParserToken_OperatorArithmeticMinus, // -
@@ -60,9 +61,11 @@ namespace Aryiele {
         ParserToken_OperatorComparisonGreaterThanOrEqual, // >=
         ParserToken_OperatorLogicalAnd, // &&
         ParserToken_OperatorLogicalOr, // ||
+        
         //ParserToken_OperatorBitwiseAnd, // &
         //ParserToken_OperatorBitwiseExclusiveOr, // ^
         //ParserToken_OperatorBitwiseInclusiveOr, // |
+        
         ParserToken_OperatorUnaryLogicalNot, // !
         ParserToken_OperatorQuestionMark, // ?
         ParserToken_SeparatorRoundBracketOpen, // (
@@ -76,6 +79,7 @@ namespace Aryiele {
         ParserToken_SeparatorComma, // ,
         ParserToken_SeparatorDot, // .
         ParserToken_SeparatorTripleDot, // ...
+        
         ParserToken_KeywordFunction, // func
         ParserToken_KeywordNamespace, // namespace
         ParserToken_KeywordVar, // var
@@ -92,16 +96,20 @@ namespace Aryiele {
         ParserToken_KeywordDefault, // default
         ParserToken_KeywordSwitch, // switch
         ParserToken_KeywordCase, // case
+        
         ParserToken_Identifier, // Any characters sequence other than a keyword.
         ParserToken_EOF, // EOF
         ParserToken_Space, // A space
         ParserToken_Newline, // A newline
+        
         ParserToken_Unknown
     };
     
     struct ParserToken {
         explicit ParserToken(const std::string& content = std::string(), ParserTokenEnum type = ParserToken_Unknown);
-
+    
+        static std::string getTypeName(ParserTokenEnum type);
+        
         std::string content;
         ParserTokenEnum type;
     };

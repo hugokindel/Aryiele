@@ -26,7 +26,6 @@
 //==================================================================================//
 
 #include <Aryiele/AST/Nodes/NodeOperationBinary.h>
-#include <Aryiele/Parser/Parser.h>
 
 namespace Aryiele {
     NodeOperationBinary::NodeOperationBinary(ParserTokenEnum operationType,
@@ -41,7 +40,7 @@ namespace Aryiele {
     void NodeOperationBinary::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Binary Operation");
         auto operationTypeNode = std::make_shared<ParserInformation>(
-            node, "Type: " + Parser::getTokenName(operationType));
+            node, "Type: " + ParserToken::getTypeName(operationType));
         auto lhsNode = std::make_shared<ParserInformation>(node, "LHS:");
         auto rhsNode = std::make_shared<ParserInformation>(node, "RHS:");
     

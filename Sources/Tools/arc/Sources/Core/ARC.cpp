@@ -60,7 +60,7 @@ namespace ARC {
 #endif
     bool ARC::m_doLexerPass = true;
     bool ARC::m_doParserPass = true;
-    bool ARC::m_doCodeGeneratorPass = false;
+    bool ARC::m_doCodeGeneratorPass = true;
 
     BuildType ARC::m_buildType = BuildType_Executable;
     
@@ -216,7 +216,7 @@ namespace ARC {
         
         for (auto& token : lexerTokens) {
             if (m_verboseMode) {
-                LOG_VERBOSE("lexer: ", token.content, (!token.content.empty() ? " => " : ""), lexer->getTokenName(token))
+                LOG_VERBOSE("lexer: ", token.content, (!token.content.empty() ? " => " : ""), Aryiele::LexerToken::getTypeName(token.type))
             }
             
             if (token.type == Aryiele::LexerToken_Unknown) {
@@ -234,7 +234,8 @@ namespace ARC {
         
         for (auto& token : parserTokens) {
             if (m_verboseMode) {
-                LOG_VERBOSE("parser: ", token.content, (!token.content.empty() ? " => " : ""), parser->getTokenName(token.type))
+                LOG_VERBOSE("parser: ", token.content, (!token.content.empty() ? " => " : ""),
+                    Aryiele::ParserToken::getTypeName(token.type))
             }
             
             if (token.type == Aryiele::ParserToken_Unknown) {

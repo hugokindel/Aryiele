@@ -37,8 +37,7 @@ namespace Aryiele {
 class Lexer : public Vanir::Module<Lexer> {
     public:
         std::vector<LexerToken> lex(const std::string& filepath);
-        static std::string getTokenName(const LexerToken& tokenType);
-
+        
     private:
         // First pass of the Lexer (separate all characters by expression with a finite-state machine).
         void stateMachine(std::string expression);

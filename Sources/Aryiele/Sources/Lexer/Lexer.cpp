@@ -52,33 +52,6 @@ namespace Aryiele {
 
         return m_tokens;
     }
-    
-    std::string Lexer::getTokenName(const LexerToken& tokenType) {
-        switch (tokenType.type) {
-            case LexerToken_Number:
-                return "Number";
-            case LexerToken_String:
-                return "String";
-            case LexerToken_Character:
-                return "Character";
-            case LexerToken_Operator:
-                return "Operator";
-            case LexerToken_Identifier:
-                return "Identifier";
-            case LexerToken_Separator:
-                return "Separator";
-            case LexerToken_Space:
-                return "Space";
-            case LexerToken_Newline:
-                return "Newline";
-            case LexerToken_StringQuote:
-                return "StringQuote";
-            case LexerToken_Unknown:
-                return "Unknown";
-            default:
-                return "Error";
-        }
-    }
 
     void Lexer::stateMachine(std::string expression) {
         LexerToken currentToken;

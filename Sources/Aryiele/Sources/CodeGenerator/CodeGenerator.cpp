@@ -344,7 +344,7 @@ namespace Aryiele {
                 value = m_builder.CreateICmpNE(lhsValue.value, rhsValue.value, "icmpeq");
                 break;
             default: {
-                LOG_ERROR("unknown binary operator: ", Parser::getTokenName(node->operationType))
+                LOG_ERROR("unknown binary operator: ", ParserToken::getTypeName(node->operationType))
 
                 return GenerationError();
             }

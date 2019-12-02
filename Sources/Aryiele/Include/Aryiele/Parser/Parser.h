@@ -44,7 +44,6 @@ class Parser : public Vanir::Module<Parser> {
     
     std::vector<std::shared_ptr<Node>> parse(std::vector<ParserToken> tokens);
         static std::vector<ParserToken> convertTokens(const std::vector<LexerToken>& tokenizerTokens);
-        static std::string getTokenName(ParserTokenEnum tokenType);
         ParserToken getCurrentToken();
 
     private:
@@ -100,7 +99,7 @@ class Parser : public Vanir::Module<Parser> {
 
 #define PARSER_CHECKTOKEN(EXPECTEDTOKENTYPE) \
 if (getParser().getCurrentToken().type != EXPECTEDTOKENTYPE) { \
-    PARSER_ERROR("wrong token, got '", Parser::getTokenName(m_currentToken.type), "' but expected '", Parser::getTokenName(EXPECTEDTOKENTYPE), "'"); \
+    PARSER_ERROR("wrong token, got '", ParserToken::getTypeName(m_currentToken.type), "' but expected '", ParserToken::getTypeName(EXPECTEDTOKENTYPE), "'"); \
 }
 
 #define PARSER_CHECKNEXTTOKEN(EXPECTEDTOKENTYPE) { \

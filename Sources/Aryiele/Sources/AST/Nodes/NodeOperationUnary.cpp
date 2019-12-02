@@ -26,7 +26,6 @@
 //==================================================================================//
 
 #include <Aryiele/AST/Nodes/NodeOperationUnary.h>
-#include <Aryiele/Parser/Parser.h>
 
 namespace Aryiele {
     NodeOperationUnary::NodeOperationUnary(ParserTokenEnum operationType, std::shared_ptr<Node> expression, bool left) :
@@ -38,7 +37,7 @@ namespace Aryiele {
         auto node = std::make_shared<ParserInformation>(parentNode, "Unary Operation");
         auto sideNode = std::make_shared<ParserInformation>(node, std::string("Side: ") + std::string(left ? "Left" : "Right"));
         auto operationTypeNode = std::make_shared<ParserInformation>(
-            node, "Type: " + Parser::getTokenName(operationType));
+            node, "Type: " + ParserToken::getTypeName(operationType));
         auto expressionNode = std::make_shared<ParserInformation>(node, "Operand:");
     
         expression->dumpInformations(expressionNode);

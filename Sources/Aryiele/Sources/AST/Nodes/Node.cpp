@@ -80,8 +80,9 @@ namespace Aryiele {
                 return "StatementVariableDeclaration";
             case Node_StatementWhile:
                 return "StatementWhile";
+                
             default:
-                return "Unknown";
+                return "Error";
         }
     }
     

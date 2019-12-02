@@ -39,7 +39,6 @@ namespace Aryiele {
         LexerToken_Operator,
         LexerToken_Separator,
         LexerToken_Identifier,
-        // Not on final pass.
         LexerToken_StringQuote,
         LexerToken_Space,
         LexerToken_Newline,
@@ -48,7 +47,9 @@ namespace Aryiele {
     
     struct LexerToken {
         explicit LexerToken(const std::string& content = std::string(), LexerTokenEnum type = LexerToken_Unknown);
-
+    
+        static std::string getTypeName(LexerTokenEnum type);
+        
         std::string content;
         LexerTokenEnum type;
     };
