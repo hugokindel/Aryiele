@@ -25,7 +25,6 @@
 //                                                                                  //
 //==================================================================================//
 
-#include <llvm/Transforms/Scalar/SimplifyCFG.h>
 #include <llvm/Transforms/Scalar/Reassociate.h>
 #include <llvm/Transforms/Utils/BasicBlockUtils.h>
 #include <Aryiele/CodeGenerator/CodeGenerator.h>
@@ -34,8 +33,8 @@
 #include <cfloat>
 
 namespace Aryiele {
-    CodeGenerator::CodeGenerator() {
-        m_module = std::make_shared<llvm::Module>("Aryiele", m_context);
+    CodeGenerator::CodeGenerator(const std::string& filename) {
+        m_module = std::make_shared<llvm::Module>(filename, m_context);
         m_dataLayout = std::make_shared<llvm::DataLayout>(m_module.get());
         m_blockStack = std::make_shared<BlockStack>();
     }
@@ -95,28 +94,56 @@ namespace Aryiele {
         return nullptr;
     }
     
-    llvm::Value *CodeGenerator::getTypeDefaultValue(const std::string &type) {
-        if (type == "Int8" || type == "Boolean") {
+    llvm::Value *CodeGenerator::getTypeDefaultValue(llvm::Type* type) {
+        if (type->isIntegerTy(1)) {
+            return llvm::ConstantInt::get(m_context, llvm::APInt(1, 0));
+        } else if (type->isIntegerTy(8)) {
             return llvm::ConstantInt::get(m_context, llvm::APInt(8, 0));
-        } else if (type == "Int16" || type == "UInt8") {
+        } else if (type->isIntegerTy(16)) {
             return llvm::ConstantInt::get(m_context, llvm::APInt(16, 0));
-        } else if (type == "Int32" || type == "UInt16") {
+        } else if (type->isIntegerTy(32)) {
             return llvm::ConstantInt::get(m_context, llvm::APInt(32, 0));
-        } else if (type == "Int64" || type == "Int" || type == "UInt32") {
+        } else if (type->isIntegerTy(64)) {
             return llvm::ConstantInt::get(m_context, llvm::APInt(64, 0));
-        } else if (type == "UInt64" ) {
+        } else if (type->isIntegerTy(128)) {
             return llvm::ConstantInt::get(m_context, llvm::APInt(128, 0));
-        } else if (type == "Float") {
+        } else if (type->isFloatTy()) {
             return llvm::ConstantFP::get(m_context, llvm::APFloat(0.0f));
-        } else if (type == "Double") {
+        } else if (type->isDoubleTy()) {
             return llvm::ConstantFP::get(m_context, llvm::APFloat(0.0));
-        } else if (type == "String") {
-            return m_builder.CreateGlobalString(llvm::StringRef(""));
         }
     
         return nullptr;
     }
-
+    
+    llvm::Value *CodeGenerator::getTypeDefaultValue(const std::string &type) {
+        return getTypeDefaultValue(getType(type));
+    }
+    
+    llvm::Value *CodeGenerator::getTypeDefaultStep(llvm::Type* type) {
+        if (type->isIntegerTy(8)) {
+            return llvm::ConstantInt::get(m_context, llvm::APInt(8, 1));
+        } else if (type->isIntegerTy(16)) {
+            return llvm::ConstantInt::get(m_context, llvm::APInt(16, 1));
+        } else if (type->isIntegerTy(32)) {
+            return llvm::ConstantInt::get(m_context, llvm::APInt(32, 1));
+        } else if (type->isIntegerTy(64)) {
+            return llvm::ConstantInt::get(m_context, llvm::APInt(64, 1));
+        } else if (type->isIntegerTy(128)) {
+            return llvm::ConstantInt::get(m_context, llvm::APInt(128, 1));
+        } else if (type->isFloatTy()) {
+            return llvm::ConstantFP::get(m_context, llvm::APFloat(1.0f));
+        } else if (type->isDoubleTy()) {
+            return llvm::ConstantFP::get(m_context, llvm::APFloat(1.0));
+        }
+    
+        return nullptr;
+    }
+    
+    llvm::Value *CodeGenerator::getTypeDefaultStep(const std::string &type) {
+        return getTypeDefaultStep(getType(type));
+    }
+    
     llvm::Value *CodeGenerator::castType(llvm::Value *value, llvm::Type *returnType, bool isSigned) {
         if (value->getType()->isIntegerTy() && returnType->isIntegerTy()) {
             return m_builder.CreateIntCast(value, returnType, isSigned);
@@ -207,7 +234,7 @@ namespace Aryiele {
 
         m_blockStack->create();
 
-        llvm::BasicBlock *basicBlock = llvm::BasicBlock::Create(m_context, "entry", function);
+        llvm::BasicBlock *basicBlock = llvm::BasicBlock::Create(m_context, "_start", function);
 
         m_builder.SetInsertPoint(basicBlock);
 
@@ -389,7 +416,11 @@ namespace Aryiele {
             argumentsValues.push_back(error.value);
         }
         
-        return GenerationError(true, m_builder.CreateCall(calledFunction, argumentsValues, "calltmp"));
+        if (calledFunction->getReturnType()->isVoidTy()) {
+            return GenerationError(true, m_builder.CreateCall(calledFunction, argumentsValues, ""));
+        }
+    
+        return GenerationError(true, m_builder.CreateCall(calledFunction, argumentsValues, "call"));
     }
 
     GenerationError CodeGenerator::generateCode(NodeStatementIf* node) {
@@ -400,16 +431,16 @@ namespace Aryiele {
 
         llvm::Function *function = m_builder.GetInsertBlock()->getParent();
         llvm::BasicBlock *entryBlock = m_builder.GetInsertBlock();
-        llvm::BasicBlock *ifBasicBlock = llvm::BasicBlock::Create(m_context, "if", function);
+        llvm::BasicBlock *ifBasicBlock = llvm::BasicBlock::Create(m_context, "_if", function);
         llvm::BasicBlock *elseBasicBlock = nullptr;
         llvm::BasicBlock *mergeBasicBlock = nullptr;
         
         if (!node->elseBody.empty()) {
-            elseBasicBlock = llvm::BasicBlock::Create(m_context, "else", function);
+            elseBasicBlock = llvm::BasicBlock::Create(m_context, "_if_else", function);
         }
     
         if (!allPathsReturn(node->ifBody) || node->elseBody.empty() || (!node->elseBody.empty() && !allPathsReturn(node->elseBody))) {
-            mergeBasicBlock = llvm::BasicBlock::Create(m_context, "merge", function);
+            mergeBasicBlock = llvm::BasicBlock::Create(m_context, "_if_end", function);
         }
 
         m_builder.CreateCondBr(conditionValue.value, ifBasicBlock, !node->elseBody.empty() ? elseBasicBlock : mergeBasicBlock);
@@ -458,28 +489,37 @@ namespace Aryiele {
     }
     
     GenerationError CodeGenerator::generateCode(NodeStatementFor *node) {
+        if (node->body.empty()) {
+            return GenerationError(true);
+        }
+        
         auto function = m_builder.GetInsertBlock()->getParent();
         auto entryBlock = m_builder.GetInsertBlock();
+        auto forBasicBlock = llvm::BasicBlock::Create(m_context, "_for", function);
+        auto forConditionBasicBlock = llvm::BasicBlock::Create(m_context, "_for_condition", function);
+        auto bodyForBasicBlock = llvm::BasicBlock::Create(m_context, "_for_body", function);
+        llvm::BasicBlock* endForBasicBlock = nullptr;
+        
+        if (!allPathsReturn(node->body)) {
+            endForBasicBlock = llvm::BasicBlock::Create(m_context, "_for_end", function);
+        }
     
         m_blockStack->create();
-        
-        llvm::AllocaInst* alloca = createEntryBlockAllocation(m_builder.GetInsertBlock()->getParent(), node->variable->variables[0]->identifier);
-        auto startValue = generateCode(node->variable->variables[0]->expression).value;
-        m_builder.CreateStore(castType(startValue, alloca->getType()), alloca);
-    
-        llvm::BasicBlock *forBasicBlock = llvm::BasicBlock::Create(m_context, "for", m_builder.GetInsertBlock()->getParent());
         
         m_builder.CreateBr(forBasicBlock);
         m_builder.SetInsertPoint(forBasicBlock);
     
+        llvm::AllocaInst* alloca = createEntryBlockAllocation(m_builder.GetInsertBlock()->getParent(), node->variable->variables[0]->identifier);
+        auto startValue = generateCode(node->variable->variables[0]->expression).value;
+        m_builder.CreateStore(castType(startValue, alloca->getType()), alloca);
+        
+        m_builder.CreateBr(forConditionBasicBlock);
+        m_builder.SetInsertPoint(forConditionBasicBlock);
+        
         m_blockStack->current->variables[node->variable->variables[0]->identifier] = alloca;
-        
-        for (auto& statement : node->body) {
-            generateCode(statement);
-        }
-        
+    
         llvm::Value* stepValue = nullptr;
-        
+    
         if (node->incrementalValue) {
             stepValue = generateCode(node->incrementalValue).value;
         } else {
@@ -487,14 +527,28 @@ namespace Aryiele {
         }
     
         auto endCondition = generateCode(node->condition).value;
+        
+        if (!allPathsReturn(node->body)) {
+            m_builder.CreateCondBr(endCondition, bodyForBasicBlock, endForBasicBlock);
+        } else {
+            m_builder.CreateBr(bodyForBasicBlock);
+        }
     
-        auto currentVar = m_builder.CreateLoad(alloca, node->variable->variables[0]->identifier);
-        auto nextVar = m_builder.CreateAdd(currentVar, stepValue, "nextvar");
-        m_builder.CreateStore(nextVar, alloca);
+        m_builder.SetInsertPoint(bodyForBasicBlock);
+        
+        for (auto& statement : node->body) {
+            generateCode(statement);
+        }
     
-        auto afterForBasicBlock = llvm::BasicBlock::Create(m_context, "afterloop", function);
-        m_builder.CreateCondBr(endCondition, forBasicBlock, afterForBasicBlock);
-        m_builder.SetInsertPoint(afterForBasicBlock);
+        if (!allPathsReturn(node->body)) {
+            auto currentVar = m_builder.CreateLoad(alloca, node->variable->variables[0]->identifier);
+            auto nextVar = m_builder.CreateAdd(currentVar, castType(stepValue, currentVar->getType()), "nextvar");
+            m_builder.CreateStore(nextVar, alloca);
+            
+            m_builder.CreateBr(forConditionBasicBlock);
+        }
+        
+        m_builder.SetInsertPoint(endForBasicBlock);
     
         m_blockStack->escapeCurrent();
         
@@ -580,26 +634,32 @@ namespace Aryiele {
             }
         } else if (node->getType() == Node_StatementIf) {
             auto ifNode = std::dynamic_pointer_cast<NodeStatementIf>(node);
-            
+    
             bool ifReturns = false;
             bool elseReturns = false;
-            
+    
             if (allPathsReturn(ifNode->ifBody)) {
                 ifReturns = true;
             }
-            
+    
             if (allPathsReturn(ifNode->elseBody)) {
                 elseReturns = true;
             }
-            
+    
             if (ifReturns && elseReturns) {
                 return true;
-            } else if (node->getType() == Node_StatementFor) {
-                auto forNode = std::dynamic_pointer_cast<NodeStatementFor>(node);
+            }
+        } else if (node->getType() == Node_StatementFor) {
+            auto forNode = std::dynamic_pointer_cast<NodeStatementFor>(node);
                 
-                if (allPathsReturn(forNode->body)) {
-                    return true;
-                }
+            if (allPathsReturn(forNode->body)) {
+                return true;
+            }
+        } else if (node->getType() == Node_StatementWhile) {
+            auto whileNode = std::dynamic_pointer_cast<NodeStatementWhile>(node);
+    
+            if (allPathsReturn(whileNode->body)) {
+                return true;
             }
         }
         
@@ -620,6 +680,12 @@ namespace Aryiele {
                 auto forNode = std::dynamic_pointer_cast<NodeStatementFor>(statement);
     
                 if (allPathsReturn(forNode)) {
+                    return true;
+                }
+            } else if (statement->getType() == Node_StatementWhile) {
+                auto whileNode = std::dynamic_pointer_cast<NodeStatementWhile>(statement);
+    
+                if (allPathsReturn(whileNode)) {
                     return true;
                 }
             }

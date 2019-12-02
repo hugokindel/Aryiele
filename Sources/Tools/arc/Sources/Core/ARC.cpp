@@ -65,10 +65,6 @@ namespace ARC {
     BuildType ARC::m_buildType = BuildType_Executable;
     
     int ARC::run(const int argc, char *argv[]) {
-        Aryiele::Lexer::start();
-        Aryiele::Parser::start();
-        Aryiele::CodeGenerator::start();
-
 #ifdef _WIN32
         FILE* stream;
     freopen_s(&stream, "CONOUT$", "w+", stdout);
@@ -161,16 +157,22 @@ namespace ARC {
                 Vanir::Logger::resetCounters();
                 
                 if (m_doLexerPass) {
+                    Aryiele::Lexer::start();
+                    
                     auto lexerPass = doLexerPass(m_inputFilepath);
     
                     ARC_RUN_CHECKERRORS()
     
                     if (m_doParserPass) {
+                        Aryiele::Parser::start();
+                        
                         auto parserPass = doParserPass(lexerPass);
     
                         ARC_RUN_CHECKERRORS()
     
                         if (m_doCodeGeneratorPass) {
+                            Aryiele::CodeGenerator::start(::Vanir::FileSystem::getFilePath(m_inputFilepath));
+                            
                             doCodeGeneratorPass(parserPass);
     
                             ARC_RUN_CHECKERRORS()
@@ -188,8 +190,14 @@ namespace ARC {
                                 if (!m_keepAllFiles)
                                     remove(m_tempOBJFilepath.c_str());
                             }
+    
+                            Aryiele::CodeGenerator::shutdown();
                         }
+    
+                        Aryiele::Parser::shutdown();
                     }
+    
+                    Aryiele::Lexer::shutdown();
                 }
             }
         }
@@ -197,10 +205,6 @@ namespace ARC {
 #ifndef FINAL_RELEASE
         Vanir::Logger::Stop();
 #endif
-        
-        Aryiele::CodeGenerator::shutdown();
-        Aryiele::Parser::shutdown();
-        Aryiele::Lexer::shutdown();
         
         return 0;
     }

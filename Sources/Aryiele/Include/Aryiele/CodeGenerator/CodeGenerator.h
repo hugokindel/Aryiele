@@ -55,6 +55,7 @@
 #include <Aryiele/AST/Nodes/NodeStatementFunctionCall.h>
 #include <Aryiele/AST/Nodes/NodeStatementIf.h>
 #include <Aryiele/AST/Nodes/NodeStatementFor.h>
+#include <Aryiele/AST/Nodes/NodeStatementWhile.h>
 #include <Aryiele/AST/Nodes/NodeStatementReturn.h>
 #include <Aryiele/AST/Nodes/NodeStatementVariableDeclaration.h>
 #include <Aryiele/AST/Nodes/NodeStatementVariable.h>
@@ -66,14 +67,17 @@ namespace Aryiele {
 
     class CodeGenerator : public Vanir::Module<CodeGenerator> {
     public:
-        CodeGenerator();
+        CodeGenerator(const std::string& filename);
         
         void generateCode(std::vector<std::shared_ptr<Node>> nodes);
         std::shared_ptr<llvm::Module> getModule();
         
     private:
         llvm::Type* getType(const std::string& type);
+        llvm::Value* getTypeDefaultValue(llvm::Type* type);
         llvm::Value* getTypeDefaultValue(const std::string& type);
+        llvm::Value* getTypeDefaultStep(llvm::Type* type);
+        llvm::Value* getTypeDefaultStep(const std::string& type);
         llvm::Value* castType(llvm::Value *value, llvm::Type *returnType, bool isSigned = true);
         llvm::AllocaInst *createEntryBlockAllocation(
             llvm::Function *function, const std::string &identifier, llvm::Type *type = nullptr);
