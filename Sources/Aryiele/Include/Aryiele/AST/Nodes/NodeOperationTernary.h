@@ -25,50 +25,26 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_AST_NODES_NODE_H
-#define ARYIELE_AST_NODES_NODE_H
+#ifndef ARYIELE_AST_NODES_NODEOPERATIONTERNARY_H
+#define ARYIELE_AST_NODES_NODEOPERATIONTERNARY_H
 
+#include <memory>
 #include <Aryiele/Common.h>
-#include <Aryiele/Parser/ParserInformation.h>
+#include <Aryiele/Parser/ParserToken.h>
+#include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-    enum NodeEnum {
-        Node_TopFunction,
-        Node_TopNamespace,
-    
-        Node_LiteralArray,
-        Node_LiteralBoolean,
-        Node_LiteralCharacter,
-        Node_LiteralNumberFloating,
-        Node_LiteralNumberInteger,
-        Node_LiteralString,
-    
-        Node_OperationUnary,
-        Node_OperationBinary,
-        Node_OperationTernary,
-    
-        Node_StatementArrayCall,
-        Node_StatementBlock,
-        Node_StatementBreak,
-        Node_StatementContinue,
-        Node_StatementFor,
-        Node_StatementFunctionCall,
-        Node_StatementIf,
-        Node_StatementReturn,
-        Node_StatementSwitch,
-        Node_StatementVariable,
-        Node_StatementVariableDeclaration,
-        Node_StatementWhile
-    };
-    
-    struct Node {
-        virtual void dumpInformations(std::shared_ptr<ParserInformation> parentNode) = 0;
-        virtual NodeEnum getType() = 0;
-        virtual std::string getTypeName();
+    struct NodeOperationTernary : public Node {
+        NodeOperationTernary(std::shared_ptr<Node> condition, std::shared_ptr<Node> lhs, std::shared_ptr<Node> rhs);
         
-        static std::string getTypeName(NodeEnum nodeType);
+        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        NodeEnum getType() override;
+    
+        std::shared_ptr<Node> condition;
+        std::shared_ptr<Node> lhs;
+        std::shared_ptr<Node> rhs;
     };
     
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_AST_NODES_NODE_H. */
+#endif /* ARYIELE_AST_NODES_NODEOPERATIONTERNARY_H. */

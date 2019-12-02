@@ -60,7 +60,11 @@ namespace Aryiele {
         ParserToken_OperatorComparisonGreaterThanOrEqual, // >=
         ParserToken_OperatorLogicalAnd, // &&
         ParserToken_OperatorLogicalOr, // ||
+        //ParserToken_OperatorBitwiseAnd, // &
+        //ParserToken_OperatorBitwiseExclusiveOr, // ^
+        //ParserToken_OperatorBitwiseInclusiveOr, // |
         ParserToken_OperatorUnaryLogicalNot, // !
+        ParserToken_OperatorQuestionMark, // ?
         ParserToken_SeparatorRoundBracketOpen, // (
         ParserToken_SeparatorRoundBracketClosed, // )
         ParserToken_SeparatorSquareBracketOpen, // [
@@ -68,7 +72,6 @@ namespace Aryiele {
         ParserToken_SeparatorCurlyBracketOpen, // {
         ParserToken_SeparatorCurlyBracketClosed, // }
         ParserToken_SeparatorColon, // :
-        ParserToken_SeparatorQuestionMark, // ?
         ParserToken_SeparatorSemicolon, // ;
         ParserToken_SeparatorComma, // ,
         ParserToken_SeparatorDot, // .

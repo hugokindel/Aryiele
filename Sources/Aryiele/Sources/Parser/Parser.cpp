@@ -25,8 +25,6 @@
 //                                                                                  //
 //==================================================================================//
 
-#include <iostream>
-#include <fcntl.h>
 #include <utility>
 #include <llvm/ADT/STLExtras.h>
 #include <Aryiele/Parser/Parser.h>
@@ -34,8 +32,6 @@
 #include <Aryiele/AST/Nodes/NodeLiteralNumberInteger.h>
 #include <Aryiele/AST/Nodes/NodeLiteralString.h>
 #include <Aryiele/AST/Nodes/NodeLiteralCharacter.h>
-#include <Aryiele/AST/Nodes/NodeLiteralBoolean.h>
-#include <Aryiele/AST/Nodes/NodeLiteralNumberInteger.h>
 #include <Aryiele/AST/Nodes/NodeOperationBinary.h>
 #include <Aryiele/AST/Nodes/NodeStatementBlock.h>
 #include <Aryiele/AST/Nodes/NodeStatementFunctionCall.h>
@@ -45,6 +41,7 @@
 #include <Aryiele/AST/Nodes/NodeStatementWhile.h>
 #include <Aryiele/AST/Nodes/NodeStatementFor.h>
 #include <Aryiele/AST/Nodes/NodeOperationUnary.h>
+#include <Aryiele/AST/Nodes/NodeOperationTernary.h>
 #include <Aryiele/AST/Nodes/NodeStatementVariable.h>
 #include <Aryiele/AST/Nodes/NodeTopNamespace.h>
 #include <Aryiele/AST/Nodes/NodeStatementBreak.h>
@@ -174,6 +171,8 @@ namespace Aryiele {
                         tokens.emplace_back("", ParserToken_OperatorUnaryArithmeticIncrement);
                     else if (token.content == "--")
                         tokens.emplace_back("", ParserToken_OperatorUnaryArithmeticDecrement);
+                    else if (token.content == "?")
+                        tokens.emplace_back("", ParserToken_OperatorQuestionMark);
                     break;
                 case LexerToken_Separator:
                     // Separators
@@ -199,8 +198,6 @@ namespace Aryiele {
                         tokens.emplace_back("", ParserToken_SeparatorDot);
                     else if (token.content == "...")
                         tokens.emplace_back("", ParserToken_SeparatorTripleDot);
-                    else if (token.content == "?")
-                        tokens.emplace_back("", ParserToken_SeparatorQuestionMark);
                     break;
                 case LexerToken_Identifier:
                     // Boolean
@@ -329,8 +326,8 @@ namespace Aryiele {
                 return "SeparatorComma";
             case ParserToken_SeparatorDot:
                 return "SeparatorDot";
-            case ParserToken_SeparatorQuestionMark:
-                return "SeparatorQuestionMark";
+            case ParserToken_OperatorQuestionMark:
+                return "OperatorQuestionMark";
             case ParserToken_SeparatorTripleDot:
                 return "SeparatorTripleDot";
             case ParserToken_SeparatorSemicolon:
@@ -463,7 +460,7 @@ namespace Aryiele {
         getNextToken();
 
         if (m_currentToken.type != ParserToken_SeparatorRoundBracketOpen) {
-            PARSER_ERROR("Expected an opened round bracket.");
+            PARSER_ERROR("Expected an opened round bracket.")
         }
 
         while (true) {
@@ -639,9 +636,29 @@ namespace Aryiele {
         
         return parseBinaryOperation(0, leftExpression);
     }
-
+    
+    std::shared_ptr<Node> Parser::parseTernaryOperation(std::shared_ptr<Node> condition) {
+        getNextToken();
+    
+        auto leftExpression = parsePrimary();
+        
+        if (m_currentToken.type != ParserToken_SeparatorColon) {
+            PARSER_ERROR("expected ':' in ternary operation")
+        }
+        
+        getNextToken();
+        
+        auto rightExpression = parsePrimary();
+        
+        return std::make_shared<NodeOperationTernary>(condition, leftExpression, rightExpression);
+    }
+    
     std::shared_ptr<Node> Parser::parseBinaryOperation(int expressionPrecedence, std::shared_ptr<Node> leftExpression) {
         while (true) {
+            if (m_currentToken.type == ParserToken_OperatorQuestionMark) {
+                return parseTernaryOperation(leftExpression);
+            }
+            
             int tokenPrecedence = getOperatorPrecedence(m_currentToken.type);
     
             if (tokenPrecedence < expressionPrecedence)
@@ -650,7 +667,7 @@ namespace Aryiele {
             auto operationType = m_currentToken.type;
             
             getNextToken();
-    
+            
             auto rightExpression = parsePrimary();
 
             if (!rightExpression)
@@ -1060,18 +1077,18 @@ namespace Aryiele {
                         casesExpression.emplace_back(parseExpression());
                     }
                     
-                    PARSER_CHECKTOKEN(ParserToken_SeparatorColon);
+                    PARSER_CHECKTOKEN(ParserToken_SeparatorColon)
                     
                     getNextToken();
                     
                     casesBody.emplace_back(parseCase());
             } else if (m_currentToken.type == ParserToken_KeywordDefault) {
-                if (defaultBody.size() > 0) {
+                if (!defaultBody.empty()) {
                     PARSER_ERROR("default already defined in switch")
                 } else {
                     getNextToken();
                     
-                    PARSER_CHECKTOKEN(ParserToken_SeparatorColon);
+                    PARSER_CHECKTOKEN(ParserToken_SeparatorColon)
                     
                     getNextToken();
     

@@ -96,6 +96,7 @@ add_library(Aryiele
         Include/Aryiele/AST/Nodes/NodeTopFunction.h
         Include/Aryiele/AST/Nodes/NodeTopNamespace.h
         Include/Aryiele/AST/Nodes/NodeOperationBinary.h
+        Include/Aryiele/AST/Nodes/NodeOperationTernary.h
         Include/Aryiele/AST/Nodes/NodeOperationUnary.h
         Include/Aryiele/AST/Nodes/NodeStatementArrayCall.h
         Include/Aryiele/AST/Nodes/NodeStatementBlock.h
@@ -133,6 +134,7 @@ add_library(Aryiele
         Sources/AST/Nodes/NodeTopFunction.cpp
         Sources/AST/Nodes/NodeTopNamespace.cpp
         Sources/AST/Nodes/NodeOperationBinary.cpp
+        Sources/AST/Nodes/NodeOperationTernary.cpp
         Sources/AST/Nodes/NodeOperationUnary.cpp
         Sources/AST/Nodes/NodeStatementArrayCall.cpp
         Sources/AST/Nodes/NodeStatementBlock.cpp

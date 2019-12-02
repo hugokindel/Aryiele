@@ -54,6 +54,7 @@ class Parser : public Vanir::Module<Parser> {
         std::shared_ptr<Node> parseNamespace();
         std::shared_ptr<Node> parsePrimary();
         std::shared_ptr<Node> parseExpression();
+        std::shared_ptr<Node> parseTernaryOperation(std::shared_ptr<Node> condition);
         std::shared_ptr<Node> parseBinaryOperation(int expressionPrecedence, std::shared_ptr<Node> leftExpression);
         std::shared_ptr<Node> parseUnaryOperation();
         std::vector<std::shared_ptr<Node>> parseBody();

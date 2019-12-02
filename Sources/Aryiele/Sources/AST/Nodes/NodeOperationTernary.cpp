@@ -25,50 +25,34 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_AST_NODES_NODE_H
-#define ARYIELE_AST_NODES_NODE_H
-
-#include <Aryiele/Common.h>
-#include <Aryiele/Parser/ParserInformation.h>
+#include <Aryiele/AST/Nodes/NodeOperationTernary.h>
 
 namespace Aryiele {
-    enum NodeEnum {
-        Node_TopFunction,
-        Node_TopNamespace,
-    
-        Node_LiteralArray,
-        Node_LiteralBoolean,
-        Node_LiteralCharacter,
-        Node_LiteralNumberFloating,
-        Node_LiteralNumberInteger,
-        Node_LiteralString,
-    
-        Node_OperationUnary,
-        Node_OperationBinary,
-        Node_OperationTernary,
-    
-        Node_StatementArrayCall,
-        Node_StatementBlock,
-        Node_StatementBreak,
-        Node_StatementContinue,
-        Node_StatementFor,
-        Node_StatementFunctionCall,
-        Node_StatementIf,
-        Node_StatementReturn,
-        Node_StatementSwitch,
-        Node_StatementVariable,
-        Node_StatementVariableDeclaration,
-        Node_StatementWhile
-    };
-    
-    struct Node {
-        virtual void dumpInformations(std::shared_ptr<ParserInformation> parentNode) = 0;
-        virtual NodeEnum getType() = 0;
-        virtual std::string getTypeName();
+    NodeOperationTernary::NodeOperationTernary(std::shared_ptr<Node> condition, std::shared_ptr<Node> lhs,
+                                               std::shared_ptr<Node> rhs) :
+        condition(condition), lhs(lhs), rhs(rhs) {
         
-        static std::string getTypeName(NodeEnum nodeType);
-    };
+    }
+    
+    void NodeOperationTernary::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+        auto node = std::make_shared<ParserInformation>(parentNode, "Ternary Operation");
+        auto conditionNode = std::make_shared<ParserInformation>(node, "Condition:");
+        auto lhsNode = std::make_shared<ParserInformation>(node, "LHS:");
+        auto rhsNode = std::make_shared<ParserInformation>(node, "RHS:");
+        
+        condition->dumpInformations(conditionNode);
+        lhs->dumpInformations(lhsNode);
+        rhs->dumpInformations(rhsNode);
+        
+        node->children.emplace_back(conditionNode);
+        node->children.emplace_back(lhsNode);
+        node->children.emplace_back(rhsNode);
+        
+        parentNode->children.emplace_back(node);
+    }
+    
+    NodeEnum NodeOperationTernary::getType() {
+        return Node_OperationTernary;
+    }
     
 } /* Namespace Aryiele. */
-
-#endif /* ARYIELE_AST_NODES_NODE_H. */

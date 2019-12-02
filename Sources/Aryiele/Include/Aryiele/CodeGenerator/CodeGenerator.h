@@ -51,6 +51,7 @@
 #include <Aryiele/AST/Nodes/NodeLiteralNumberInteger.h>
 #include <Aryiele/AST/Nodes/NodeTopFunction.h>
 #include <Aryiele/AST/Nodes/NodeOperationBinary.h>
+#include <Aryiele/AST/Nodes/NodeOperationUnary.h>
 #include <Aryiele/AST/Nodes/NodeStatementBlock.h>
 #include <Aryiele/AST/Nodes/NodeStatementFunctionCall.h>
 #include <Aryiele/AST/Nodes/NodeStatementIf.h>
@@ -84,12 +85,14 @@ namespace Aryiele {
         GenerationError generateCode(std::shared_ptr<Node> node);
         GenerationError generateCode(NodeTopFunction* node);
         GenerationError generateCode(NodeOperationBinary* node);
+        GenerationError generateCode(NodeOperationUnary* node);
         GenerationError generateCode(NodeLiteralNumberFloating* node);
         GenerationError generateCode(NodeLiteralNumberInteger* node);
         GenerationError generateCode(NodeStatementVariable* node);
         GenerationError generateCode(NodeStatementFunctionCall* node);
         GenerationError generateCode(NodeStatementIf* node);
         GenerationError generateCode(NodeStatementFor* node);
+        GenerationError generateCode(NodeStatementWhile* node);
         GenerationError generateCode(NodeStatementReturn* node);
         GenerationError generateCode(NodeStatementBlock* node);
         GenerationError generateCode(NodeStatementVariableDeclaration* node);

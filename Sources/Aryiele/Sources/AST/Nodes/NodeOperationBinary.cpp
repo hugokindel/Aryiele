@@ -29,7 +29,6 @@
 #include <Aryiele/Parser/Parser.h>
 
 namespace Aryiele {
-
     NodeOperationBinary::NodeOperationBinary(ParserTokenEnum operationType,
                                              std::shared_ptr<Node> lhs,
                                              std::shared_ptr<Node> rhs) :

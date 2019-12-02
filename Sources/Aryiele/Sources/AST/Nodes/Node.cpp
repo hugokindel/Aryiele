@@ -50,10 +50,12 @@ namespace Aryiele {
                 return "LiteralNumberInteger";
             case Node_LiteralString:
                 return "LiteralString";
-            case Node_OperationBinary:
-                return "OperationBinary";
             case Node_OperationUnary:
                 return "OperationUnary";
+            case Node_OperationBinary:
+                return "OperationBinary";
+            case Node_OperationTernary:
+                return "OperationTernary";
             case Node_StatementArrayCall:
                 return "StatementArrayCall";
             case Node_StatementBlock:
