@@ -52,6 +52,7 @@
 
 namespace Aryiele {
     Parser::Parser() {
+        m_binaryOperatorPrecedence[ParserToken_OperatorQuestionMark] = 5;
         m_binaryOperatorPrecedence[ParserToken_OperatorEqual] = 10;
         m_binaryOperatorPrecedence[ParserToken_OperatorArithmeticPlusEqual] = 10;
         m_binaryOperatorPrecedence[ParserToken_OperatorArithmeticMinusEqual] = 10;
@@ -510,7 +511,7 @@ namespace Aryiele {
     std::shared_ptr<Node> Parser::parseTernaryOperation(std::shared_ptr<Node> condition) {
         getNextToken();
     
-        auto leftExpression = parsePrimary();
+        auto leftExpression = parseExpression();
         
         if (m_currentToken.type != ParserToken_SeparatorColon) {
             PARSER_ERROR("expected ':' in ternary operation")
@@ -518,7 +519,9 @@ namespace Aryiele {
         
         getNextToken();
         
-        auto rightExpression = parsePrimary();
+        auto rightExpression = parseExpression();
+        
+        getNextToken();
         
         return std::make_shared<NodeOperationTernary>(condition, leftExpression, rightExpression);
     }

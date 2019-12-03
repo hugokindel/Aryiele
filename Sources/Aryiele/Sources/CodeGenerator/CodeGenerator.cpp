@@ -188,10 +188,12 @@ namespace Aryiele {
                 return generateCode((NodeLiteralNumberInteger*)nodePtr);
             case Node_StatementVariable:
                 return generateCode((NodeStatementVariable*)nodePtr);
-            case Node_OperationBinary:
-                return generateCode((NodeOperationBinary*)nodePtr);
             case Node_OperationUnary:
                 return generateCode((NodeOperationUnary*)nodePtr);
+            case Node_OperationBinary:
+                return generateCode((NodeOperationBinary*)nodePtr);
+            case Node_OperationTernary:
+                return generateCode((NodeOperationTernary*)nodePtr);
             case Node_StatementFunctionCall:
                 return generateCode((NodeStatementFunctionCall*)nodePtr);
             case Node_StatementIf:
@@ -268,7 +270,44 @@ namespace Aryiele {
 
         return GenerationError(true, function);
     }
-
+    
+    GenerationError CodeGenerator::generateCode(NodeOperationTernary *node) {
+        m_blockStack->create();
+        
+        auto ternaryBasicBlock = llvm::BasicBlock::Create(m_context, "_ternary_start", m_builder.GetInsertBlock()->getParent());
+    
+        m_builder.CreateBr(ternaryBasicBlock);
+        m_builder.SetInsertPoint(ternaryBasicBlock);
+        
+        auto condition = generateCode(node->condition);
+        
+        auto rightBasicBlock = llvm::BasicBlock::Create(m_context, "_ternary_right", m_builder.GetInsertBlock()->getParent());
+        auto endBasicBlock = llvm::BasicBlock::Create(m_context, "_ternary_end", m_builder.GetInsertBlock()->getParent());
+    
+        llvm::AllocaInst* alloca = createEntryBlockAllocation(m_builder.GetInsertBlock()->getParent(), "v_ternary_temp");
+        auto left = generateCode(node->lhs).value;
+        m_builder.CreateStore(castType(left, alloca->getType()), alloca);
+        
+        m_builder.CreateCondBr(condition.value, endBasicBlock, rightBasicBlock);
+        
+        m_builder.CreateBr(endBasicBlock);
+            
+        m_builder.SetInsertPoint(rightBasicBlock);
+    
+        auto right = generateCode(node->rhs).value;
+        m_builder.CreateStore(castType(right, alloca->getType()), alloca);
+    
+        m_builder.CreateBr(endBasicBlock);
+    
+        m_builder.SetInsertPoint(endBasicBlock);
+    
+        auto currentVar = m_builder.CreateLoad(alloca, "v_ternary_temp");
+    
+        m_blockStack->escapeCurrent();
+        
+        return GenerationError(true, currentVar);
+    }
+    
     GenerationError CodeGenerator::generateCode(NodeOperationBinary* node) {
         if (node->operationType == ParserToken_OperatorEqual) {
             auto lhs = std::static_pointer_cast<NodeStatementVariable>(node->lhs);
@@ -295,7 +334,7 @@ namespace Aryiele {
                 return GenerationError();
             }
 
-            m_builder.CreateStore(rhsValue.value, variable);
+            m_builder.CreateStore(castType(rhsValue.value, variable->getType()), variable);
 
             return GenerationError(true, rhsValue.value);
         }
@@ -544,7 +583,7 @@ namespace Aryiele {
         
         auto function = m_builder.GetInsertBlock()->getParent();
         auto entryBlock = m_builder.GetInsertBlock();
-        auto forBasicBlock = llvm::BasicBlock::Create(m_context, "_for", function);
+        auto forBasicBlock = llvm::BasicBlock::Create(m_context, "_for_start", function);
         auto forConditionBasicBlock = llvm::BasicBlock::Create(m_context, "_for_condition", function);
         auto bodyForBasicBlock = llvm::BasicBlock::Create(m_context, "_for_body", function);
         llvm::BasicBlock* endForBasicBlock = nullptr;
@@ -591,7 +630,7 @@ namespace Aryiele {
     
         if (!allPathsReturn(node->body)) {
             auto currentVar = m_builder.CreateLoad(alloca, node->variable->variables[0]->identifier);
-            auto nextVar = m_builder.CreateAdd(currentVar, castType(stepValue, currentVar->getType()), "nextvar");
+            auto nextVar = m_builder.CreateAdd(currentVar, castType(stepValue, currentVar->getType()), "v_for_next");
             m_builder.CreateStore(nextVar, alloca);
             
             m_builder.CreateBr(forConditionBasicBlock);

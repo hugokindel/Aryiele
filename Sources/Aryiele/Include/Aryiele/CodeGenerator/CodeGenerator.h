@@ -52,6 +52,7 @@
 #include <Aryiele/AST/Nodes/NodeTopFunction.h>
 #include <Aryiele/AST/Nodes/NodeOperationBinary.h>
 #include <Aryiele/AST/Nodes/NodeOperationUnary.h>
+#include <Aryiele/AST/Nodes/NodeOperationTernary.h>
 #include <Aryiele/AST/Nodes/NodeStatementBlock.h>
 #include <Aryiele/AST/Nodes/NodeStatementFunctionCall.h>
 #include <Aryiele/AST/Nodes/NodeStatementIf.h>
@@ -84,6 +85,7 @@ namespace Aryiele {
             llvm::Function *function, const std::string &identifier, llvm::Type *type = nullptr);
         GenerationError generateCode(std::shared_ptr<Node> node);
         GenerationError generateCode(NodeTopFunction* node);
+        GenerationError generateCode(NodeOperationTernary* node);
         GenerationError generateCode(NodeOperationBinary* node);
         GenerationError generateCode(NodeOperationUnary* node);
         GenerationError generateCode(NodeLiteralNumberFloating* node);
