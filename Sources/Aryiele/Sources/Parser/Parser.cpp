@@ -237,6 +237,8 @@ namespace Aryiele {
                         tokens.emplace_back("", ParserToken_KeywordNamespace);
                     else if (token.content == "default")
                         tokens.emplace_back("", ParserToken_KeywordDefault);
+                    else if (token.content == "_")
+                        tokens.emplace_back("", ParserToken_KeywordEmpty);
                     else
                         tokens.emplace_back(token.content, ParserToken_Identifier);
                     break;
@@ -520,8 +522,6 @@ namespace Aryiele {
         getNextToken();
         
         auto rightExpression = parseExpression();
-        
-        getNextToken();
         
         return std::make_shared<NodeOperationTernary>(condition, leftExpression, rightExpression);
     }
@@ -813,11 +813,17 @@ namespace Aryiele {
             getNextToken();
         }
     
-        if (m_currentToken.type != ParserToken_Identifier) {
-            PARSER_ERROR("expected variable declaration in for declaration")
-        }
+        std::shared_ptr<Node> variable = nullptr;
         
-        auto variable = parseVariableDeclaration(false, false, false);
+        if (m_currentToken.type != ParserToken_KeywordEmpty) {
+            if (getNextToken(false).type == ParserToken_OperatorEqual) {
+                variable = parseVariableDeclaration(false, false, false);
+            } else {
+                variable = parseIdentifier();
+            }
+        } else {
+            getNextToken();
+        }
     
         if (m_currentToken.type != ParserToken_KeywordWhile) {
             PARSER_ERROR("expected 'while' in for declaration")
@@ -853,8 +859,11 @@ namespace Aryiele {
     
         PARSER_CHECKTOKEN(ParserToken_SeparatorCurlyBracketClosed)
         
-        return std::make_shared<NodeStatementFor>(std::dynamic_pointer_cast<NodeStatementVariableDeclaration>(variable),
-            condition, incrementationValue, body);
+        if (variable) {
+            return std::make_shared<NodeStatementFor>(variable, condition, incrementationValue, body);
+        }
+        
+        return std::make_shared<NodeStatementFor>(nullptr, condition, incrementationValue, body);
     }
     
     std::shared_ptr<Node> Parser::parseWhile(bool doOnce) {

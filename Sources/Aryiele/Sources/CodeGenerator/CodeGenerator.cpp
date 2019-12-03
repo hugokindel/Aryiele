@@ -41,8 +41,12 @@ namespace Aryiele {
 
     void CodeGenerator::generateCode(std::vector<std::shared_ptr<Node>> nodes) {
         for (auto& node : nodes) {
-            if (!allPathsReturn(node)) {
-                LOG_ERROR(node->getTypeName(), ": ", "not all code paths return a value")
+            if (node->getType() == Node_TopFunction) {
+                auto function = std::dynamic_pointer_cast<NodeTopFunction>(node);
+                
+                if (!allPathsReturn(node)) {
+                    LOG_ERROR("in function '", function->identifier, "': ", "not all code paths return a value")
+                }
             }
         }
         
@@ -121,15 +125,15 @@ namespace Aryiele {
     }
     
     llvm::Value *CodeGenerator::getTypeDefaultStep(llvm::Type* type) {
-        if (type->isIntegerTy(8)) {
+        if (type->isIntegerTy(8) || (type->isIntOrPtrTy() && type->getNumContainedTypes() > 0 && type->getContainedType(0)->isIntegerTy(8))) {
             return llvm::ConstantInt::get(m_context, llvm::APInt(8, 1));
-        } else if (type->isIntegerTy(16)) {
+        } else if (type->isIntegerTy(16) || (type->isIntOrPtrTy() && type->getNumContainedTypes() > 0 && type->getContainedType(0)->isIntegerTy(16))) {
             return llvm::ConstantInt::get(m_context, llvm::APInt(16, 1));
-        } else if (type->isIntegerTy(32)) {
+        } else if (type->isIntegerTy(32) || (type->isIntOrPtrTy() && type->getNumContainedTypes() > 0 && type->getContainedType(0)->isIntegerTy(32))) {
             return llvm::ConstantInt::get(m_context, llvm::APInt(32, 1));
-        } else if (type->isIntegerTy(64)) {
+        } else if (type->isIntegerTy(64) || (type->isIntOrPtrTy() && type->getNumContainedTypes() > 0 && type->getContainedType(0)->isIntegerTy(64))) {
             return llvm::ConstantInt::get(m_context, llvm::APInt(64, 1));
-        } else if (type->isIntegerTy(128)) {
+        } else if (type->isIntegerTy(128) || (type->isIntOrPtrTy() && type->getNumContainedTypes() > 0 && type->getContainedType(0)->isIntegerTy(128))) {
             return llvm::ConstantInt::get(m_context, llvm::APInt(128, 1));
         } else if (type->isFloatTy()) {
             return llvm::ConstantFP::get(m_context, llvm::APFloat(1.0f));
@@ -272,40 +276,60 @@ namespace Aryiele {
     }
     
     GenerationError CodeGenerator::generateCode(NodeOperationTernary *node) {
-        m_blockStack->create();
+        std::vector<std::shared_ptr<Node>> leftr = {node->lhs};
+        std::vector<std::shared_ptr<Node>> rightr = {node->rhs};
         
+        auto entryBlock = m_builder.GetInsertBlock();
         auto ternaryBasicBlock = llvm::BasicBlock::Create(m_context, "_ternary_start", m_builder.GetInsertBlock()->getParent());
     
         m_builder.CreateBr(ternaryBasicBlock);
         m_builder.SetInsertPoint(ternaryBasicBlock);
         
         auto condition = generateCode(node->condition);
-        
+    
+        auto leftBasicBlock = llvm::BasicBlock::Create(m_context, "_ternary_left", m_builder.GetInsertBlock()->getParent());
         auto rightBasicBlock = llvm::BasicBlock::Create(m_context, "_ternary_right", m_builder.GetInsertBlock()->getParent());
-        auto endBasicBlock = llvm::BasicBlock::Create(m_context, "_ternary_end", m_builder.GetInsertBlock()->getParent());
+        llvm::BasicBlock* endBasicBlock = nullptr;
+        llvm::AllocaInst* alloca = nullptr;
+        
+        if (!allPathsReturn(leftr) || !allPathsReturn(rightr)) {
+            endBasicBlock = llvm::BasicBlock::Create(m_context, "_ternary_end", m_builder.GetInsertBlock()->getParent());
     
-        llvm::AllocaInst* alloca = createEntryBlockAllocation(m_builder.GetInsertBlock()->getParent(), "v_ternary_temp");
+            alloca = createEntryBlockAllocation(m_builder.GetInsertBlock()->getParent(), "v_ternary_temp");
+            m_builder.CreateStore(castType(getTypeDefaultValue("Boolean"), alloca->getType()), alloca);
+        }
+    
+        m_builder.CreateCondBr(condition.value, leftBasicBlock, rightBasicBlock);
+    
+        m_builder.SetInsertPoint(leftBasicBlock);
         auto left = generateCode(node->lhs).value;
-        m_builder.CreateStore(castType(left, alloca->getType()), alloca);
         
-        m_builder.CreateCondBr(condition.value, endBasicBlock, rightBasicBlock);
-        
-        m_builder.CreateBr(endBasicBlock);
+        if (!allPathsReturn(leftr)) {
+            m_builder.CreateStore(castType(left, alloca->getType()), alloca);
             
-        m_builder.SetInsertPoint(rightBasicBlock);
-    
-        auto right = generateCode(node->rhs).value;
-        m_builder.CreateStore(castType(right, alloca->getType()), alloca);
-    
-        m_builder.CreateBr(endBasicBlock);
-    
-        m_builder.SetInsertPoint(endBasicBlock);
-    
-        auto currentVar = m_builder.CreateLoad(alloca, "v_ternary_temp");
-    
-        m_blockStack->escapeCurrent();
+            m_builder.CreateBr(endBasicBlock);
+        }
         
-        return GenerationError(true, currentVar);
+        m_builder.SetInsertPoint(rightBasicBlock);
+        auto right = generateCode(node->rhs).value;
+        
+        if (!allPathsReturn(rightr)) {
+            m_builder.CreateStore(castType(right, alloca->getType()), alloca);
+            
+            m_builder.CreateBr(endBasicBlock);
+        }
+        
+        llvm::Value* ternaryVariable = nullptr;
+    
+        if (!allPathsReturn(leftr) || !allPathsReturn(rightr)) {
+            m_builder.SetInsertPoint(endBasicBlock);
+    
+            ternaryVariable = m_builder.CreateLoad(alloca, "v_ternary_temp");
+        } else {
+            m_builder.SetInsertPoint(entryBlock);
+        }
+    
+        return GenerationError(true, ternaryVariable);
     }
     
     GenerationError CodeGenerator::generateCode(NodeOperationBinary* node) {
@@ -519,7 +543,7 @@ namespace Aryiele {
 
         llvm::Function *function = m_builder.GetInsertBlock()->getParent();
         llvm::BasicBlock *entryBlock = m_builder.GetInsertBlock();
-        llvm::BasicBlock *ifBasicBlock = llvm::BasicBlock::Create(m_context, "_if", function);
+        llvm::BasicBlock *ifBasicBlock = llvm::BasicBlock::Create(m_context, "_if_start", function);
         llvm::BasicBlock *elseBasicBlock = nullptr;
         llvm::BasicBlock *mergeBasicBlock = nullptr;
         
@@ -597,21 +621,36 @@ namespace Aryiele {
         m_builder.CreateBr(forBasicBlock);
         m_builder.SetInsertPoint(forBasicBlock);
     
-        llvm::AllocaInst* alloca = createEntryBlockAllocation(m_builder.GetInsertBlock()->getParent(), node->variable->variables[0]->identifier);
-        auto startValue = generateCode(node->variable->variables[0]->expression).value;
-        m_builder.CreateStore(castType(startValue, alloca->getType()), alloca);
+        
+        
+        llvm::AllocaInst* alloca = nullptr;
+        llvm::Value* startValue = nullptr;
+        
+        if (node->variable && node->variable->getType() == Node_StatementVariableDeclaration) {
+            auto var = std::dynamic_pointer_cast<NodeStatementVariableDeclaration>(node->variable);
+            
+            alloca = createEntryBlockAllocation(m_builder.GetInsertBlock()->getParent(), var->variables[0]->identifier);
+            startValue = generateCode(var->variables[0]->expression).value;
+            m_builder.CreateStore(castType(startValue, alloca->getType()), alloca);
+        }
         
         m_builder.CreateBr(forConditionBasicBlock);
         m_builder.SetInsertPoint(forConditionBasicBlock);
-        
-        m_blockStack->current->variables[node->variable->variables[0]->identifier] = alloca;
+    
+        if (node->variable && node->variable->getType() == Node_StatementVariableDeclaration) {
+            auto var = std::dynamic_pointer_cast<NodeStatementVariableDeclaration>(node->variable);
+            
+            m_blockStack->current->variables[var->variables[0]->identifier] = alloca;
+        }
     
         llvm::Value* stepValue = nullptr;
     
         if (node->incrementalValue) {
             stepValue = generateCode(node->incrementalValue).value;
-        } else {
+        } else if (node->variable && node->variable->getType() == Node_StatementVariableDeclaration) {
             stepValue = getTypeDefaultStep(startValue->getType());
+        } else if (node->variable) {
+            stepValue = getTypeDefaultStep(m_blockStack->findVariable(std::dynamic_pointer_cast<NodeStatementVariable>(node->variable)->identifier)->getType());
         }
     
         auto endCondition = generateCode(node->condition).value;
@@ -629,9 +668,20 @@ namespace Aryiele {
         }
     
         if (!allPathsReturn(node->body)) {
-            auto currentVar = m_builder.CreateLoad(alloca, node->variable->variables[0]->identifier);
-            auto nextVar = m_builder.CreateAdd(currentVar, castType(stepValue, currentVar->getType()), "v_for_next");
-            m_builder.CreateStore(nextVar, alloca);
+            if (node->variable) {
+                std::string identifier;
+                if (node->variable->getType() == Node_StatementVariableDeclaration) {
+                    identifier = std::dynamic_pointer_cast<NodeStatementVariableDeclaration>(node->variable)->variables[0]->identifier;
+                    auto currentVar = m_builder.CreateLoad(alloca, identifier);
+                    auto nextVar = m_builder.CreateAdd(currentVar, castType(stepValue, currentVar->getType()), "v_for_next");
+                    m_builder.CreateStore(nextVar, alloca);
+                } else {
+                    identifier = std::dynamic_pointer_cast<NodeStatementVariable>(node->variable)->identifier;
+                    auto currentVar = m_builder.CreateLoad(m_blockStack->findVariable(std::dynamic_pointer_cast<NodeStatementVariable>(node->variable)->identifier), identifier);
+                    auto nextVar = m_builder.CreateAdd(currentVar, castType(stepValue, currentVar->getType()), "v_for_next");
+                    m_builder.CreateStore(nextVar, m_blockStack->findVariable(std::dynamic_pointer_cast<NodeStatementVariable>(node->variable)->identifier));
+                }
+            }
             
             m_builder.CreateBr(forConditionBasicBlock);
         }
@@ -653,15 +703,15 @@ namespace Aryiele {
         llvm::BasicBlock* whileDoBasicBlock = nullptr;
         
         if (node->doOnce) {
-            whileDoBasicBlock = llvm::BasicBlock::Create(m_context, "_do", function);
+            whileDoBasicBlock = llvm::BasicBlock::Create(m_context, "_do_while_start", function);
         }
         
-        auto whileBasicBlock = llvm::BasicBlock::Create(m_context, "_while", function);
-        auto whileBodyBasicBlock = llvm::BasicBlock::Create(m_context, "_while_body", function);
+        auto whileBasicBlock = llvm::BasicBlock::Create(m_context, node->doOnce ? "_do_while_condition" : "_while_start", function);
+        auto whileBodyBasicBlock = llvm::BasicBlock::Create(m_context, node->doOnce ? "_do_while_body" : "_while_body", function);
         llvm::BasicBlock* whileEndBasicBlock = nullptr;
     
         if (!allPathsReturn(node->body)) {
-            whileEndBasicBlock = llvm::BasicBlock::Create(m_context, "_while_end", function);
+            whileEndBasicBlock = llvm::BasicBlock::Create(m_context, node->doOnce ? "_do_while_end" : "_while_end", function);
         }
     
         m_blockStack->create();
@@ -834,6 +884,14 @@ namespace Aryiele {
                 auto whileNode = std::dynamic_pointer_cast<NodeStatementWhile>(statement);
     
                 if (allPathsReturn(whileNode)) {
+                    return true;
+                }
+            } else if (statement->getType() == Node_OperationTernary) {
+                auto ternaryNode = std::dynamic_pointer_cast<NodeOperationTernary>(statement);
+                std::vector<std::shared_ptr<Node>> leftr = {ternaryNode->lhs};
+                std::vector<std::shared_ptr<Node>> rightr = {ternaryNode->rhs};
+                
+                if (allPathsReturn(leftr) && allPathsReturn(rightr)) {
                     return true;
                 }
             }

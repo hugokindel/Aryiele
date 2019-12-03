@@ -96,6 +96,7 @@ namespace Aryiele {
         ParserToken_KeywordDefault, // default
         ParserToken_KeywordSwitch, // switch
         ParserToken_KeywordCase, // case
+        ParserToken_KeywordEmpty, // _
         
         ParserToken_Identifier, // Any characters sequence other than a keyword.
         ParserToken_EOF, // EOF

@@ -35,7 +35,7 @@
 
 namespace Aryiele {
     struct NodeStatementFor : public Node {
-        NodeStatementFor(std::shared_ptr<NodeStatementVariableDeclaration> variable, std::shared_ptr<Node> condition,
+        NodeStatementFor(std::shared_ptr<Node> variable, std::shared_ptr<Node> condition,
             std::shared_ptr<Node> incrementalValue, std::vector<std::shared_ptr<Node>> body);
     
         void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
@@ -44,7 +44,7 @@ namespace Aryiele {
         std::shared_ptr<Node> condition;
         std::shared_ptr<Node> incrementalValue;
         std::vector<std::shared_ptr<Node>> body;
-        std::shared_ptr<NodeStatementVariableDeclaration> variable;
+        std::shared_ptr<Node> variable;
     };
     
 } /* Namespace Aryiele. */

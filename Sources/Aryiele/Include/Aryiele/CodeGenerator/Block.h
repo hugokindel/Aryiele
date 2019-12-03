@@ -35,10 +35,12 @@ namespace Aryiele {
     struct Block {
         Block(std::shared_ptr<Block> parent = nullptr,
               std::map<std::string, llvm::AllocaInst*> variables = std::map<std::string, llvm::AllocaInst*>(),
+              std::map<std::string, bool> setVariables = std::map<std::string, bool>(),
               std::vector<std::shared_ptr<Block>> children = std::vector<std::shared_ptr<Block>>());
 
         std::shared_ptr<Block> parent = nullptr;
         std::map<std::string, llvm::AllocaInst*> variables;
+        std::map<std::string, bool> setVariables;
         std::vector<std::shared_ptr<Block>> children;
     };
 

@@ -266,10 +266,10 @@ namespace ARC {
         codeGenerator->generateCode(std::move(astNodes));
         
         if (::Vanir::Logger::errorCount > 0) {
-            LOG_ERROR("ir code generation failed with ", ::Vanir::Logger::errorCount, " errors")
+            LOG_ERROR("code generation failed with ", ::Vanir::Logger::errorCount, " errors")
         } else {
             if (m_verboseMode) {
-                LOG_VERBOSE("ir code generated with success")
+                LOG_VERBOSE("code generated with success")
             }
             
             m_tempIRFilepath = Vanir::FileSystem::getFilePath(m_inputFilepath) + ".ll";

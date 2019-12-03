@@ -28,7 +28,7 @@
 #include <Aryiele/AST/Nodes/NodeStatementFor.h>
 
 namespace Aryiele {
-    NodeStatementFor::NodeStatementFor(std::shared_ptr<NodeStatementVariableDeclaration> variable, std::shared_ptr<Node> condition,
+    NodeStatementFor::NodeStatementFor(std::shared_ptr<Node> variable, std::shared_ptr<Node> condition,
         std::shared_ptr<Node> incrementalValue, std::vector<std::shared_ptr<Node>> body) :
         variable(variable), condition(condition), incrementalValue(incrementalValue), body(body) {
         
@@ -41,18 +41,22 @@ namespace Aryiele {
         auto incrementalValueNode = std::make_shared<ParserInformation>(node, "Incremental Value:");
         auto bodyNode = std::make_shared<ParserInformation>(node, "Body:");
     
-        variable->dumpInformations(variableNode);
+        if (variable) {
+            variable->dumpInformations(variableNode);
+        }
         condition->dumpInformations(conditionNode);
         
         for (auto& i : body) {
             i->dumpInformations(bodyNode);
         }
         
-        if (incrementalValue != nullptr) {
+        if (incrementalValue) {
             incrementalValue->dumpInformations(incrementalValueNode);
         }
     
-        node->children.emplace_back(variableNode);
+        if (variable) {
+            node->children.emplace_back(variableNode);
+        }
         node->children.emplace_back(conditionNode);
     
         if (incrementalValue != nullptr) {

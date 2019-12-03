@@ -154,6 +154,8 @@ namespace Aryiele {
                 return "KeywordNamespace";
             case ParserToken_KeywordDefault:
                 return "KeywordDefault";
+            case ParserToken_KeywordEmpty:
+                 return "KeywordEmpty";
                 
             case ParserToken_Space:
                 return "Space";
