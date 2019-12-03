@@ -50,10 +50,10 @@ namespace Aryiele {
 
         return current;
     }
-
-    llvm::AllocaInst* BlockStack::findVariable(const std::string& identifier) {
+    
+    std::shared_ptr<BlockVariable> BlockStack::findVariable(const std::string& identifier) {
         auto block = current;
-        llvm::AllocaInst* variable = nullptr;
+        std::shared_ptr<BlockVariable> variable = nullptr;
 
         if (block->variables.find(identifier) != block->variables.end())
             variable = current->variables[identifier];
@@ -70,5 +70,16 @@ namespace Aryiele {
 
         return variable;
     }
-
+    
+    void
+    BlockStack::addVariable(const std::string &identifier, llvm::AllocaInst *instance, bool isConstant) {
+        addVariable(identifier, std::make_shared<BlockVariable>(instance, isConstant));
+    }
+    
+    void BlockStack::addVariable(const std::string &identifier, std::shared_ptr<BlockVariable> variable) {
+        if (!current->variables[identifier]) {
+            current->variables[identifier] = variable;
+        }
+    }
+    
 } /* Namespace Aryiele. */

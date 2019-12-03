@@ -252,8 +252,7 @@ namespace Aryiele {
             llvm::AllocaInst *allocationInstance = createEntryBlockAllocation(function, argument.getName(), argument.getType());
 
             m_builder.CreateStore(&argument, allocationInstance);
-
-            m_blockStack->current->variables[argument.getName()] = allocationInstance;
+            m_blockStack->addVariable(argument.getName(), allocationInstance, false);
         }
 
         for (auto& statement : node->body) {
@@ -341,6 +340,12 @@ namespace Aryiele {
 
                 return GenerationError();
             }
+            
+            if (m_blockStack->findVariable(lhs->identifier)->isConstant && !m_blockStack->findVariable(lhs->identifier)->instance->use_empty()) {
+                LOG_ERROR("cannot redefine a constant")
+    
+                return GenerationError();
+            }
 
             auto rhsValue = generateCode(node->rhs);
 
@@ -350,16 +355,16 @@ namespace Aryiele {
                 return GenerationError();
             }
 
-            llvm::Value *variable = m_blockStack->findVariable(lhs->identifier);
+            auto variable = m_blockStack->findVariable(lhs->identifier);
 
             if (!variable) {
                 LOG_ERROR("cannot generate a binary operation: lhs: unknown variable '" + lhs->identifier + "'")
 
                 return GenerationError();
             }
-
-            m_builder.CreateStore(castType(rhsValue.value, variable->getType()), variable);
-
+            
+            m_builder.CreateStore(castType(rhsValue.value, variable->instance->getType()), variable->instance);
+    
             return GenerationError(true, rhsValue.value);
         }
 
@@ -436,7 +441,7 @@ namespace Aryiele {
                     operation = m_builder.CreateSub(lhsValue.value, getTypeDefaultStep(lhsValue.value->getType()), "sub");
                 }
     
-                m_builder.CreateStore(operation, m_blockStack->findVariable(std::dynamic_pointer_cast<NodeStatementVariable>(node->expression)->identifier));
+                m_builder.CreateStore(operation, m_blockStack->findVariable(std::dynamic_pointer_cast<NodeStatementVariable>(node->expression)->identifier)->instance);
             }
             
             return GenerationError(true, returnValue->getValueOperand());
@@ -452,7 +457,7 @@ namespace Aryiele {
             }
                 
             if (node->expression->getType() == Node_StatementVariable) {
-                m_builder.CreateStore(operation, m_blockStack->findVariable(std::dynamic_pointer_cast<NodeStatementVariable>(node->expression)->identifier));
+                m_builder.CreateStore(operation, m_blockStack->findVariable(std::dynamic_pointer_cast<NodeStatementVariable>(node->expression)->identifier)->instance);
             }
         
             return GenerationError(true, operation);
@@ -486,13 +491,13 @@ namespace Aryiele {
     }
 
     GenerationError CodeGenerator::generateCode(NodeStatementVariable* node) {
-        llvm::Value *value = m_blockStack->findVariable(node->identifier);
+        auto value = m_blockStack->findVariable(node->identifier);
 
         if (!value) {
             LOG_ERROR("unknown variable: ", node->identifier)
         }
 
-        return GenerationError(true, m_builder.CreateLoad(value, node->identifier.c_str()));
+        return GenerationError(true, m_builder.CreateLoad(value->instance, node->identifier.c_str()));
     }
 
 
@@ -639,8 +644,7 @@ namespace Aryiele {
     
         if (node->variable && node->variable->getType() == Node_StatementVariableDeclaration) {
             auto var = std::dynamic_pointer_cast<NodeStatementVariableDeclaration>(node->variable);
-            
-            m_blockStack->current->variables[var->variables[0]->identifier] = alloca;
+            m_blockStack->addVariable(var->variables[0]->identifier, alloca, false);
         }
     
         llvm::Value* stepValue = nullptr;
@@ -650,7 +654,7 @@ namespace Aryiele {
         } else if (node->variable && node->variable->getType() == Node_StatementVariableDeclaration) {
             stepValue = getTypeDefaultStep(startValue->getType());
         } else if (node->variable) {
-            stepValue = getTypeDefaultStep(m_blockStack->findVariable(std::dynamic_pointer_cast<NodeStatementVariable>(node->variable)->identifier)->getType());
+            stepValue = getTypeDefaultStep(m_blockStack->findVariable(std::dynamic_pointer_cast<NodeStatementVariable>(node->variable)->identifier)->instance->getType());
         }
     
         auto endCondition = generateCode(node->condition).value;
@@ -677,9 +681,9 @@ namespace Aryiele {
                     m_builder.CreateStore(nextVar, alloca);
                 } else {
                     identifier = std::dynamic_pointer_cast<NodeStatementVariable>(node->variable)->identifier;
-                    auto currentVar = m_builder.CreateLoad(m_blockStack->findVariable(std::dynamic_pointer_cast<NodeStatementVariable>(node->variable)->identifier), identifier);
+                    auto currentVar = m_builder.CreateLoad(m_blockStack->findVariable(std::dynamic_pointer_cast<NodeStatementVariable>(node->variable)->identifier)->instance, identifier);
                     auto nextVar = m_builder.CreateAdd(currentVar, castType(stepValue, currentVar->getType()), "v_for_next");
-                    m_builder.CreateStore(nextVar, m_blockStack->findVariable(std::dynamic_pointer_cast<NodeStatementVariable>(node->variable)->identifier));
+                    m_builder.CreateStore(nextVar, m_blockStack->findVariable(std::dynamic_pointer_cast<NodeStatementVariable>(node->variable)->identifier)->instance);
                 }
             }
             
@@ -809,15 +813,17 @@ namespace Aryiele {
                     return GenerationError();
                 }
             }
-            else {
+            else if (!variable->constant) {
                 error.value = getTypeDefaultValue(variable->type);
             }
 
             llvm::AllocaInst *allocationInstance = createEntryBlockAllocation(function, variable->identifier);
-
-            m_builder.CreateStore(castType(error.value, allocationInstance->getType()), allocationInstance);
-
-            m_blockStack->current->variables[variable->identifier] = allocationInstance;
+            
+            if (error.value) {
+                m_builder.CreateStore(castType(error.value, allocationInstance->getType()), allocationInstance);
+            }
+            
+            m_blockStack->addVariable(variable->identifier, allocationInstance, variable->constant);
         }
 
         return GenerationError(true);

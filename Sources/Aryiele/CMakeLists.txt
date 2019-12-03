@@ -113,6 +113,7 @@ add_library(Aryiele
         Include/Aryiele/CodeGenerator/CodeGenerator.h
         Include/Aryiele/CodeGenerator/Block.h
         Include/Aryiele/CodeGenerator/BlockStack.h
+        Include/Aryiele/CodeGenerator/BlockVariable.h
         Include/Aryiele/CodeGenerator/Function.h
         Include/Aryiele/CodeGenerator/FunctionArgument.h
         Include/Aryiele/CodeGenerator/GenerationError.h
@@ -151,6 +152,7 @@ add_library(Aryiele
         Sources/CodeGenerator/CodeGenerator.cpp
         Sources/CodeGenerator/Block.cpp
         Sources/CodeGenerator/BlockStack.cpp
+        Sources/CodeGenerator/BlockVariable.cpp
         Sources/CodeGenerator/Function.cpp
         Sources/CodeGenerator/FunctionArgument.cpp
         Sources/CodeGenerator/GenerationError.cpp)

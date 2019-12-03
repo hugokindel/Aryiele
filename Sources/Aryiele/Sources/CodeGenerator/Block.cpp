@@ -28,9 +28,9 @@
 #include <Aryiele/CodeGenerator/Block.h>
 
 namespace Aryiele {
-    Block::Block(std::shared_ptr<Block> parent, std::map<std::string, llvm::AllocaInst*> variables,
-                 std::map<std::string, bool> setVariables, std::vector<std::shared_ptr<Block>> children) :
-        parent(parent), variables(variables), setVariables(setVariables), children(children) {
+    Block::Block(std::shared_ptr<Block> parent, std::map<std::string, std::shared_ptr<BlockVariable>> variables,
+                 std::vector<std::shared_ptr<Block>> children) :
+        parent(parent), variables(variables), children(children) {
 
     }
 

@@ -30,17 +30,16 @@
 
 #include <llvm/IR/Instructions.h>
 #include <Aryiele/Common.h>
+#include <Aryiele/CodeGenerator/BlockVariable.h>
 
 namespace Aryiele {
     struct Block {
         Block(std::shared_ptr<Block> parent = nullptr,
-              std::map<std::string, llvm::AllocaInst*> variables = std::map<std::string, llvm::AllocaInst*>(),
-              std::map<std::string, bool> setVariables = std::map<std::string, bool>(),
+              std::map<std::string, std::shared_ptr<BlockVariable>> variables = std::map<std::string, std::shared_ptr<BlockVariable>>(),
               std::vector<std::shared_ptr<Block>> children = std::vector<std::shared_ptr<Block>>());
 
         std::shared_ptr<Block> parent = nullptr;
-        std::map<std::string, llvm::AllocaInst*> variables;
-        std::map<std::string, bool> setVariables;
+        std::map<std::string, std::shared_ptr<BlockVariable>> variables;
         std::vector<std::shared_ptr<Block>> children;
     };
 

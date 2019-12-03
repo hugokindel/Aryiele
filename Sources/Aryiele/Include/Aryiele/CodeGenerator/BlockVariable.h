@@ -1,6 +1,6 @@
 //==================================================================================//
 //                                                                                  //
-//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                       //
+//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                      //
 //                                                                                  //
 //  This file is part of the Aryiele project.                                       //
 //  Licensed under MIT License:                                                     //
@@ -25,25 +25,20 @@
 //                                                                                  //
 //==================================================================================//
 
-#ifndef ARYIELE_CODEGENERATOR_BLOCKSTACK_H
-#define ARYIELE_CODEGENERATOR_BLOCKSTACK_H
+#ifndef ARYIELE_BLOCKVARIABLE_H
+#define ARYIELE_BLOCKVARIABLE_H
 
 #include <Aryiele/Common.h>
-#include <Aryiele/CodeGenerator/Block.h>
+#include <llvm/IR/Instructions.h>
 
 namespace Aryiele {
-    struct BlockStack {
-        BlockStack() = default;
-
-        std::shared_ptr<Block> create(bool setAsCurrent = true);
-        std::shared_ptr<Block> escapeCurrent();
-        std::shared_ptr<BlockVariable> findVariable(const std::string& identifier);
-        void addVariable(const std::string& identifier, llvm::AllocaInst* instance, bool isConstant = false);
-        void addVariable(const std::string& identifier, std::shared_ptr<BlockVariable> variable);
-
-        std::shared_ptr<Block> current = nullptr;
+    struct BlockVariable {
+        explicit BlockVariable(llvm::AllocaInst* instance, bool isConstant = false);
+        
+        llvm::AllocaInst* instance;
+        bool isConstant;
     };
-
+    
 } /* Namespace Aryiele. */
 
-#endif /* ARYIELE_CODEGENERATOR_BLOCKSTACK_H. */
+#endif /* ARYIELE_BLOCKVARIABLE_H. */
