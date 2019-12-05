@@ -40,7 +40,7 @@
 
 #define ARC_RUN_CHECKERRORS() { \
     if (::Vanir::Logger::errorCount > 0) \
-        return 0; \
+        return 1; \
     Vanir::Logger::resetCounters(); \
 }
 

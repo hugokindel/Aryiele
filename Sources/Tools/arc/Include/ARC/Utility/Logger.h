@@ -26,7 +26,7 @@
 //==================================================================================//
 
 #ifndef ARYIELE_ARC_LOGGER_H
-#define ARYIELE_ARC_LOGGER_H.H_H
+#define ARYIELE_ARC_LOGGER_H
 
 #include <Vanir/Logger/Logger.h>
 
@@ -73,4 +73,4 @@
 #define ULOG_ERROR(...) LOG_ERROR(__VA_ARGS__)
 #endif
 
-#endif /* ARYIELE_ARC_LOGGER_H.H_H. */
+#endif /* ARYIELE_ARC_LOGGER_H. */
