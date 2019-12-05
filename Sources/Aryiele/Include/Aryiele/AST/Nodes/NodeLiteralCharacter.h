@@ -35,7 +35,7 @@ namespace Aryiele {
     struct NodeLiteralCharacter : public Node {
         explicit NodeLiteralCharacter(const std::string& value = " ");
         
-        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        void dumpAST(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
         
         std::string value;

@@ -34,7 +34,7 @@ namespace Aryiele {
     
     }
     
-    void NodeLiteralArray::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeLiteralArray::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Array");
         auto elementsNode = std::make_shared<ParserInformation>(node, "Elements:");
         
@@ -42,7 +42,7 @@ namespace Aryiele {
             auto elementNode = std::make_shared<ParserInformation>(elementsNode, std::to_string(i) + ": ");
             auto elementExpressionNode = std::make_shared<ParserInformation>(elementNode, "Expression:");
     
-            elements.at(i)->dumpInformations(elementExpressionNode);
+            elements.at(i)->dumpAST(elementExpressionNode);
     
             elementNode->children.emplace_back(elementExpressionNode);
     

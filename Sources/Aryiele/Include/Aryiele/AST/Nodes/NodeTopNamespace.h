@@ -37,7 +37,7 @@ namespace Aryiele {
         NodeTopNamespace(const std::string& identifier,
                          std::vector<std::shared_ptr<Node>> content);
         
-        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        void dumpAST(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
         
         std::string identifier;

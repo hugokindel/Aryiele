@@ -35,7 +35,7 @@ namespace Aryiele {
     struct NodeStatementBlock : public Node {
         explicit NodeStatementBlock(std::vector<std::shared_ptr<Node>> body = std::vector<std::shared_ptr<Node>>());
 
-        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        void dumpAST(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
 
         std::vector<std::shared_ptr<Node>> body;

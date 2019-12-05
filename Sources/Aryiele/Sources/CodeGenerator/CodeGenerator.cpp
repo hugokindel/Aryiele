@@ -275,9 +275,6 @@ namespace Aryiele {
     }
     
     GenerationError CodeGenerator::generateCode(NodeOperationTernary *node) {
-        std::vector<std::shared_ptr<Node>> leftr = {node->lhs};
-        std::vector<std::shared_ptr<Node>> rightr = {node->rhs};
-        
         auto entryBlock = m_builder.GetInsertBlock();
         auto ternaryBasicBlock = llvm::BasicBlock::Create(m_context, "_ternary_start", m_builder.GetInsertBlock()->getParent());
     
@@ -291,7 +288,7 @@ namespace Aryiele {
         llvm::BasicBlock* endBasicBlock = nullptr;
         llvm::AllocaInst* alloca = nullptr;
         
-        if (!allPathsReturn(leftr) || !allPathsReturn(rightr)) {
+        if (!allPathsReturn(node->lhs) || !allPathsReturn(node->rhs)) {
             endBasicBlock = llvm::BasicBlock::Create(m_context, "_ternary_end", m_builder.GetInsertBlock()->getParent());
     
             alloca = createEntryBlockAllocation(m_builder.GetInsertBlock()->getParent(), "v_ternary_temp");
@@ -303,7 +300,7 @@ namespace Aryiele {
         m_builder.SetInsertPoint(leftBasicBlock);
         auto left = generateCode(node->lhs).value;
         
-        if (!allPathsReturn(leftr)) {
+        if (!allPathsReturn(node->lhs)) {
             m_builder.CreateStore(castType(left, alloca->getType()), alloca);
             
             m_builder.CreateBr(endBasicBlock);
@@ -312,7 +309,7 @@ namespace Aryiele {
         m_builder.SetInsertPoint(rightBasicBlock);
         auto right = generateCode(node->rhs).value;
         
-        if (!allPathsReturn(rightr)) {
+        if (!allPathsReturn(node->rhs)) {
             m_builder.CreateStore(castType(right, alloca->getType()), alloca);
             
             m_builder.CreateBr(endBasicBlock);
@@ -320,7 +317,7 @@ namespace Aryiele {
         
         llvm::Value* ternaryVariable = nullptr;
     
-        if (!allPathsReturn(leftr) || !allPathsReturn(rightr)) {
+        if (!allPathsReturn(node->lhs) || !allPathsReturn(node->rhs)) {
             m_builder.SetInsertPoint(endBasicBlock);
     
             ternaryVariable = m_builder.CreateLoad(alloca, "v_ternary_temp");
@@ -833,8 +830,14 @@ namespace Aryiele {
         if (node->getType() == Node_TopFunction) {
             auto functionNode = std::dynamic_pointer_cast<NodeTopFunction>(node);
             
-            if (functionNode->type == "Void" || allPathsReturn(functionNode->body)) {
+            if (functionNode->type == "Void" ) {
                 return true;
+            }
+    
+            for (auto& statement : functionNode->body) {
+                if (allPathsReturn(statement)) {
+                    return true;
+                }
             }
         } else if (node->getType() == Node_StatementIf) {
             auto ifNode = std::dynamic_pointer_cast<NodeStatementIf>(node);
@@ -842,12 +845,16 @@ namespace Aryiele {
             bool ifReturns = false;
             bool elseReturns = false;
     
-            if (allPathsReturn(ifNode->ifBody)) {
-                ifReturns = true;
+            for (auto& statement : ifNode->ifBody) {
+                if (allPathsReturn(statement)) {
+                    ifReturns = true;
+                }
             }
     
-            if (allPathsReturn(ifNode->elseBody)) {
-                elseReturns = true;
+            for (auto& statement : ifNode->elseBody) {
+                if (allPathsReturn(statement)) {
+                    elseReturns = true;
+                }
             }
     
             if (ifReturns && elseReturns) {
@@ -855,51 +862,37 @@ namespace Aryiele {
             }
         } else if (node->getType() == Node_StatementFor) {
             auto forNode = std::dynamic_pointer_cast<NodeStatementFor>(node);
-                
-            if (allPathsReturn(forNode->body)) {
-                return true;
+    
+            for (auto& statement : forNode->body) {
+                if (allPathsReturn(statement)) {
+                    return true;
+                }
             }
         } else if (node->getType() == Node_StatementWhile) {
             auto whileNode = std::dynamic_pointer_cast<NodeStatementWhile>(node);
     
-            if (allPathsReturn(whileNode->body)) {
+            for (auto& statement : whileNode->body) {
+                if (allPathsReturn(statement)) {
+                    return true;
+                }
+            }
+        } else if (node->getType() == Node_OperationTernary) {
+            auto ternaryNode = std::dynamic_pointer_cast<NodeOperationTernary>(node);
+            
+            if (allPathsReturn(ternaryNode->lhs) && allPathsReturn(ternaryNode->rhs)) {
                 return true;
             }
+        } else if (node->getType() == Node_StatementReturn) {
+            return true;
         }
-        
+    
         return false;
     }
     
     bool CodeGenerator::allPathsReturn(std::vector<std::shared_ptr<Node>> nodes) {
         for (auto& statement : nodes) {
-            if (statement->getType() == Node_StatementReturn) {
+            if (allPathsReturn(statement)) {
                 return true;
-            } else if (statement->getType() == Node_StatementIf) {
-                auto ifNode = std::dynamic_pointer_cast<NodeStatementIf>(statement);
-                
-                if (!ifNode->elseBody.empty() && allPathsReturn(statement)) {
-                    return true;
-                }
-            } else if (statement->getType() == Node_StatementFor) {
-                auto forNode = std::dynamic_pointer_cast<NodeStatementFor>(statement);
-    
-                if (allPathsReturn(forNode)) {
-                    return true;
-                }
-            } else if (statement->getType() == Node_StatementWhile) {
-                auto whileNode = std::dynamic_pointer_cast<NodeStatementWhile>(statement);
-    
-                if (allPathsReturn(whileNode)) {
-                    return true;
-                }
-            } else if (statement->getType() == Node_OperationTernary) {
-                auto ternaryNode = std::dynamic_pointer_cast<NodeOperationTernary>(statement);
-                std::vector<std::shared_ptr<Node>> leftr = {ternaryNode->lhs};
-                std::vector<std::shared_ptr<Node>> rightr = {ternaryNode->rhs};
-                
-                if (allPathsReturn(leftr) && allPathsReturn(rightr)) {
-                    return true;
-                }
             }
         }
         

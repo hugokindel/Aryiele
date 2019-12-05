@@ -34,17 +34,17 @@ namespace Aryiele {
         
     }
     
-    void NodeStatementArrayCall::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeStatementArrayCall::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Array Call");
         auto elementsNode = std::make_shared<ParserInformation>(node, "Element:");
         auto subExpressionNode = std::make_shared<ParserInformation>(node, "Subexpression:");
     
-        element->dumpInformations(elementsNode);
+        element->dumpAST(elementsNode);
         
         node->children.emplace_back(elementsNode);
     
         if (subExpression) {
-            subExpression->dumpInformations(subExpressionNode);
+            subExpression->dumpAST(subExpressionNode);
             node->children.emplace_back(subExpressionNode);
         }
         

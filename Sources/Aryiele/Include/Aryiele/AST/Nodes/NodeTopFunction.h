@@ -39,7 +39,7 @@ namespace Aryiele {
                         std::vector<Argument> argumentsName,
                         std::vector<std::shared_ptr<Node>> body);
 
-        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        void dumpAST(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
 
         std::string identifier;

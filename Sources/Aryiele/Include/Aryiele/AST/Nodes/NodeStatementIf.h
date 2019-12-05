@@ -37,7 +37,7 @@ namespace Aryiele {
                          std::vector<std::shared_ptr<Node>> ifBody,
                          std::vector<std::shared_ptr<Node>> elseBody = std::vector<std::shared_ptr<Node>>());
 
-        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        void dumpAST(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
 
         std::shared_ptr<Node> condition;

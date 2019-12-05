@@ -28,7 +28,7 @@
 #include <Aryiele/AST/Nodes/NodeStatementBreak.h>
 
 namespace Aryiele {
-    void NodeStatementBreak::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeStatementBreak::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Break");
         
         parentNode->children.emplace_back(node);

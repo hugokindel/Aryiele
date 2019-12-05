@@ -33,7 +33,7 @@
 
 namespace Aryiele {
     struct NodeStatementBreak : public Node {
-        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        void dumpAST(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
     };
     

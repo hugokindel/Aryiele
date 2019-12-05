@@ -37,7 +37,7 @@ namespace Aryiele {
     struct NodeOperationUnary : public Node {
         NodeOperationUnary(ParserTokenEnum operationType, std::shared_ptr<Node> expression, bool left = true);
         
-        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        void dumpAST(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
         
         ParserTokenEnum operationType;

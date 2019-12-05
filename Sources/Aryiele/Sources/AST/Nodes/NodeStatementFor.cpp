@@ -34,7 +34,7 @@ namespace Aryiele {
         
     }
     
-    void NodeStatementFor::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeStatementFor::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "For");
         auto variableNode = std::make_shared<ParserInformation>(node, "Variable:");
         auto conditionNode = std::make_shared<ParserInformation>(node, "Condition:");
@@ -42,16 +42,16 @@ namespace Aryiele {
         auto bodyNode = std::make_shared<ParserInformation>(node, "Body:");
     
         if (variable) {
-            variable->dumpInformations(variableNode);
+            variable->dumpAST(variableNode);
         }
-        condition->dumpInformations(conditionNode);
+        condition->dumpAST(conditionNode);
         
         for (auto& i : body) {
-            i->dumpInformations(bodyNode);
+            i->dumpAST(bodyNode);
         }
         
         if (incrementalValue) {
-            incrementalValue->dumpInformations(incrementalValueNode);
+            incrementalValue->dumpAST(incrementalValueNode);
         }
     
         if (variable) {

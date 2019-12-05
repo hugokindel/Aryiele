@@ -37,7 +37,7 @@ namespace Aryiele {
     struct NodeStatementFunctionCall : public Node {
         NodeStatementFunctionCall(const std::string& identifier, std::vector<std::shared_ptr<Node>> arguments = std::vector<std::shared_ptr<Node>>(), std::shared_ptr<Node> subExpression = nullptr);
 
-        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        void dumpAST(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
         
         std::string identifier;

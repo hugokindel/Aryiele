@@ -28,7 +28,7 @@
 #include <Aryiele/AST/Nodes/NodeStatementContinue.h>
 
 namespace Aryiele {
-    void NodeStatementContinue::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeStatementContinue::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Continue");
     
         parentNode->children.emplace_back(node);

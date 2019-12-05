@@ -62,7 +62,7 @@ namespace Aryiele {
     };
     
     struct Node {
-        virtual void dumpInformations(std::shared_ptr<ParserInformation> parentNode) = 0;
+        virtual void dumpAST(std::shared_ptr<ParserInformation> parentNode) = 0;
         virtual NodeEnum getType() = 0;
         virtual std::string getTypeName();
         

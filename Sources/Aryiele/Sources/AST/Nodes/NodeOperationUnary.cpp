@@ -33,14 +33,14 @@ namespace Aryiele {
     
     }
     
-    void NodeOperationUnary::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeOperationUnary::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Unary Operation");
         auto sideNode = std::make_shared<ParserInformation>(node, std::string("Side: ") + std::string(left ? "Left" : "Right"));
         auto operationTypeNode = std::make_shared<ParserInformation>(
             node, "Type: " + ParserToken::getTypeName(operationType));
         auto expressionNode = std::make_shared<ParserInformation>(node, "Operand:");
     
-        expression->dumpInformations(expressionNode);
+        expression->dumpAST(expressionNode);
     
         node->children.emplace_back(sideNode);
         node->children.emplace_back(operationTypeNode);

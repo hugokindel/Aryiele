@@ -35,16 +35,16 @@ namespace Aryiele {
 
     }
 
-    void NodeStatementIf::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeStatementIf::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "If/Else");
         auto ifNode = std::make_shared<ParserInformation>(node, "If");
         auto ifConditionNode = std::make_shared<ParserInformation>(ifNode, "Condition:");
         auto ifBodyNode = std::make_shared<ParserInformation>(ifNode, "Body:");
 
-        condition->dumpInformations(ifConditionNode);
+        condition->dumpAST(ifConditionNode);
 
         for (auto& i : ifBody)
-            i->dumpInformations(ifBodyNode);
+            i->dumpAST(ifBodyNode);
 
         ifNode->children.emplace_back(ifConditionNode);
         ifNode->children.emplace_back(ifBodyNode);
@@ -55,7 +55,7 @@ namespace Aryiele {
             auto elseBodyNode = std::make_shared<ParserInformation>(elseNode, "Body:");
 
             for (auto& i : elseBody)
-                i->dumpInformations(elseBodyNode);
+                i->dumpAST(elseBodyNode);
 
             elseNode->children.emplace_back(elseBodyNode);
             node->children.emplace_back(elseNode);

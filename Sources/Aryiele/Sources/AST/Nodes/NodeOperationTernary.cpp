@@ -34,15 +34,15 @@ namespace Aryiele {
         
     }
     
-    void NodeOperationTernary::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeOperationTernary::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Ternary Operation");
         auto conditionNode = std::make_shared<ParserInformation>(node, "Condition:");
         auto lhsNode = std::make_shared<ParserInformation>(node, "LHS:");
         auto rhsNode = std::make_shared<ParserInformation>(node, "RHS:");
         
-        condition->dumpInformations(conditionNode);
-        lhs->dumpInformations(lhsNode);
-        rhs->dumpInformations(rhsNode);
+        condition->dumpAST(conditionNode);
+        lhs->dumpAST(lhsNode);
+        rhs->dumpAST(rhsNode);
         
         node->children.emplace_back(conditionNode);
         node->children.emplace_back(lhsNode);

@@ -36,13 +36,13 @@ namespace Aryiele {
 
     }
 
-    void NodeTopFunction::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeTopFunction::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Function");
         auto argumentsNode = std::make_shared<ParserInformation>(node, "Arguments:");
         auto valueNode = std::make_shared<ParserInformation>(node, "Body:");
 
         for (auto& childNode : body)
-            childNode->dumpInformations(valueNode);
+            childNode->dumpAST(valueNode);
 
         int i = 0;
 

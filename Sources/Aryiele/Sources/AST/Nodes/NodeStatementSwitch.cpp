@@ -37,23 +37,23 @@ namespace Aryiele {
         
     }
     
-    void NodeStatementSwitch::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeStatementSwitch::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Switch");
         auto expressionNode = std::make_shared<ParserInformation>(node, "Expression:");
         auto casesNode = std::make_shared<ParserInformation>(node, "Cases:");
         auto defaultNode = std::make_shared<ParserInformation>(node, "Default:");
     
-        expression->dumpInformations(expressionNode);
+        expression->dumpAST(expressionNode);
         
         for (int i = 0; i < casesExpression.size(); i++) {
             auto caseNode = std::make_shared<ParserInformation>(casesNode, std::to_string(i) + ": ");
             auto caseExpressionNode = std::make_shared<ParserInformation>(caseNode, "Expression:");
             auto caseBodyNode = std::make_shared<ParserInformation>(caseNode, "Body:");
     
-            casesExpression.at(i)->dumpInformations(caseExpressionNode);
+            casesExpression.at(i)->dumpAST(caseExpressionNode);
     
             for (auto& j : casesBody.at(i)) {
-                j->dumpInformations(caseBodyNode);
+                j->dumpAST(caseBodyNode);
             }
     
             caseNode->children.emplace_back(caseExpressionNode);
@@ -64,7 +64,7 @@ namespace Aryiele {
     
         if (!defaultBody.empty()) {
             for (auto& i : defaultBody) {
-                i->dumpInformations(defaultNode);
+                i->dumpAST(defaultNode);
             }
         }
         

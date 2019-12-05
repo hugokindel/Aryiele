@@ -35,7 +35,7 @@ namespace Aryiele {
     struct NodeLiteralNumberInteger : public Node {
         explicit NodeLiteralNumberInteger(long value = 0);
 
-        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        void dumpAST(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
 
         long value;

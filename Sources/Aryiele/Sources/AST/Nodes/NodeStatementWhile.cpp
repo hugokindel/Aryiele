@@ -34,16 +34,16 @@ namespace Aryiele {
         
     }
     
-    void NodeStatementWhile::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeStatementWhile::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "While");
         auto doOnceNode = std::make_shared<ParserInformation>(node, std::string("Do: ") + std::string((doOnce ? "true" : "false")));
         auto conditionNode = std::make_shared<ParserInformation>(node, "Condition:");
         auto bodyNode = std::make_shared<ParserInformation>(node, "Body:");
     
-        condition->dumpInformations(conditionNode);
+        condition->dumpAST(conditionNode);
     
         for (auto& i : body) {
-            i->dumpInformations(bodyNode);
+            i->dumpAST(bodyNode);
         }
     
         node->children.emplace_back(doOnceNode);

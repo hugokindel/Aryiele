@@ -33,7 +33,7 @@ namespace Aryiele {
         
     }
     
-    void NodeLiteralCharacter::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeLiteralCharacter::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Character");
         auto bodyNode = std::make_shared<ParserInformation>(node, "Value: " + value);
         

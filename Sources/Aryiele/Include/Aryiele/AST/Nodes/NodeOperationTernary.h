@@ -37,7 +37,7 @@ namespace Aryiele {
     struct NodeOperationTernary : public Node {
         NodeOperationTernary(std::shared_ptr<Node> condition, std::shared_ptr<Node> lhs, std::shared_ptr<Node> rhs);
         
-        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        void dumpAST(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
     
         std::shared_ptr<Node> condition;

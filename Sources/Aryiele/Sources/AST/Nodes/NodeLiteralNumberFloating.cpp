@@ -33,7 +33,7 @@ namespace Aryiele {
 
     }
 
-    void NodeLiteralNumberFloating::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeLiteralNumberFloating::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Double");
         auto bodyNode = std::make_shared<ParserInformation>(node, "Value: " + std::to_string(value));
 

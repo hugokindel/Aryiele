@@ -35,7 +35,7 @@ namespace Aryiele {
     struct NodeLiteralArray : public Node {
         explicit NodeLiteralArray(std::vector<std::shared_ptr<Node>> elements = std::vector<std::shared_ptr<Node>>());
         
-        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        void dumpAST(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
         
         std::vector<std::shared_ptr<Node>> elements;

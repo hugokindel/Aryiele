@@ -250,7 +250,7 @@ namespace ARC {
         
             // TODO: Small memory leak coming from here (see valgrind)
             for (auto& node : nodes)
-                node->dumpInformations(dumpNode);
+                node->dumpAST(dumpNode);
         
             dumpASTInformations(dumpNode, " ");
         

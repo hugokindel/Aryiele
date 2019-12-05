@@ -37,15 +37,15 @@ namespace Aryiele {
 
     }
 
-    void NodeOperationBinary::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeOperationBinary::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Binary Operation");
         auto operationTypeNode = std::make_shared<ParserInformation>(
             node, "Type: " + ParserToken::getTypeName(operationType));
         auto lhsNode = std::make_shared<ParserInformation>(node, "LHS:");
         auto rhsNode = std::make_shared<ParserInformation>(node, "RHS:");
     
-        lhs->dumpInformations(lhsNode);
-        rhs->dumpInformations(rhsNode);
+        lhs->dumpAST(lhsNode);
+        rhs->dumpAST(rhsNode);
 
         node->children.emplace_back(operationTypeNode);
         node->children.emplace_back(lhsNode);

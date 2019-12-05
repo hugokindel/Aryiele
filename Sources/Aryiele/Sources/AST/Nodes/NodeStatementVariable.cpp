@@ -33,7 +33,7 @@ namespace Aryiele {
 
     }
 
-    void NodeStatementVariable::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeStatementVariable::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Variable");
         auto bodyNode = std::make_shared<ParserInformation>(node, "Identifier: " + identifier);
         auto subExpressionNode = std::make_shared<ParserInformation>(node, "Subexpression:");
@@ -41,7 +41,7 @@ namespace Aryiele {
         node->children.emplace_back(bodyNode);
         
         if (subExpression) {
-            subExpression->dumpInformations(subExpressionNode);
+            subExpression->dumpAST(subExpressionNode);
             node->children.emplace_back(subExpressionNode);
         }
         

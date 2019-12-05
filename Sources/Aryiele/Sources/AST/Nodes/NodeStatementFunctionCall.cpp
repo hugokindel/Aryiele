@@ -35,7 +35,7 @@ namespace Aryiele {
 
     }
 
-    void NodeStatementFunctionCall::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeStatementFunctionCall::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Function Call");
         auto identifierNode = std::make_shared<ParserInformation>(node, "Identifier: " + identifier);
         auto argumentsNode = std::make_shared<ParserInformation>(node, "Arguments:");
@@ -47,7 +47,7 @@ namespace Aryiele {
             auto argumentNode = std::make_shared<ParserInformation>(argumentsNode, std::to_string(i));
             auto body = std::make_shared<ParserInformation>(argumentNode, "Body:");
 
-            argument->dumpInformations(body);
+            argument->dumpAST(body);
 
             argumentNode->children.emplace_back(body);
             argumentsNode->children.emplace_back(argumentNode);
@@ -62,7 +62,7 @@ namespace Aryiele {
         }
         
         if (subExpression) {
-            subExpression->dumpInformations(subExpressionNode);
+            subExpression->dumpAST(subExpressionNode);
             node->children.emplace_back(subExpressionNode);
         }
         

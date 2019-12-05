@@ -35,7 +35,7 @@ namespace Aryiele {
     struct NodeLiteralBoolean : public Node {
         explicit NodeLiteralBoolean(bool value = false);
         
-        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        void dumpAST(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
         
         bool value;

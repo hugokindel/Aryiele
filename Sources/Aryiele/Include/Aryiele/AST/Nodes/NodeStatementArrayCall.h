@@ -36,7 +36,7 @@ namespace Aryiele {
         explicit NodeStatementArrayCall(std::shared_ptr<Node> arrayElementExpression,
             std::shared_ptr<Node> subExpression = nullptr);
         
-        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        void dumpAST(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
     
         std::shared_ptr<Node> element;

@@ -35,7 +35,7 @@ namespace Aryiele {
     struct NodeLiteralNumberFloating : public Node {
         explicit NodeLiteralNumberFloating(double value = 0.0);
 
-        void dumpInformations(std::shared_ptr<ParserInformation> parentNode) override;
+        void dumpAST(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
 
         double value;

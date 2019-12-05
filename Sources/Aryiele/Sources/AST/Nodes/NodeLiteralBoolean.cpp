@@ -33,7 +33,7 @@ namespace Aryiele {
         
     }
     
-    void NodeLiteralBoolean::dumpInformations(std::shared_ptr<ParserInformation> parentNode) {
+    void NodeLiteralBoolean::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Boolean");
         auto bodyNode = std::make_shared<ParserInformation>(node, "Value: " + std::to_string(value));
         
