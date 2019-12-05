@@ -28,17 +28,18 @@
 #include <Aryiele/AST/Nodes/NodeTopNamespace.h>
 
 namespace Aryiele {
-    NodeTopNamespace::NodeTopNamespace(const std::string& identifier, std::vector<std::shared_ptr<Node>> content) :
-        identifier(identifier), content(content) {
-    
+    NodeTopNamespace::NodeTopNamespace(const std::string& identifier, std::vector<std::shared_ptr<Node>> body) :
+        identifier(identifier), body(body) {
+        children = std::vector<std::shared_ptr<Node>> ();
+        children.insert(children.end(), body.begin(), body.end());
     }
     
     void NodeTopNamespace::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Namespace");
         auto identifierNode = std::make_shared<ParserInformation>(node, "Identifier: " + identifier);
-        auto bodyNode = std::make_shared<ParserInformation>(node, "Content:");
+        auto bodyNode = std::make_shared<ParserInformation>(node, "Body:");
     
-        for (auto& statement : content) {
+        for (auto& statement : body) {
             statement->dumpAST(bodyNode);
         }
     

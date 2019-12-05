@@ -28,10 +28,10 @@
 #include <Aryiele/AST/Nodes/NodeOperationTernary.h>
 
 namespace Aryiele {
-    NodeOperationTernary::NodeOperationTernary(std::shared_ptr<Node> condition, std::shared_ptr<Node> lhs,
-                                               std::shared_ptr<Node> rhs) :
+    NodeOperationTernary::NodeOperationTernary(std::shared_ptr<Node> condition,
+        std::shared_ptr<Node> lhs, std::shared_ptr<Node> rhs) :
         condition(condition), lhs(lhs), rhs(rhs) {
-        
+        children = std::vector<std::shared_ptr<Node>> {condition, lhs, rhs};
     }
     
     void NodeOperationTernary::dumpAST(std::shared_ptr<ParserInformation> parentNode) {

@@ -32,7 +32,9 @@ namespace Aryiele {
     NodeStatementFunctionCall::NodeStatementFunctionCall(const std::string &identifier,
         std::vector<std::shared_ptr<Node>> arguments, std::shared_ptr<Node> subExpression) :
         identifier(identifier) , arguments(arguments), subExpression(subExpression) {
-
+        children = std::vector<std::shared_ptr<Node>>();
+        children.insert(children.end(), arguments.begin(), arguments.end());
+        children.insert(children.end(), subExpression);
     }
 
     void NodeStatementFunctionCall::dumpAST(std::shared_ptr<ParserInformation> parentNode) {

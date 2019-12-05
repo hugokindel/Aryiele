@@ -28,12 +28,11 @@
 #include <Aryiele/AST/Nodes/NodeTopFunction.h>
 
 namespace Aryiele {
-    NodeTopFunction::NodeTopFunction(const std::string& identifier,
-                                     const std::string& type,
-                                     std::vector<Argument> arguments,
-                                     std::vector<std::shared_ptr<Node>> body) :
+    NodeTopFunction::NodeTopFunction(const std::string& identifier, const std::string& type,
+        std::vector<Argument> arguments, std::vector<std::shared_ptr<Node>> body) :
         identifier(identifier), type(type), arguments(arguments), body(body) {
-
+        children = std::vector<std::shared_ptr<Node>> ();
+        children.insert(children.end(), body.begin(), body.end());
     }
 
     void NodeTopFunction::dumpAST(std::shared_ptr<ParserInformation> parentNode) {

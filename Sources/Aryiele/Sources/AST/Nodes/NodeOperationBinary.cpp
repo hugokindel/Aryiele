@@ -29,12 +29,9 @@
 
 namespace Aryiele {
     NodeOperationBinary::NodeOperationBinary(ParserTokenEnum operationType,
-                                             std::shared_ptr<Node> lhs,
-                                             std::shared_ptr<Node> rhs) :
-            operationType(operationType),
-            lhs(lhs),
-            rhs(rhs) {
-
+        std::shared_ptr<Node> lhs, std::shared_ptr<Node> rhs) :
+        operationType(operationType), lhs(lhs), rhs(rhs) {
+        children = std::vector<std::shared_ptr<Node>> {lhs, rhs};
     }
 
     void NodeOperationBinary::dumpAST(std::shared_ptr<ParserInformation> parentNode) {

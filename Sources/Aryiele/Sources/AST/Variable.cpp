@@ -28,8 +28,8 @@
 #include <Aryiele/AST/Variable.h>
 
 namespace Aryiele {
-    Variable::Variable(const std::string &identifier, const std::string &type, bool constant, std::shared_ptr<Node> expression) :
-        identifier(identifier), type(type), constant(constant), expression(expression) {
+    Variable::Variable(const std::string &identifier, const std::string &type, bool isConstant, std::shared_ptr<Node> expression) :
+        identifier(identifier), type(type), isConstant(isConstant), expression(expression) {
 
     }
 

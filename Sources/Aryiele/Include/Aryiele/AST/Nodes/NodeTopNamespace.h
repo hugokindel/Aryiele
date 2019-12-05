@@ -34,14 +34,13 @@
 
 namespace Aryiele {
     struct NodeTopNamespace : public Node {
-        NodeTopNamespace(const std::string& identifier,
-                         std::vector<std::shared_ptr<Node>> content);
+        NodeTopNamespace(const std::string& identifier, std::vector<std::shared_ptr<Node>> body);
         
         void dumpAST(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
         
         std::string identifier;
-        std::vector<std::shared_ptr<Node>> content;
+        std::vector<std::shared_ptr<Node>> body;
     };
     
 } /* Namespace Aryiele. */

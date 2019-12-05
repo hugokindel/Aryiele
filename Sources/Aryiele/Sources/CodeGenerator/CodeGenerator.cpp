@@ -30,6 +30,7 @@
 #include <Aryiele/CodeGenerator/CodeGenerator.h>
 #include <Aryiele/Parser/Parser.h>
 #include <Aryiele/AST/Nodes/Node.h>
+#include <Aryiele/AST/Nodes/NodeTopFile.h>
 #include <cfloat>
 
 namespace Aryiele {
@@ -39,13 +40,17 @@ namespace Aryiele {
         m_blockStack = std::make_shared<BlockStack>();
     }
 
-    void CodeGenerator::generateCode(std::vector<std::shared_ptr<Node>> nodes) {
-        for (auto& node : nodes) {
-            if (node->getType() == Node_TopFunction) {
-                auto function = std::dynamic_pointer_cast<NodeTopFunction>(node);
-                
-                if (!allPathsReturn(node)) {
-                    LOG_ERROR("in function '", function->identifier, "': ", "not all code paths return a value")
+    void CodeGenerator::generateCode(std::shared_ptr<NodeRoot> nodeRoot) {
+        for (auto& file : nodeRoot->body) {
+            auto fileNode = std::dynamic_pointer_cast<NodeTopFile>(file);
+            
+            for (auto& node : fileNode->body) {
+                if (node->getType() == Node_TopFunction) {
+                    auto function = std::dynamic_pointer_cast<NodeTopFunction>(node);
+            
+                    if (!allPathsReturn(node)) {
+                        LOG_ERROR("in function '", function->identifier, "': ", "not all code paths return a value")
+                    }
                 }
             }
         }
@@ -61,9 +66,14 @@ namespace Aryiele {
         // --
 
         m_blockStack->create();
-
-        for (auto& node : nodes)
-            generateCode(node);
+    
+        for (auto& file : nodeRoot->body) {
+            auto fileNode = std::dynamic_pointer_cast<NodeTopFile>(file);
+        
+            for (auto& node : fileNode->body) {
+                generateCode(node);
+            }
+        }
 
         m_blockStack->escapeCurrent();
     }
@@ -810,7 +820,7 @@ namespace Aryiele {
                     return GenerationError();
                 }
             }
-            else if (!variable->constant) {
+            else if (!variable->isConstant) {
                 error.value = getTypeDefaultValue(variable->type);
             }
 
@@ -820,7 +830,7 @@ namespace Aryiele {
                 m_builder.CreateStore(castType(error.value, allocationInstance->getType()), allocationInstance);
             }
             
-            m_blockStack->addVariable(variable->identifier, allocationInstance, variable->constant);
+            m_blockStack->addVariable(variable->identifier, allocationInstance, variable->isConstant);
         }
 
         return GenerationError(true);

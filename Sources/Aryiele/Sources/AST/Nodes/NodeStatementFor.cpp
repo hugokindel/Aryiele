@@ -31,7 +31,8 @@ namespace Aryiele {
     NodeStatementFor::NodeStatementFor(std::shared_ptr<Node> variable, std::shared_ptr<Node> condition,
         std::shared_ptr<Node> incrementalValue, std::vector<std::shared_ptr<Node>> body) :
         variable(variable), condition(condition), incrementalValue(incrementalValue), body(body) {
-        
+        children = std::vector<std::shared_ptr<Node>> {variable, condition, incrementalValue};
+        children.insert(children.end(), body.begin(), body.end());
     }
     
     void NodeStatementFor::dumpAST(std::shared_ptr<ParserInformation> parentNode) {

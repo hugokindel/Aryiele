@@ -33,13 +33,13 @@
 
 namespace Aryiele {
     struct NodeStatementArrayCall : public Node {
-        explicit NodeStatementArrayCall(std::shared_ptr<Node> arrayElementExpression,
+        explicit NodeStatementArrayCall(std::shared_ptr<Node> expression,
             std::shared_ptr<Node> subExpression = nullptr);
         
         void dumpAST(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
     
-        std::shared_ptr<Node> element;
+        std::shared_ptr<Node> expression;
         std::shared_ptr<Node> subExpression;
     };
     

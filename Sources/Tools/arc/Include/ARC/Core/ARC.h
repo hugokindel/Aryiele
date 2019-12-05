@@ -49,8 +49,9 @@ namespace ARC {
     public:
         static int run(int argc, char *argv[]);
         static std::vector<Aryiele::LexerToken> doLexerPass(const std::string& filepath);
-        static std::vector<std::shared_ptr<Aryiele::Node>> doParserPass(std::vector<Aryiele::LexerToken> lexerTokens);
-        static void doCodeGeneratorPass(std::vector<std::shared_ptr<Aryiele::Node>> astNodes);
+        static std::shared_ptr<Aryiele::NodeRoot> doParserPass(const std::string& path,
+            std::vector<Aryiele::LexerToken> lexerTokens);
+        static void doCodeGeneratorPass(std::shared_ptr<Aryiele::NodeRoot> nodeRoot);
         static void doObjectGeneratorPass();
         static void doExecutableGeneratorPass();
         static void dumpASTInformations(const std::shared_ptr<Aryiele::ParserInformation>& node, std::string indent = "");

@@ -30,50 +30,25 @@
 namespace Aryiele {
     
     NodeStatementSwitch::NodeStatementSwitch(std::shared_ptr<Node> expression,
-                                             std::vector<std::shared_ptr<Node>> casesExpression,
-                                             std::vector<std::vector<std::shared_ptr<Node>>> casesBody,
-                                             std::vector<std::shared_ptr<Node>> defaultBody) :
-        expression(expression), casesExpression(casesExpression), casesBody(casesBody), defaultBody(defaultBody) {
-        
+        std::vector<std::shared_ptr<Node>> cases) :
+        expression(expression), cases(cases) {
+        children = std::vector<std::shared_ptr<Node>> {expression};
+        children.insert(children.end(), cases.begin(), cases.end());
     }
     
     void NodeStatementSwitch::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Switch");
         auto expressionNode = std::make_shared<ParserInformation>(node, "Expression:");
         auto casesNode = std::make_shared<ParserInformation>(node, "Cases:");
-        auto defaultNode = std::make_shared<ParserInformation>(node, "Default:");
     
         expression->dumpAST(expressionNode);
         
-        for (int i = 0; i < casesExpression.size(); i++) {
-            auto caseNode = std::make_shared<ParserInformation>(casesNode, std::to_string(i) + ": ");
-            auto caseExpressionNode = std::make_shared<ParserInformation>(caseNode, "Expression:");
-            auto caseBodyNode = std::make_shared<ParserInformation>(caseNode, "Body:");
-    
-            casesExpression.at(i)->dumpAST(caseExpressionNode);
-    
-            for (auto& j : casesBody.at(i)) {
-                j->dumpAST(caseBodyNode);
-            }
-    
-            caseNode->children.emplace_back(caseExpressionNode);
-            caseNode->children.emplace_back(caseBodyNode);
-    
-            casesNode->children.emplace_back(caseNode);
+        for (auto& caseNode : cases) {
+            caseNode->dumpAST(casesNode);
         }
     
-        if (!defaultBody.empty()) {
-            for (auto& i : defaultBody) {
-                i->dumpAST(defaultNode);
-            }
-        }
-        
         node->children.emplace_back(expressionNode);
         node->children.emplace_back(casesNode);
-        
-        if (!defaultBody.empty()) {
-            node->children.emplace_back(defaultNode);
-        }
         
         parentNode->children.emplace_back(node);
     }

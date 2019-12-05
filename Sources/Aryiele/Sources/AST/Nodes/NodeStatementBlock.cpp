@@ -30,7 +30,8 @@
 namespace Aryiele {
     NodeStatementBlock::NodeStatementBlock(std::vector<std::shared_ptr<Node>> body) :
         body(body) {
-
+        children = std::vector<std::shared_ptr<Node>>();
+        children.insert(children.end(), body.begin(), body.end());
     }
 
     void NodeStatementBlock::dumpAST(std::shared_ptr<ParserInformation> parentNode) {

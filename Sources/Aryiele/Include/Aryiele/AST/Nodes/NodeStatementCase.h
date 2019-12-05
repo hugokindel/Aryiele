@@ -1,6 +1,6 @@
 //==================================================================================//
 //                                                                                  //
-//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                       //
+//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                      //
 //                                                                                  //
 //  This file is part of the Aryiele project.                                       //
 //  Licensed under MIT License:                                                     //
@@ -25,48 +25,24 @@
 //                                                                                  //
 //==================================================================================//
 
-#include <Aryiele/AST/Nodes/NodeStatementIf.h>
+#ifndef ARYIELE_NODESTATEMENTCASE_H
+#define ARYIELE_NODESTATEMENTCASE_H
+
+#include <Aryiele/Common.h>
+#include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
-    NodeStatementIf::NodeStatementIf(std::shared_ptr<Node> condition,
-        std::vector<std::shared_ptr<Node>> ifBody, std::vector<std::shared_ptr<Node>> elseBody) :
-        condition(condition), ifBody(ifBody), elseBody(elseBody) {
-        children = std::vector<std::shared_ptr<Node>> {condition};
-        children.insert(children.end(), ifBody.begin(), ifBody.end());
-        children.insert(children.end(), elseBody.begin(), elseBody.end());
-    }
-
-    void NodeStatementIf::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
-        auto node = std::make_shared<ParserInformation>(parentNode, "If/Else");
-        auto ifNode = std::make_shared<ParserInformation>(node, "If");
-        auto ifConditionNode = std::make_shared<ParserInformation>(ifNode, "Condition:");
-        auto ifBodyNode = std::make_shared<ParserInformation>(ifNode, "Body:");
-
-        condition->dumpAST(ifConditionNode);
-
-        for (auto& i : ifBody)
-            i->dumpAST(ifBodyNode);
-
-        ifNode->children.emplace_back(ifConditionNode);
-        ifNode->children.emplace_back(ifBodyNode);
-        node->children.emplace_back(ifNode);
-
-        if (!elseBody.empty()) {
-            auto elseNode = std::make_shared<ParserInformation>(node, "Else");
-            auto elseBodyNode = std::make_shared<ParserInformation>(elseNode, "Body:");
-
-            for (auto& i : elseBody)
-                i->dumpAST(elseBodyNode);
-
-            elseNode->children.emplace_back(elseBodyNode);
-            node->children.emplace_back(elseNode);
-        }
-
-        parentNode->children.emplace_back(node);
-    }
+    struct NodeStatementCase : public Node {
+        NodeStatementCase(std::shared_ptr<Node> expression = nullptr,
+            std::vector<std::shared_ptr<Node>> body = std::vector<std::shared_ptr<Node>>());
+        
+        void dumpAST(std::shared_ptr<ParserInformation> parentNode) override;
+        NodeEnum getType() override;
+        
+        std::shared_ptr<Node> expression;
+        std::vector<std::shared_ptr<Node>> body;
+    };
     
-    NodeEnum NodeStatementIf::getType() {
-        return Node_StatementIf;
-    }
-
 } /* Namespace Aryiele. */
+
+#endif /* ARYIELE_NODESTATEMENTCASE_H. */

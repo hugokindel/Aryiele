@@ -29,16 +29,16 @@
 
 namespace Aryiele {
     NodeStatementVariableDeclaration::NodeStatementVariableDeclaration(
-            std::vector<std::shared_ptr<Variable>> variables) :
+        std::vector<std::shared_ptr<Variable>> variables) :
         variables(variables) {
-
+        
     }
 
     void NodeStatementVariableDeclaration::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
         auto node = std::make_shared<ParserInformation>(parentNode, "Variable Declaration");
         auto constantNode = std::make_shared<ParserInformation>(parentNode,
             std::string("Constant") + std::string(variables.size() > 1 ? "s" : "") +
-            std::string(": ") + std::string(variables.at(0)->constant ? "true" : "false"));
+            std::string(": ") + std::string(variables.at(0)->isConstant ? "true" : "false"));
     
         node->children.emplace_back(constantNode);
         
@@ -51,7 +51,8 @@ namespace Aryiele {
                     variableNode, "Identifier: " + variable->identifier));
             
             if (!variable->type.empty()) {
-                variableNode->children.emplace_back(std::make_shared<ParserInformation>(variableNode, "Type: " + variable->type));
+                variableNode->children.emplace_back(std::make_shared<ParserInformation>(variableNode,
+                    "Type: " + variable->type));
             }
 
             if (variable->expression) {

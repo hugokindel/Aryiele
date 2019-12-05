@@ -49,6 +49,8 @@
 #include <Aryiele/AST/Nodes/NodeStatementSwitch.h>
 #include <Aryiele/AST/Nodes/NodeLiteralArray.h>
 #include <Aryiele/AST/Nodes/NodeStatementArrayCall.h>
+#include <Aryiele/AST/Nodes/NodeStatementCase.h>
+#include <Aryiele/AST/Nodes/NodeTopFile.h>
 
 namespace Aryiele {
     Parser::Parser() {
@@ -74,7 +76,7 @@ namespace Aryiele {
         m_binaryOperatorPrecedence[ParserToken_OperatorArithmeticDivide] = 50;
     }
     
-    std::vector<std::shared_ptr<Node>> Parser::parse(std::vector<ParserToken> tokens) {
+    std::shared_ptr<NodeRoot> Parser::parse(const std::string& path, std::vector<ParserToken> tokens) {
         m_tokens = std::move(tokens);
         m_tokens.emplace_back("", ParserToken_EOF);
         
@@ -90,7 +92,12 @@ namespace Aryiele {
             }
         }
         
-        return m_nodes;
+        auto nodeRoot = std::make_shared<NodeRoot>(std::vector<std::shared_ptr<Node>>
+            {std::make_shared<NodeTopFile>(path, m_nodes)});
+        
+        setParent(nodeRoot);
+        
+        return nodeRoot;
     }
     
     std::vector<ParserToken> Parser::convertTokens(const std::vector<LexerToken>& LexerTokens) {
@@ -929,9 +936,8 @@ namespace Aryiele {
     
     std::shared_ptr<Node> Parser::parseSwitch() {
         std::shared_ptr<Node> expression;
-        std::vector<std::shared_ptr<Node>> casesExpression;
-        std::vector<std::vector<std::shared_ptr<Node>>> casesBody;
-        std::vector<std::shared_ptr<Node>> defaultBody;
+        std::vector<std::shared_ptr<Node>> cases;
+        auto defaultCase = std::make_shared<NodeStatementCase>();
         
         getNextToken();
     
@@ -951,21 +957,26 @@ namespace Aryiele {
             } else if (m_currentToken.type == ParserToken_Newline) {
                 getNextToken();
             } else if (m_currentToken.type == ParserToken_KeywordCase) {
-                    getNextToken();
+                auto caseNode = std::make_shared<NodeStatementCase>();
+                
+                getNextToken();
+                
     
-                    if (m_currentToken.type == ParserToken_SeparatorRoundBracketOpen) {
-                        casesExpression.emplace_back(parseParenthese());
-                    } else {
-                        casesExpression.emplace_back(parseExpression());
-                    }
+                if (m_currentToken.type == ParserToken_SeparatorRoundBracketOpen) {
+                    caseNode->expression = parseParenthese();
+                } else {
+                    caseNode->expression = parseExpression();
+                }
                     
-                    PARSER_CHECKTOKEN(ParserToken_SeparatorColon)
+                PARSER_CHECKTOKEN(ParserToken_SeparatorColon)
                     
-                    getNextToken();
-                    
-                    casesBody.emplace_back(parseCase());
+                getNextToken();
+    
+                caseNode->body = parseCase();
+                
+                cases.emplace_back(caseNode);
             } else if (m_currentToken.type == ParserToken_KeywordDefault) {
-                if (!defaultBody.empty()) {
+                if (defaultCase) {
                     PARSER_ERROR("default already defined in switch")
                 } else {
                     getNextToken();
@@ -974,14 +985,16 @@ namespace Aryiele {
                     
                     getNextToken();
     
-                    defaultBody = parseCase();
+                    defaultCase->body = parseCase();
+                    
+                    cases.insert(cases.begin(), defaultCase);
                 }
             } else {
                 PARSER_ERROR("unexpected token in switch declaration")
             }
         }
         
-        return std::make_shared<NodeStatementSwitch>(expression, casesExpression, casesBody, defaultBody);
+        return std::make_shared<NodeStatementSwitch>(expression, cases);
     }
     
     std::shared_ptr<Node> Parser::parseVariableDeclaration(bool constant, bool passVar, bool multiple) {
@@ -1048,6 +1061,16 @@ namespace Aryiele {
     
     bool Parser::isLiteralOrIdentifier(ParserTokenEnum type) {
         return m_currentToken.type == ParserToken_Identifier || isLiteral(type);
+    }
+    
+    bool Parser::setParent(std::shared_ptr<Node> node) {
+        for (auto& child : node->children) {
+            if (child) {
+                child->parent = node;
+    
+                setParent(child);
+            }
+        }
     }
     
     Parser &getParser() {

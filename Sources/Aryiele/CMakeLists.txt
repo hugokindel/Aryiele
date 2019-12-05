@@ -93,14 +93,14 @@ add_library(Aryiele
         Include/Aryiele/AST/Nodes/NodeLiteralString.h
         Include/Aryiele/AST/Nodes/NodeLiteralCharacter.h
         Include/Aryiele/AST/Nodes/NodeLiteralBoolean.h
-        Include/Aryiele/AST/Nodes/NodeTopFunction.h
-        Include/Aryiele/AST/Nodes/NodeTopNamespace.h
         Include/Aryiele/AST/Nodes/NodeOperationBinary.h
         Include/Aryiele/AST/Nodes/NodeOperationTernary.h
         Include/Aryiele/AST/Nodes/NodeOperationUnary.h
+        Include/Aryiele/AST/Nodes/NodeRoot.h
         Include/Aryiele/AST/Nodes/NodeStatementArrayCall.h
         Include/Aryiele/AST/Nodes/NodeStatementBlock.h
         Include/Aryiele/AST/Nodes/NodeStatementBreak.h
+        Include/Aryiele/AST/Nodes/NodeStatementCase.h
         Include/Aryiele/AST/Nodes/NodeStatementContinue.h
         Include/Aryiele/AST/Nodes/NodeStatementFor.h
         Include/Aryiele/AST/Nodes/NodeStatementFunctionCall.h
@@ -110,6 +110,9 @@ add_library(Aryiele
         Include/Aryiele/AST/Nodes/NodeStatementVariableDeclaration.h
         Include/Aryiele/AST/Nodes/NodeStatementWhile.h
         Include/Aryiele/AST/Nodes/NodeStatementVariable.h
+        Include/Aryiele/AST/Nodes/NodeTopFile.h
+        Include/Aryiele/AST/Nodes/NodeTopFunction.h
+        Include/Aryiele/AST/Nodes/NodeTopNamespace.h
         Include/Aryiele/CodeGenerator/CodeGenerator.h
         Include/Aryiele/CodeGenerator/Block.h
         Include/Aryiele/CodeGenerator/BlockStack.h
@@ -132,14 +135,14 @@ add_library(Aryiele
         Sources/AST/Nodes/NodeLiteralString.cpp
         Sources/AST/Nodes/NodeLiteralCharacter.cpp
         Sources/AST/Nodes/NodeLiteralBoolean.cpp
-        Sources/AST/Nodes/NodeTopFunction.cpp
-        Sources/AST/Nodes/NodeTopNamespace.cpp
         Sources/AST/Nodes/NodeOperationBinary.cpp
         Sources/AST/Nodes/NodeOperationTernary.cpp
         Sources/AST/Nodes/NodeOperationUnary.cpp
+        Sources/AST/Nodes/NodeRoot.cpp
         Sources/AST/Nodes/NodeStatementArrayCall.cpp
         Sources/AST/Nodes/NodeStatementBlock.cpp
         Sources/AST/Nodes/NodeStatementBreak.cpp
+        Sources/AST/Nodes/NodeStatementCase.cpp
         Sources/AST/Nodes/NodeStatementContinue.cpp
         Sources/AST/Nodes/NodeStatementFor.cpp
         Sources/AST/Nodes/NodeStatementFunctionCall.cpp
@@ -149,6 +152,9 @@ add_library(Aryiele
         Sources/AST/Nodes/NodeStatementVariableDeclaration.cpp
         Sources/AST/Nodes/NodeStatementWhile.cpp
         Sources/AST/Nodes/NodeStatementVariable.cpp
+        Sources/AST/Nodes/NodeTopFile.cpp
+        Sources/AST/Nodes/NodeTopFunction.cpp
+        Sources/AST/Nodes/NodeTopNamespace.cpp
         Sources/CodeGenerator/CodeGenerator.cpp
         Sources/CodeGenerator/Block.cpp
         Sources/CodeGenerator/BlockStack.cpp

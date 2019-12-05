@@ -30,7 +30,7 @@
 namespace Aryiele {
     NodeOperationUnary::NodeOperationUnary(ParserTokenEnum operationType, std::shared_ptr<Node> expression, bool left) :
         operationType(operationType), expression(expression), left(left) {
-    
+        children = std::vector<std::shared_ptr<Node>> {expression};
     }
     
     void NodeOperationUnary::dumpAST(std::shared_ptr<ParserInformation> parentNode) {

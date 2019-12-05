@@ -33,12 +33,12 @@
 
 namespace Aryiele {
     struct Variable {
-        Variable(const std::string &identifier, const std::string &type, bool constant,
+        Variable(const std::string &identifier, const std::string &type, bool isConstant,
                  std::shared_ptr<Node> expression = nullptr);
 
         std::string identifier;
         std::string type;
-        bool constant;
+        bool isConstant;
         std::shared_ptr<Node> expression;
     };
 

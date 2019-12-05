@@ -29,8 +29,8 @@
 
 namespace Aryiele {
     NodeStatementVariable::NodeStatementVariable(const std::string& identifier, std::shared_ptr<Node> subExpression) :
-            identifier(identifier), subExpression(subExpression) {
-
+        identifier(identifier), subExpression(subExpression) {
+        children = std::vector<std::shared_ptr<Node>> {subExpression};
     }
 
     void NodeStatementVariable::dumpAST(std::shared_ptr<ParserInformation> parentNode) {

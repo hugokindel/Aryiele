@@ -31,7 +31,7 @@ namespace Aryiele {
 
     NodeStatementReturn::NodeStatementReturn(std::shared_ptr<Node> expression) :
         expression(expression) {
-
+        children = std::vector<std::shared_ptr<Node>> {expression};
     }
 
     void NodeStatementReturn::dumpAST(std::shared_ptr<ParserInformation> parentNode) {

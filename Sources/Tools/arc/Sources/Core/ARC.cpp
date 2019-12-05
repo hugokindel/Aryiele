@@ -166,7 +166,7 @@ namespace ARC {
                     if (m_doParserPass) {
                         Aryiele::Parser::start();
                         
-                        auto parserPass = doParserPass(lexerPass);
+                        auto parserPass = doParserPass(m_inputFilepath, lexerPass);
     
                         ARC_RUN_CHECKERRORS()
     
@@ -225,7 +225,8 @@ namespace ARC {
         return lexerTokens;
     }
     
-    std::vector<std::shared_ptr<Aryiele::Node>> ARC::doParserPass(std::vector<Aryiele::LexerToken> lexerTokens) {
+    std::shared_ptr<Aryiele::NodeRoot> ARC::doParserPass(const std::string& path,
+        std::vector<Aryiele::LexerToken> lexerTokens) {
         auto parser = Aryiele::Parser::getInstancePtr();
         
         auto parserTokens = Aryiele::Parser::convertTokens(std::move(lexerTokens));
@@ -241,27 +242,26 @@ namespace ARC {
             }
         }
         
-        auto nodes = parser->parse(parserTokens);
+        auto node = parser->parse(path, parserTokens);
     
         if (m_verboseMode) {
-            auto dumpNode = std::make_shared<Aryiele::ParserInformation>(nullptr, "AST");
+            auto dumpNode = std::make_shared<Aryiele::ParserInformation>(nullptr, "");
         
             // TODO: Small memory leak coming from here (see valgrind)
-            for (auto& node : nodes)
-                node->dumpAST(dumpNode);
+            node->dumpAST(dumpNode);
         
             dumpASTInformations(dumpNode, " ");
         
             dumpNode.reset();
         }
         
-        return nodes;
+        return node;
     }
     
-    void ARC::doCodeGeneratorPass(std::vector<std::shared_ptr<Aryiele::Node>> astNodes) {
+    void ARC::doCodeGeneratorPass(std::shared_ptr<Aryiele::NodeRoot> nodeRoot) {
         auto codeGenerator = Aryiele::CodeGenerator::getInstancePtr();
         
-        codeGenerator->generateCode(std::move(astNodes));
+        codeGenerator->generateCode(std::move(nodeRoot));
         
         if (::Vanir::Logger::errorCount > 0) {
             LOG_ERROR("code generation failed with ", ::Vanir::Logger::errorCount, " errors")
@@ -349,26 +349,27 @@ namespace ARC {
     
     void ARC::dumpASTInformations(const std::shared_ptr<Aryiele::ParserInformation>& node, std::string indent) {
         const auto isRoot = node->parent == nullptr;
+        const auto isParentRoot = !isRoot && node->parent->parent == nullptr;
         const auto hasChildren = !node->children.empty();
         auto isLastSibling = true;
         
-        if (!isRoot) {
+        if (!isRoot && !isParentRoot) {
             isLastSibling = (static_cast<int>(std::distance(node->parent->children.begin(),
                                 std::find(node->parent->children.begin(), node->parent->children.end(), node)))
                              == static_cast<int>(node->parent->children.size()) - 1);
         }
         
-        if (isRoot) {
+        if (isParentRoot) {
             ULOG_VERBOSE("ast: ", node->name)
-        }
-        else {
+        } else if (!isRoot && !isParentRoot) {
             ULOG_VERBOSE("ast:", indent + (isLastSibling ? "└╴" : "├╴"), node->name)
             indent += isLastSibling ? "  " : "│ ";
         }
         
         if (hasChildren) {
-            for (auto& nodeChild : node->children)
+            for (auto& nodeChild : node->children) {
                 dumpASTInformations(nodeChild, indent);
+            }
         }
     }
     

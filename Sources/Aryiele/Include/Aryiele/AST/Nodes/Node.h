@@ -33,6 +33,11 @@
 
 namespace Aryiele {
     enum NodeEnum {
+        Node_Error,
+        
+        Node_Root,
+        
+        Node_TopFile,
         Node_TopFunction,
         Node_TopNamespace,
     
@@ -50,6 +55,7 @@ namespace Aryiele {
         Node_StatementArrayCall,
         Node_StatementBlock,
         Node_StatementBreak,
+        Node_StatementCase,
         Node_StatementContinue,
         Node_StatementFor,
         Node_StatementFunctionCall,

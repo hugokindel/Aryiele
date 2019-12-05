@@ -61,6 +61,7 @@
 #include <Aryiele/AST/Nodes/NodeStatementReturn.h>
 #include <Aryiele/AST/Nodes/NodeStatementVariableDeclaration.h>
 #include <Aryiele/AST/Nodes/NodeStatementVariable.h>
+#include <Aryiele/AST/Nodes/NodeRoot.h>
 #include <Aryiele/CodeGenerator/BlockStack.h>
 #include <Aryiele/CodeGenerator/GenerationError.h>
 
@@ -71,7 +72,7 @@ namespace Aryiele {
     public:
         CodeGenerator(const std::string& filename);
         
-        void generateCode(std::vector<std::shared_ptr<Node>> nodes);
+        void generateCode(std::shared_ptr<NodeRoot> nodeRoot);
         std::shared_ptr<llvm::Module> getModule();
         
     private:

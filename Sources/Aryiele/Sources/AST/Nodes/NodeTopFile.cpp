@@ -1,6 +1,6 @@
 //==================================================================================//
 //                                                                                  //
-//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                       //
+//  Copyright (c) 2019 Hugo Kindel <kindelhugo.pro@gmail.com>                      //
 //                                                                                  //
 //  This file is part of the Aryiele project.                                       //
 //  Licensed under MIT License:                                                     //
@@ -25,48 +25,34 @@
 //                                                                                  //
 //==================================================================================//
 
-#include <Aryiele/AST/Nodes/NodeStatementIf.h>
+#include <Aryiele/AST/Nodes/NodeTopFile.h>
+#include <Sources/Vanir/Include/Vanir/FileSystem/FileSystem.h>
 
 namespace Aryiele {
-    NodeStatementIf::NodeStatementIf(std::shared_ptr<Node> condition,
-        std::vector<std::shared_ptr<Node>> ifBody, std::vector<std::shared_ptr<Node>> elseBody) :
-        condition(condition), ifBody(ifBody), elseBody(elseBody) {
-        children = std::vector<std::shared_ptr<Node>> {condition};
-        children.insert(children.end(), ifBody.begin(), ifBody.end());
-        children.insert(children.end(), elseBody.begin(), elseBody.end());
+    NodeTopFile::NodeTopFile(const std::string &path, std::vector<std::shared_ptr<Node>> body) :
+        path(path), body(body) {
+        children = std::vector<std::shared_ptr<Node>>();
+        children.insert(children.end(), body.begin(), body.end());
     }
-
-    void NodeStatementIf::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
-        auto node = std::make_shared<ParserInformation>(parentNode, "If/Else");
-        auto ifNode = std::make_shared<ParserInformation>(node, "If");
-        auto ifConditionNode = std::make_shared<ParserInformation>(ifNode, "Condition:");
-        auto ifBodyNode = std::make_shared<ParserInformation>(ifNode, "Body:");
-
-        condition->dumpAST(ifConditionNode);
-
-        for (auto& i : ifBody)
-            i->dumpAST(ifBodyNode);
-
-        ifNode->children.emplace_back(ifConditionNode);
-        ifNode->children.emplace_back(ifBodyNode);
-        node->children.emplace_back(ifNode);
-
-        if (!elseBody.empty()) {
-            auto elseNode = std::make_shared<ParserInformation>(node, "Else");
-            auto elseBodyNode = std::make_shared<ParserInformation>(elseNode, "Body:");
-
-            for (auto& i : elseBody)
-                i->dumpAST(elseBodyNode);
-
-            elseNode->children.emplace_back(elseBodyNode);
-            node->children.emplace_back(elseNode);
+    
+    void NodeTopFile::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
+        auto node = std::make_shared<ParserInformation>(parentNode, "File");
+        auto identifierNode = std::make_shared<ParserInformation>(node,
+            "Identifier: " + Vanir::FileSystem::getFilePath(path));
+        auto bodyNode = std::make_shared<ParserInformation>(node, "Body:");
+    
+        for (auto& childNode : body) {
+            childNode->dumpAST(bodyNode);
         }
-
+    
+        node->children.emplace_back(identifierNode);
+        node->children.emplace_back(bodyNode);
+    
         parentNode->children.emplace_back(node);
     }
     
-    NodeEnum NodeStatementIf::getType() {
-        return Node_StatementIf;
+    NodeEnum NodeTopFile::getType() {
+        return Node_TopFile;
     }
-
+    
 } /* Namespace Aryiele. */

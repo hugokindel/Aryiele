@@ -34,6 +34,7 @@
 #include <Aryiele/Lexer/LexerToken.h>
 #include <Aryiele/AST/Nodes/Node.h>
 #include <Aryiele/AST/Nodes/NodeTopFunction.h>
+#include <Aryiele/AST/Nodes/NodeRoot.h>
 #include <Aryiele/Parser/ParserToken.h>
 #include <Aryiele/Parser/ParserInformation.h>
 
@@ -42,7 +43,7 @@ class Parser : public Vanir::Module<Parser> {
     public:
         Parser();
     
-    std::vector<std::shared_ptr<Node>> parse(std::vector<ParserToken> tokens);
+        std::shared_ptr<NodeRoot> parse(const std::string& path, std::vector<ParserToken> tokens);
         static std::vector<ParserToken> convertTokens(const std::vector<LexerToken>& tokenizerTokens);
         ParserToken getCurrentToken();
 
@@ -78,6 +79,7 @@ class Parser : public Vanir::Module<Parser> {
         std::shared_ptr<Node> parseVariableDeclaration(bool constant = false, bool passVar = true, bool multiple = true);
         bool isLiteral(ParserTokenEnum type);
         bool isLiteralOrIdentifier(ParserTokenEnum type);
+        static bool setParent(std::shared_ptr<Node> node);
     
         std::map<ParserTokenEnum, int> m_binaryOperatorPrecedence;
         std::vector<std::shared_ptr<Node>> m_nodes;

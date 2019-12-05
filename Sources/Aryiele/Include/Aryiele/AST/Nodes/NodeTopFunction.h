@@ -34,10 +34,8 @@
 
 namespace Aryiele {
     struct NodeTopFunction : public Node {
-        NodeTopFunction(const std::string& identifier,
-                        const std::string& type,
-                        std::vector<Argument> argumentsName,
-                        std::vector<std::shared_ptr<Node>> body);
+        NodeTopFunction(const std::string& identifier, const std::string& type, std::vector<Argument> argumentsName,
+            std::vector<std::shared_ptr<Node>> body);
 
         void dumpAST(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;

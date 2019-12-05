@@ -33,16 +33,13 @@
 
 namespace Aryiele {
     struct NodeStatementSwitch : public Node {
-        NodeStatementSwitch(std::shared_ptr<Node> expression, std::vector<std::shared_ptr<Node>> casesExpression,
-            std::vector<std::vector<std::shared_ptr<Node>>> casesBody, std::vector<std::shared_ptr<Node>> defaultBody);
+        NodeStatementSwitch(std::shared_ptr<Node> expression, std::vector<std::shared_ptr<Node>> cases);
         
         void dumpAST(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
         
         std::shared_ptr<Node> expression;
-        std::vector<std::shared_ptr<Node>> casesExpression;
-        std::vector<std::vector<std::shared_ptr<Node>>> casesBody;
-        std::vector<std::shared_ptr<Node>> defaultBody;
+        std::vector<std::shared_ptr<Node>> cases;
     };
     
 } /* Namespace Aryiele. */

@@ -29,9 +29,9 @@
 
 namespace Aryiele {
     
-    NodeStatementArrayCall::NodeStatementArrayCall(std::shared_ptr<Node> element, std::shared_ptr<Node> subExpression) :
-        element(element), subExpression(subExpression) {
-        
+    NodeStatementArrayCall::NodeStatementArrayCall(std::shared_ptr<Node> expression, std::shared_ptr<Node> subExpression) :
+        expression(expression), subExpression(subExpression) {
+        children = std::vector<std::shared_ptr<Node>> {expression, subExpression};
     }
     
     void NodeStatementArrayCall::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
@@ -39,7 +39,7 @@ namespace Aryiele {
         auto elementsNode = std::make_shared<ParserInformation>(node, "Element:");
         auto subExpressionNode = std::make_shared<ParserInformation>(node, "Subexpression:");
     
-        element->dumpAST(elementsNode);
+        expression->dumpAST(elementsNode);
         
         node->children.emplace_back(elementsNode);
     
