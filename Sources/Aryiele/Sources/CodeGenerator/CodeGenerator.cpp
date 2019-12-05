@@ -292,6 +292,10 @@ namespace Aryiele {
         m_builder.SetInsertPoint(ternaryBasicBlock);
         
         auto condition = generateCode(node->condition);
+        
+        if (!condition.success) {
+            return GenerationError();
+        }
     
         auto leftBasicBlock = llvm::BasicBlock::Create(m_context, "_ternary_left", m_builder.GetInsertBlock()->getParent());
         auto rightBasicBlock = llvm::BasicBlock::Create(m_context, "_ternary_right", m_builder.GetInsertBlock()->getParent());
@@ -308,7 +312,12 @@ namespace Aryiele {
         m_builder.CreateCondBr(condition.value, leftBasicBlock, rightBasicBlock);
     
         m_builder.SetInsertPoint(leftBasicBlock);
+        
         auto left = generateCode(node->lhs).value;
+    
+        if (!left) {
+            return GenerationError();
+        }
         
         if (!allPathsReturn(node->lhs)) {
             m_builder.CreateStore(castType(left, alloca->getType()), alloca);
@@ -318,6 +327,10 @@ namespace Aryiele {
         
         m_builder.SetInsertPoint(rightBasicBlock);
         auto right = generateCode(node->rhs).value;
+    
+        if (!right) {
+            return GenerationError();
+        }
         
         if (!allPathsReturn(node->rhs)) {
             m_builder.CreateStore(castType(right, alloca->getType()), alloca);
@@ -348,7 +361,7 @@ namespace Aryiele {
                 return GenerationError();
             }
             
-            if (m_blockStack->findVariable(lhs->identifier)->isConstant && !m_blockStack->findVariable(lhs->identifier)->instance->use_empty()) {
+            if (m_blockStack->findVariable(lhs->identifier)->isConstant && isVariableSetAtPath(lhs->identifier, node->parent, node)) {
                 LOG_ERROR("cannot redefine a constant")
     
                 return GenerationError();
@@ -890,6 +903,79 @@ namespace Aryiele {
             if (allPathsReturn(statement)) {
                 return true;
             }
+        }
+        
+        return false;
+    }
+    
+    bool CodeGenerator::isVariableSetAtPath(const std::string &identifier, std::shared_ptr<Node> currentPath, Node* originalPosition) {
+        int i = 0;
+        LOG("--")
+        for (auto& statement : currentPath->children) {
+            LOG(statement->getTypeName())
+            if (currentPath->getType() == Node_StatementIf) {
+                auto nodeIf = std::dynamic_pointer_cast<NodeStatementIf>(currentPath);
+        
+                bool inIf = false;
+                bool inElse = false;
+        
+                for (auto& ifStatement : nodeIf->ifBody) {
+                    if (ifStatement.get() == originalPosition) {
+                        inIf = true;
+                    }
+                }
+        
+                for (auto& elseStatement : nodeIf->elseBody) {
+                    if (elseStatement.get() == originalPosition) {
+                        inElse = true;
+                    }
+                }
+        
+                if ((inIf && i <= nodeIf->ifBody.size()) ||
+                    (inElse && i >= nodeIf->ifBody.size())) {
+                    break;
+                }
+        
+            }
+        
+            if (statement.get() == originalPosition) {
+                break;
+            } else if (statement->getType() == Node_StatementVariableDeclaration) {
+                auto nodeVariable = std::dynamic_pointer_cast<NodeStatementVariableDeclaration>(statement);
+                    
+                for (auto& variable : nodeVariable->variables) {
+                    if (variable->identifier == identifier && variable->expression) {
+                        return true;
+                    }
+                }
+            } else if (statement->getType() == Node_OperationBinary) {
+                auto nodeBinary = std::dynamic_pointer_cast<NodeOperationBinary>(statement);
+                if ((nodeBinary->operationType == ParserToken_OperatorEqual ||
+                     nodeBinary->operationType == ParserToken_OperatorArithmeticPlusEqual ||
+                     nodeBinary->operationType == ParserToken_OperatorArithmeticMinusEqual ||
+                     nodeBinary->operationType == ParserToken_OperatorArithmeticMultiplyEqual ||
+                     nodeBinary->operationType == ParserToken_OperatorArithmeticDivideEqual ||
+                     nodeBinary->operationType == ParserToken_OperatorArithmeticRemainderEqual) &&
+                     std::dynamic_pointer_cast<NodeStatementVariable>(nodeBinary->lhs)->identifier == identifier) {
+                    return true;
+                }
+            } else if (statement->getType() == Node_OperationUnary) {
+                auto nodeBinary = std::dynamic_pointer_cast<NodeOperationUnary>(statement);
+    
+                if ((nodeBinary->operationType == ParserToken_OperatorUnaryArithmeticIncrement ||
+                     nodeBinary->operationType == ParserToken_OperatorUnaryArithmeticDecrement) &&
+                     std::dynamic_pointer_cast<NodeStatementVariable>(nodeBinary->expression)->identifier == identifier) {
+                    return true;
+                }
+            } else if (isVariableSetAtPath(identifier, statement, originalPosition)) {
+                return true;
+            }
+        
+            i++;
+        }
+        
+        if (currentPath->parent && currentPath->parent->getType() != Node_TopFile) {
+            return isVariableSetAtPath(identifier, currentPath->parent, originalPosition->parent.get());
         }
         
         return false;

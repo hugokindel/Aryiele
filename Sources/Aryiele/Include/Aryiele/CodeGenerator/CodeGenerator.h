@@ -101,7 +101,8 @@ namespace Aryiele {
         GenerationError generateCode(NodeStatementVariableDeclaration* node);
         static bool allPathsReturn(std::shared_ptr<Node> node);
         static bool allPathsReturn(std::vector<std::shared_ptr<Node>> node);
-
+        static bool isVariableSetAtPath(const std::string& identifier, std::shared_ptr<Node> currentPath, Node* originalPosition);
+        
         llvm::LLVMContext m_context;
         llvm::IRBuilder<> m_builder = llvm::IRBuilder<>(m_context);
         std::shared_ptr<llvm::DataLayout> m_dataLayout;
