@@ -32,7 +32,7 @@
 #include <windows.h>
 #endif
 #include <utility>
-#include <stdio.h>
+#include <cstdio>
 #include <memory>
 #include <llvm/Bitcode/BitcodeWriter.h>
 #include <llvm/Bitcode/BitcodeReader.h>
@@ -134,7 +134,7 @@ namespace ARC {
 
         auto result = Vanir::CLI::parse(argc, argv, m_options, false);
 
-        if (result.errors.size() > 0) {
+        if (!result.errors.empty()) {
             LOG_WARNING("command interpretation had ", result.errors.size(), " errors")
             for (auto e : result.errors) {
                 LOG_WARNING(Vanir::CLIParsingResult::errorToString(e))
@@ -202,9 +202,7 @@ namespace ARC {
             }
         }
 
-#ifndef FINAL_RELEASE
-        Vanir::Logger::Stop();
-#endif
+        Vanir::Logger::stop();
         
         return 0;
     }
@@ -230,7 +228,7 @@ namespace ARC {
     std::vector<std::shared_ptr<Aryiele::Node>> ARC::doParserPass(std::vector<Aryiele::LexerToken> lexerTokens) {
         auto parser = Aryiele::Parser::getInstancePtr();
         
-        auto parserTokens = parser->convertTokens(std::move(lexerTokens));
+        auto parserTokens = Aryiele::Parser::convertTokens(std::move(lexerTokens));
         
         for (auto& token : parserTokens) {
             if (m_verboseMode) {

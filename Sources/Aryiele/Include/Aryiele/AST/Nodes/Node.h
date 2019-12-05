@@ -62,11 +62,17 @@ namespace Aryiele {
     };
     
     struct Node {
+        explicit Node(std::vector<std::shared_ptr<Node>> children = std::vector<std::shared_ptr<Node>>(),
+            std::shared_ptr<Node> parent = nullptr);
+        
         virtual void dumpAST(std::shared_ptr<ParserInformation> parentNode) = 0;
         virtual NodeEnum getType() = 0;
         virtual std::string getTypeName();
         
         static std::string getTypeName(NodeEnum nodeType);
+        
+        std::vector<std::shared_ptr<Node>> children;
+        std::shared_ptr<Node> parent;
     };
     
 } /* Namespace Aryiele. */

@@ -28,6 +28,11 @@
 #include <Aryiele/AST/Nodes/Node.h>
 
 namespace Aryiele {
+    Node::Node(std::vector<std::shared_ptr<Node>> children, std::shared_ptr<Node> parent) :
+        children(children), parent(parent) {
+        
+    }
+    
     std::string Node::getTypeName() {
         return getTypeName(getType());
     }

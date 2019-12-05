@@ -830,14 +830,8 @@ namespace Aryiele {
         if (node->getType() == Node_TopFunction) {
             auto functionNode = std::dynamic_pointer_cast<NodeTopFunction>(node);
             
-            if (functionNode->type == "Void" ) {
+            if (functionNode->type == "Void" || allPathsReturn(functionNode->body)) {
                 return true;
-            }
-    
-            for (auto& statement : functionNode->body) {
-                if (allPathsReturn(statement)) {
-                    return true;
-                }
             }
         } else if (node->getType() == Node_StatementIf) {
             auto ifNode = std::dynamic_pointer_cast<NodeStatementIf>(node);
@@ -845,16 +839,12 @@ namespace Aryiele {
             bool ifReturns = false;
             bool elseReturns = false;
     
-            for (auto& statement : ifNode->ifBody) {
-                if (allPathsReturn(statement)) {
-                    ifReturns = true;
-                }
+            if (allPathsReturn(ifNode->ifBody)) {
+                ifReturns = true;
             }
-    
-            for (auto& statement : ifNode->elseBody) {
-                if (allPathsReturn(statement)) {
-                    elseReturns = true;
-                }
+            
+            if (allPathsReturn(ifNode->elseBody)) {
+                elseReturns = true;
             }
     
             if (ifReturns && elseReturns) {
@@ -863,18 +853,14 @@ namespace Aryiele {
         } else if (node->getType() == Node_StatementFor) {
             auto forNode = std::dynamic_pointer_cast<NodeStatementFor>(node);
     
-            for (auto& statement : forNode->body) {
-                if (allPathsReturn(statement)) {
-                    return true;
-                }
+            if (allPathsReturn(forNode->body)) {
+                return true;
             }
         } else if (node->getType() == Node_StatementWhile) {
             auto whileNode = std::dynamic_pointer_cast<NodeStatementWhile>(node);
     
-            for (auto& statement : whileNode->body) {
-                if (allPathsReturn(statement)) {
-                    return true;
-                }
+            if (allPathsReturn(whileNode->body)) {
+                return true;
             }
         } else if (node->getType() == Node_OperationTernary) {
             auto ternaryNode = std::dynamic_pointer_cast<NodeOperationTernary>(node);
