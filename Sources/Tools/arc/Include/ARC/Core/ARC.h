@@ -39,40 +39,40 @@
 
 #include <Vanir/Logger/Logger.h>
 
-#define LOG(...) ::Vanir::Logger::log(__VA_ARGS__);
+#define LOG(...) ::Vanir::Logger::log(false, __VA_ARGS__);
 #define LOG_INFO(...) { \
-    ::Vanir::Logger::log("arc: ", __VA_ARGS__); \
+    ::Vanir::Logger::log(false, "arc: ", __VA_ARGS__); \
     ::Vanir::Logger::infoCount += 1; \
 }
 #define LOG_VERBOSE(...) { \
-    ::Vanir::Logger::log("arc: ", ::Vanir::LogColor(::Vanir::LogColor_Bright_Blue), "verbose: ", ::Vanir::LogColor(), __VA_ARGS__); \
+    ::Vanir::Logger::log(false, "arc: ", ::Vanir::LogColor(::Vanir::LogColor_Bright_Blue), "verbose: ", ::Vanir::LogColor(), __VA_ARGS__); \
     ::Vanir::Logger::warningCount += 1; \
 }
 #define LOG_WARNING(...) { \
-    ::Vanir::Logger::log("arc: ", ::Vanir::LogColor(::Vanir::LogColor_Yellow), "warning: ", ::Vanir::LogColor(), __VA_ARGS__); \
+    ::Vanir::Logger::log(false, "arc: ", ::Vanir::LogColor(::Vanir::LogColor_Yellow), "warning: ", ::Vanir::LogColor(), __VA_ARGS__); \
     ::Vanir::Logger::warningCount += 1; \
 }
 #define LOG_ERROR(...) { \
-    ::Vanir::Logger::log("arc: ", ::Vanir::LogColor(::Vanir::LogColor_Red), "error: ", ::Vanir::LogColor(), __VA_ARGS__); \
+    ::Vanir::Logger::log(true, "arc: ", ::Vanir::LogColor(::Vanir::LogColor_Red), "error: ", ::Vanir::LogColor(), __VA_ARGS__); \
     ::Vanir::Logger::errorCount += 1; \
 }
 
 #ifdef _WIN32
-#define ULOG(...) ::Vanir::Logger::ulog(__VA_ARGS__);
+#define ULOG(...) ::Vanir::Logger::ulog(false, __VA_ARGS__);
 #define ULOG_INFO(...) { \
-    ::Vanir::Logger::ulog("arc: ", __VA_ARGS__); \
+    ::Vanir::Logger::ulog(false, "arc: ", __VA_ARGS__); \
     ::Vanir::Logger::infoCount += 1; \
 }
 #define ULOG_VERBOSE(...) { \
-    ::Vanir::Logger::ulog("arc: ", ::Vanir::LogColor(::Vanir::LogColor_Bright_Blue), "verbose: ", ::Vanir::LogColor(), __VA_ARGS__); \
+    ::Vanir::Logger::ulog(false, "arc: ", ::Vanir::LogColor(::Vanir::LogColor_Bright_Blue), "verbose: ", ::Vanir::LogColor(), __VA_ARGS__); \
     ::Vanir::Logger::warningCount += 1; \
 }
 #define ULOG_WARNING(...) { \
-    ::Vanir::Logger::ulog("arc: ", ::Vanir::LogColor(::Vanir::LogColor_Yellow), "warning: ", ::Vanir::LogColor(), __VA_ARGS__); \
+    ::Vanir::Logger::ulog(false, "arc: ", ::Vanir::LogColor(::Vanir::LogColor_Yellow), "warning: ", ::Vanir::LogColor(), __VA_ARGS__); \
     ::Vanir::Logger::warningCount += 1; \
 }
 #define ULOG_ERROR(...) { \
-    ::Vanir::Logger::ulog("arc: ", ::Vanir::LogColor(::Vanir::LogColor_Red), "error: ", ::Vanir::LogColor(), __VA_ARGS__); \
+    ::Vanir::Logger::ulog(true, "arc: ", ::Vanir::LogColor(::Vanir::LogColor_Red), "error: ", ::Vanir::LogColor(), __VA_ARGS__); \
     ::Vanir::Logger::errorCount += 1; \
 }
 #else
