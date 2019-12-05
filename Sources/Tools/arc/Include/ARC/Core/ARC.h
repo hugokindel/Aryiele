@@ -33,54 +33,10 @@
 #include <Aryiele/Lexer/Lexer.h>
 #include <Aryiele/Parser/Parser.h>
 #include <ARC/Core/BuildType.h>
+#include <ARC/Utility/Logger.h>
 
 #define ARC_VERSION "0.0.1"
 #define FINAL_RELEASE // ONLY use for final releases.
-
-#include <Vanir/Logger/Logger.h>
-
-#define LOG(...) ::Vanir::Logger::log(false, __VA_ARGS__);
-#define LOG_INFO(...) { \
-    ::Vanir::Logger::log(false, "arc: ", __VA_ARGS__); \
-    ::Vanir::Logger::infoCount += 1; \
-}
-#define LOG_VERBOSE(...) { \
-    ::Vanir::Logger::log(false, "arc: ", ::Vanir::LogColor(::Vanir::LogColor_Bright_Blue), "verbose: ", ::Vanir::LogColor(), __VA_ARGS__); \
-    ::Vanir::Logger::warningCount += 1; \
-}
-#define LOG_WARNING(...) { \
-    ::Vanir::Logger::log(false, "arc: ", ::Vanir::LogColor(::Vanir::LogColor_Yellow), "warning: ", ::Vanir::LogColor(), __VA_ARGS__); \
-    ::Vanir::Logger::warningCount += 1; \
-}
-#define LOG_ERROR(...) { \
-    ::Vanir::Logger::log(true, "arc: ", ::Vanir::LogColor(::Vanir::LogColor_Red), "error: ", ::Vanir::LogColor(), __VA_ARGS__); \
-    ::Vanir::Logger::errorCount += 1; \
-}
-
-#ifdef _WIN32
-#define ULOG(...) ::Vanir::Logger::ulog(false, __VA_ARGS__);
-#define ULOG_INFO(...) { \
-    ::Vanir::Logger::ulog(false, "arc: ", __VA_ARGS__); \
-    ::Vanir::Logger::infoCount += 1; \
-}
-#define ULOG_VERBOSE(...) { \
-    ::Vanir::Logger::ulog(false, "arc: ", ::Vanir::LogColor(::Vanir::LogColor_Bright_Blue), "verbose: ", ::Vanir::LogColor(), __VA_ARGS__); \
-    ::Vanir::Logger::warningCount += 1; \
-}
-#define ULOG_WARNING(...) { \
-    ::Vanir::Logger::ulog(false, "arc: ", ::Vanir::LogColor(::Vanir::LogColor_Yellow), "warning: ", ::Vanir::LogColor(), __VA_ARGS__); \
-    ::Vanir::Logger::warningCount += 1; \
-}
-#define ULOG_ERROR(...) { \
-    ::Vanir::Logger::ulog(true, "arc: ", ::Vanir::LogColor(::Vanir::LogColor_Red), "error: ", ::Vanir::LogColor(), __VA_ARGS__); \
-    ::Vanir::Logger::errorCount += 1; \
-}
-#else
-#define ULOG(...) LOG(__VA_ARGS__)
-#define ULOG_INFO(...) LOG_INFO(__VA_ARGS__)
-#define ULOG_WARNING(...) LOG_WARNING(__VA_ARGS__)
-#define ULOG_ERROR(...) LOG_ERROR(__VA_ARGS__)
-#endif
 
 #define ARC_RUN_CHECKERRORS() { \
     if (::Vanir::Logger::errorCount > 0) \
@@ -89,7 +45,6 @@
 }
 
 namespace ARC {
-    // Main class of the Aryiele Compiler command line tool.
     class ARC {
     public:
         static int run(int argc, char *argv[]);

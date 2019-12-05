@@ -81,6 +81,7 @@ add_definitions(${LLVM_DEFINITIONS})
 add_executable(arc
         Include/ARC/Core/ARC.h
         Include/ARC/Core/BuildType.h
+        Include/ARC/Utility/Logger.h
         Sources/Core/ARC.cpp
         Sources/Main.cpp)
         
