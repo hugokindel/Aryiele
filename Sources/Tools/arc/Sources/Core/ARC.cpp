@@ -71,7 +71,7 @@ namespace ARC {
 #endif
 
 #ifndef FINAL_RELEASE
-        Vanir::Logger::StartNoLog();
+        Vanir::Logger::startNoLog();
 #endif
         
         m_options.emplace_back(
@@ -145,7 +145,7 @@ namespace ARC {
 
 #ifndef FINAL_RELEASE
         if (m_inputFilepath.empty())
-            m_inputFilepath = "../../../../Examples/example-1.ac";
+            m_inputFilepath = "../../example-1.ac";
 #endif
         
         if (!m_inputFilepath.empty()) {

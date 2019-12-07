@@ -36,7 +36,9 @@
 #include <ARC/Utility/Logger.h>
 
 #define ARC_VERSION "0.0.1"
+#ifdef _RELEASE
 #define FINAL_RELEASE // ONLY use for final releases.
+#endif
 
 #define ARC_RUN_CHECKERRORS() { \
     if (::Vanir::Logger::errorCount > 0) \

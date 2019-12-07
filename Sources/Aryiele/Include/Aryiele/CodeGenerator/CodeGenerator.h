@@ -58,6 +58,8 @@
 #include <Aryiele/AST/Nodes/NodeStatementIf.h>
 #include <Aryiele/AST/Nodes/NodeStatementFor.h>
 #include <Aryiele/AST/Nodes/NodeStatementWhile.h>
+#include <Aryiele/AST/Nodes/NodeStatementSwitch.h>
+#include <Aryiele/AST/Nodes/NodeStatementCase.h>
 #include <Aryiele/AST/Nodes/NodeStatementReturn.h>
 #include <Aryiele/AST/Nodes/NodeStatementVariableDeclaration.h>
 #include <Aryiele/AST/Nodes/NodeStatementVariable.h>
@@ -96,12 +98,13 @@ namespace Aryiele {
         GenerationError generateCode(NodeStatementIf* node);
         GenerationError generateCode(NodeStatementFor* node);
         GenerationError generateCode(NodeStatementWhile* node);
+        GenerationError generateCode(NodeStatementSwitch* node);
         GenerationError generateCode(NodeStatementReturn* node);
         GenerationError generateCode(NodeStatementBlock* node);
         GenerationError generateCode(NodeStatementVariableDeclaration* node);
         static bool allPathsReturn(std::shared_ptr<Node> node);
         static bool allPathsReturn(std::vector<std::shared_ptr<Node>> node);
-        static bool isVariableSetAtPath(const std::string& identifier, std::shared_ptr<Node> currentPath, Node* originalPosition);
+        static bool isVariableSetAtPath(const std::string& identifier, std::shared_ptr<Node> currentPath, Node* breakPosition);
         
         llvm::LLVMContext m_context;
         llvm::IRBuilder<> m_builder = llvm::IRBuilder<>(m_context);

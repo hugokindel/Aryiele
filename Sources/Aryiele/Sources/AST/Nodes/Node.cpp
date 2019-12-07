@@ -39,10 +39,19 @@ namespace Aryiele {
     
     std::string Node::getTypeName(NodeEnum nodeType) {
         switch (nodeType) {
+            case Node_Error:
+                return "Error";
+            
+            case Node_Root:
+                return "Root";
+                
+            case Node_TopFile:
+                return "TopFile";
             case Node_TopFunction:
                 return "TopFunction";
             case Node_TopNamespace:
                 return "TopNamespace";
+                
             case Node_LiteralArray:
                 return "LiteralArray";
             case Node_LiteralBoolean:
@@ -55,18 +64,22 @@ namespace Aryiele {
                 return "LiteralNumberInteger";
             case Node_LiteralString:
                 return "LiteralString";
+                
             case Node_OperationUnary:
                 return "OperationUnary";
             case Node_OperationBinary:
                 return "OperationBinary";
             case Node_OperationTernary:
                 return "OperationTernary";
+                
             case Node_StatementArrayCall:
                 return "StatementArrayCall";
             case Node_StatementBlock:
                 return "StatementBlock";
             case Node_StatementBreak:
                 return "StatementBreak";
+            case Node_StatementCase:
+                return "StatementCase";
             case Node_StatementContinue:
                 return "StatementContinue";
             case Node_StatementFor:
@@ -87,7 +100,7 @@ namespace Aryiele {
                 return "StatementWhile";
                 
             default:
-                return "Error";
+                return "Unknown";
         }
     }
     

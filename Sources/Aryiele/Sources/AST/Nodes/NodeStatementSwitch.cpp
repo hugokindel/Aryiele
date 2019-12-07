@@ -26,6 +26,7 @@
 //==================================================================================//
 
 #include <Aryiele/AST/Nodes/NodeStatementSwitch.h>
+#include <Aryiele/AST/Nodes/NodeStatementCase.h>
 
 namespace Aryiele {
     
@@ -56,4 +57,11 @@ namespace Aryiele {
     NodeEnum NodeStatementSwitch::getType() {
         return Node_StatementSwitch;
     }
+    
+    bool NodeStatementSwitch::hasDefault() {
+        auto caseNode = std::dynamic_pointer_cast<NodeStatementCase>(cases[0]);
+        
+        return caseNode->expression ? false : true;
+    }
+    
 } /* Namespace Aryiele. */

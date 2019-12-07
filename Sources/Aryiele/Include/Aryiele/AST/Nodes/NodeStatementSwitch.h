@@ -37,6 +37,7 @@ namespace Aryiele {
         
         void dumpAST(std::shared_ptr<ParserInformation> parentNode) override;
         NodeEnum getType() override;
+        bool hasDefault();
         
         std::shared_ptr<Node> expression;
         std::vector<std::shared_ptr<Node>> cases;

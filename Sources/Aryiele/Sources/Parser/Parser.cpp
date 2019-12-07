@@ -937,7 +937,7 @@ namespace Aryiele {
     std::shared_ptr<Node> Parser::parseSwitch() {
         std::shared_ptr<Node> expression;
         std::vector<std::shared_ptr<Node>> cases;
-        auto defaultCase = std::make_shared<NodeStatementCase>();
+        std::shared_ptr<NodeStatementCase> defaultCase = nullptr;
         
         getNextToken();
     
@@ -957,37 +957,40 @@ namespace Aryiele {
             } else if (m_currentToken.type == ParserToken_Newline) {
                 getNextToken();
             } else if (m_currentToken.type == ParserToken_KeywordCase) {
-                auto caseNode = std::make_shared<NodeStatementCase>();
+                std::shared_ptr<Node> expressionCase = nullptr;
+                std::vector<std::shared_ptr<Node>> bodyCase = std::vector<std::shared_ptr<Node>>();
                 
                 getNextToken();
                 
     
                 if (m_currentToken.type == ParserToken_SeparatorRoundBracketOpen) {
-                    caseNode->expression = parseParenthese();
+                    expressionCase = parseParenthese();
                 } else {
-                    caseNode->expression = parseExpression();
+                    expressionCase = parseExpression();
                 }
                     
                 PARSER_CHECKTOKEN(ParserToken_SeparatorColon)
                     
                 getNextToken();
     
-                caseNode->body = parseCase();
+                bodyCase = parseCase();
                 
-                cases.emplace_back(caseNode);
+                cases.emplace_back(std::make_shared<NodeStatementCase>(expressionCase, bodyCase));
             } else if (m_currentToken.type == ParserToken_KeywordDefault) {
                 if (defaultCase) {
                     PARSER_ERROR("default already defined in switch")
                 } else {
+                    std::vector<std::shared_ptr<Node>> bodyCase = std::vector<std::shared_ptr<Node>>();
+                    
                     getNextToken();
                     
                     PARSER_CHECKTOKEN(ParserToken_SeparatorColon)
                     
                     getNextToken();
-    
-                    defaultCase->body = parseCase();
                     
-                    cases.insert(cases.begin(), defaultCase);
+                    bodyCase = parseCase();
+                    
+                    cases.insert(cases.begin(), std::make_shared<NodeStatementCase>(nullptr, bodyCase));
                 }
             } else {
                 PARSER_ERROR("unexpected token in switch declaration")
@@ -1035,6 +1038,12 @@ namespace Aryiele {
                 getNextToken();
                 
                 value = parseExpression();
+            } else if (m_currentToken.type == ParserToken_OperatorArithmeticPlusEqual ||
+                m_currentToken.type == ParserToken_OperatorArithmeticMinusEqual ||
+                m_currentToken.type == ParserToken_OperatorArithmeticMultiplyEqual ||
+                m_currentToken.type == ParserToken_OperatorArithmeticDivideEqual ||
+                m_currentToken.type == ParserToken_OperatorArithmeticRemainderEqual) {
+                PARSER_ERROR("expected initializer before using differents assignment operators")
             } else if (type.empty() && value == nullptr) {
                 PARSER_ERROR("variable declaration has empty type and value")
             }
