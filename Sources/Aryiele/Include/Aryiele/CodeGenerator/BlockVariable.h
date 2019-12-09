@@ -29,13 +29,15 @@
 #define ARYIELE_BLOCKVARIABLE_H
 
 #include <Aryiele/Common.h>
+#include <Aryiele/AST/Nodes/Node.h>
 #include <llvm/IR/Instructions.h>
 
 namespace Aryiele {
     struct BlockVariable {
-        explicit BlockVariable(llvm::AllocaInst* instance, bool isConstant = false);
+        explicit BlockVariable(llvm::AllocaInst* instance, Node* initializationNode, bool isConstant = false);
         
         llvm::AllocaInst* instance;
+        Node* initializationNode;
         bool isConstant;
     };
     

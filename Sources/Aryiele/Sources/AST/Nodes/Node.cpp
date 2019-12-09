@@ -104,4 +104,38 @@ namespace Aryiele {
         }
     }
     
+    int Node::getPositionInParent() {
+        return getPositionInParent(this);
+    }
+    
+    int Node::getPositionInParent(Node *node) {
+        auto parent = node->parent;
+        
+        for (int i = 0; i < parent->children.size(); i++) {
+            if (parent->children[i].get() == node) {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+    
+    int Node::getPositionInParent(std::shared_ptr<Node> node) {
+        return getPositionInParent(node.get());
+    }
+    
+    bool Node::contains(Node *element) {
+        return contains(element, this);
+    }
+    
+    bool Node::contains(Node *element, Node *parent) {
+        for (auto& child : parent->children) {
+            if  (child && (child.get() == element || (!child->children.empty() && contains(element, child.get())))) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
 } /* Namespace Aryiele. */

@@ -87,6 +87,7 @@ namespace Aryiele {
         llvm::AllocaInst *createEntryBlockAllocation(
             llvm::Function *function, const std::string &identifier, llvm::Type *type = nullptr);
         GenerationError generateCode(std::shared_ptr<Node> node);
+        GenerationError generateCode(std::vector<std::shared_ptr<Node>> node);
         GenerationError generateCode(NodeTopFunction* node);
         GenerationError generateCode(NodeOperationTernary* node);
         GenerationError generateCode(NodeOperationBinary* node);
@@ -102,9 +103,10 @@ namespace Aryiele {
         GenerationError generateCode(NodeStatementReturn* node);
         GenerationError generateCode(NodeStatementBlock* node);
         GenerationError generateCode(NodeStatementVariableDeclaration* node);
+        static bool allPathsReturn(Node* node);
         static bool allPathsReturn(std::shared_ptr<Node> node);
         static bool allPathsReturn(std::vector<std::shared_ptr<Node>> node);
-        static bool isVariableSetAtPath(const std::string& identifier, std::shared_ptr<Node> currentPath, Node* breakPosition);
+        static bool isVariableSet(const std::string& identifier, Node* startPosition, Node* breakPosition);
         
         llvm::LLVMContext m_context;
         llvm::IRBuilder<> m_builder = llvm::IRBuilder<>(m_context);

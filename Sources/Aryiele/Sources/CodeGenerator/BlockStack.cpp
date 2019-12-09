@@ -42,7 +42,7 @@ namespace Aryiele {
         return current;
     }
 
-    std::shared_ptr<Block> BlockStack::escapeCurrent() {
+    std::shared_ptr<Block> BlockStack::escape() {
         if (current->parent)
             current = current->parent;
         else
@@ -72,8 +72,8 @@ namespace Aryiele {
     }
     
     void
-    BlockStack::addVariable(const std::string &identifier, llvm::AllocaInst *instance, bool isConstant) {
-        addVariable(identifier, std::make_shared<BlockVariable>(instance, isConstant));
+    BlockStack::addVariable(const std::string &identifier, llvm::AllocaInst *instance, Node* initializationNode, bool isConstant) {
+        addVariable(identifier, std::make_shared<BlockVariable>(instance, initializationNode, isConstant));
     }
     
     void BlockStack::addVariable(const std::string &identifier, std::shared_ptr<BlockVariable> variable) {

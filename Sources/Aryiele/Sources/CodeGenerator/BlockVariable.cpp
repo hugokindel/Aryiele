@@ -28,8 +28,8 @@
 #include <Aryiele/CodeGenerator/BlockVariable.h>
 
 namespace Aryiele {
-    BlockVariable::BlockVariable(llvm::AllocaInst *instance, bool isConstant) :
-        instance(instance), isConstant(isConstant) {
+    BlockVariable::BlockVariable(llvm::AllocaInst *instance, Node* initializationNode, bool isConstant) :
+        instance(instance), initializationNode(initializationNode), isConstant(isConstant) {
         
     }
     

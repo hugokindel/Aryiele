@@ -36,9 +36,9 @@ namespace Aryiele {
         BlockStack() = default;
 
         std::shared_ptr<Block> create(bool setAsCurrent = true);
-        std::shared_ptr<Block> escapeCurrent();
+        std::shared_ptr<Block> escape();
         std::shared_ptr<BlockVariable> findVariable(const std::string& identifier);
-        void addVariable(const std::string& identifier, llvm::AllocaInst* instance, bool isConstant = false);
+        void addVariable(const std::string& identifier, llvm::AllocaInst* instance, Node* initializationNode, bool isConstant = false);
         void addVariable(const std::string& identifier, std::shared_ptr<BlockVariable> variable);
 
         std::shared_ptr<Block> current = nullptr;

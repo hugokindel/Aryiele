@@ -74,8 +74,13 @@ namespace Aryiele {
         virtual void dumpAST(std::shared_ptr<ParserInformation> parentNode) = 0;
         virtual NodeEnum getType() = 0;
         virtual std::string getTypeName();
+        virtual int getPositionInParent();
+        virtual bool contains(Node* element);
         
         static std::string getTypeName(NodeEnum nodeType);
+        static int getPositionInParent(Node* node);
+        static int getPositionInParent(std::shared_ptr<Node> node);
+        static bool contains(Node* element, Node* parent);
         
         std::vector<std::shared_ptr<Node>> children;
         std::shared_ptr<Node> parent;

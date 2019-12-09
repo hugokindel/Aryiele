@@ -31,7 +31,7 @@ namespace Aryiele {
     NodeStatementVariableDeclaration::NodeStatementVariableDeclaration(
         std::vector<std::shared_ptr<Variable>> variables) :
         variables(variables) {
-        
+        children = std::vector<std::shared_ptr<Node>>();
     }
 
     void NodeStatementVariableDeclaration::dumpAST(std::shared_ptr<ParserInformation> parentNode) {
