@@ -66,6 +66,9 @@
 #include <Aryiele/AST/Nodes/NodeRoot.h>
 #include <Aryiele/CodeGenerator/BlockStack.h>
 #include <Aryiele/CodeGenerator/GenerationError.h>
+#include <Aryiele/CodeGenerator/Function.h>
+#include <Aryiele/AST/Nodes/NodeStatementBreak.h>
+#include <Aryiele/AST/Nodes/NodeStatementContinue.h>
 
 namespace Aryiele {
     class Node;
@@ -88,21 +91,25 @@ namespace Aryiele {
             llvm::Function *function, const std::string &identifier, llvm::Type *type = nullptr);
         GenerationError generateCode(std::shared_ptr<Node> node);
         GenerationError generateCode(std::vector<std::shared_ptr<Node>> node);
+        
         GenerationError generateCode(NodeTopFunction* node);
-        GenerationError generateCode(NodeOperationTernary* node);
-        GenerationError generateCode(NodeOperationBinary* node);
-        GenerationError generateCode(NodeOperationUnary* node);
         GenerationError generateCode(NodeLiteralNumberFloating* node);
         GenerationError generateCode(NodeLiteralNumberInteger* node);
-        GenerationError generateCode(NodeStatementVariable* node);
+        GenerationError generateCode(NodeOperationUnary* node);
+        GenerationError generateCode(NodeOperationBinary* node);
+        GenerationError generateCode(NodeOperationTernary* node);
+        GenerationError generateCode(NodeStatementBlock* node);
+        GenerationError generateCode(NodeStatementBreak* node);
+        GenerationError generateCode(NodeStatementContinue* node);
+        GenerationError generateCode(NodeStatementFor* node);
         GenerationError generateCode(NodeStatementFunctionCall* node);
         GenerationError generateCode(NodeStatementIf* node);
-        GenerationError generateCode(NodeStatementFor* node);
-        GenerationError generateCode(NodeStatementWhile* node);
-        GenerationError generateCode(NodeStatementSwitch* node);
         GenerationError generateCode(NodeStatementReturn* node);
-        GenerationError generateCode(NodeStatementBlock* node);
+        GenerationError generateCode(NodeStatementSwitch* node);
+        GenerationError generateCode(NodeStatementVariable* node);
         GenerationError generateCode(NodeStatementVariableDeclaration* node);
+        GenerationError generateCode(NodeStatementWhile* node);
+        
         static bool allPathsReturn(Node* node);
         static bool allPathsReturn(std::shared_ptr<Node> node);
         static bool allPathsReturn(std::vector<std::shared_ptr<Node>> node);
@@ -113,6 +120,8 @@ namespace Aryiele {
         std::shared_ptr<llvm::DataLayout> m_dataLayout;
         std::shared_ptr<llvm::Module> m_module;
         std::shared_ptr<BlockStack> m_blockStack;
+        std::vector<llvm::BasicBlock*> m_continueList;
+        std::vector<llvm::BasicBlock*> m_breakList;
     };
     
     CodeGenerator &getCodeGenerator();
