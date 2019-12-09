@@ -41,6 +41,8 @@ namespace Aryiele {
     }
     
     void CodeGenerator::generateCode(std::shared_ptr<NodeRoot> nodeRoot) {
+        m_root = nodeRoot;
+        
         for (auto& file : nodeRoot->body) {
             auto fileNode = std::dynamic_pointer_cast<NodeTopFile>(file);
             
@@ -57,8 +59,10 @@ namespace Aryiele {
         
         // TODO Move print
         std::vector<llvm::Type *> functionTypes(1, llvm::Type::getInt32Ty(m_context));
-        llvm::FunctionType *functionType = llvm::FunctionType::get(llvm::Type::getInt32Ty(m_context), functionTypes, false);
-        llvm::Function *function = llvm::Function::Create(functionType, llvm::Function::ExternalLinkage, "print", m_module.get());
+        llvm::FunctionType *functionType = llvm::FunctionType::get(
+            llvm::Type::getInt32Ty(m_context), functionTypes, false);
+        llvm::Function *function = llvm::Function::Create(
+            functionType, llvm::Function::ExternalLinkage, "print", m_module.get());
         unsigned Idx = 0;
         for (auto &Arg : function->args())
             Arg.setName("value");
@@ -133,15 +137,25 @@ namespace Aryiele {
     }
     
     llvm::Value *CodeGenerator::getTypeDefaultStep(llvm::Type* type) {
-        if (type->isIntegerTy(8) || (type->isIntOrPtrTy() && type->getNumContainedTypes() > 0 && type->getContainedType(0)->isIntegerTy(8))) {
+        if (type->isIntegerTy(8) ||
+            (type->isIntOrPtrTy() && type->getNumContainedTypes() > 0 &&
+             type->getContainedType(0)->isIntegerTy(8))) {
             return llvm::ConstantInt::get(m_context, llvm::APInt(8, 1));
-        } else if (type->isIntegerTy(16) || (type->isIntOrPtrTy() && type->getNumContainedTypes() > 0 && type->getContainedType(0)->isIntegerTy(16))) {
+        } else if (type->isIntegerTy(16) ||
+                  (type->isIntOrPtrTy() && type->getNumContainedTypes() > 0 &&
+                   type->getContainedType(0)->isIntegerTy(16))) {
             return llvm::ConstantInt::get(m_context, llvm::APInt(16, 1));
-        } else if (type->isIntegerTy(32) || (type->isIntOrPtrTy() && type->getNumContainedTypes() > 0 && type->getContainedType(0)->isIntegerTy(32))) {
+        } else if (type->isIntegerTy(32) ||
+                  (type->isIntOrPtrTy() && type->getNumContainedTypes() > 0 &&
+                   type->getContainedType(0)->isIntegerTy(32))) {
             return llvm::ConstantInt::get(m_context, llvm::APInt(32, 1));
-        } else if (type->isIntegerTy(64) || (type->isIntOrPtrTy() && type->getNumContainedTypes() > 0 && type->getContainedType(0)->isIntegerTy(64))) {
+        } else if (type->isIntegerTy(64) ||
+                  (type->isIntOrPtrTy() && type->getNumContainedTypes() > 0 &&
+                   type->getContainedType(0)->isIntegerTy(64))) {
             return llvm::ConstantInt::get(m_context, llvm::APInt(64, 1));
-        } else if (type->isIntegerTy(128) || (type->isIntOrPtrTy() && type->getNumContainedTypes() > 0 && type->getContainedType(0)->isIntegerTy(128))) {
+        } else if (type->isIntegerTy(128) ||
+                  (type->isIntOrPtrTy() && type->getNumContainedTypes() > 0 &&
+                   type->getContainedType(0)->isIntegerTy(128))) {
             return llvm::ConstantInt::get(m_context, llvm::APInt(128, 1));
         } else if (type->isFloatTy()) {
             return llvm::ConstantFP::get(m_context, llvm::APFloat(1.0f));
@@ -180,12 +194,12 @@ namespace Aryiele {
         return value;
     }
     
-    // Definition code from https://llvm.org/docs/tutorial/LangImpl07.html
-    llvm::AllocaInst *
-    CodeGenerator::createEntryBlockAllocation(llvm::Function *function, const std::string &identifier, llvm::Type *type) {
+    llvm::AllocaInst *CodeGenerator::createEntryBlockAllocation(
+        llvm::Function *function, const std::string &identifier, llvm::Type *type) {
         llvm::IRBuilder<> TmpB(&function->getEntryBlock(), function->getEntryBlock().begin());
         
-        return TmpB.CreateAlloca(type == nullptr ? llvm::Type::getInt32Ty(m_context) : type, nullptr, identifier);
+        return TmpB.CreateAlloca(
+            type == nullptr ? llvm::Type::getInt32Ty(m_context) : type, nullptr, identifier);
     }
     
     GenerationError CodeGenerator::generateCode(std::shared_ptr<Node> node) {
@@ -241,6 +255,8 @@ namespace Aryiele {
     }
     
     GenerationError CodeGenerator::generateCode(NodeTopFunction* node) {
+        m_isInFunction = true;
+        
         llvm::Function *function = m_module->getFunction(node->identifier);
         
         if (!function) {
@@ -271,7 +287,8 @@ namespace Aryiele {
         m_builder.SetInsertPoint(basicBlock);
         
         for (auto &argument : function->args()) {
-            llvm::AllocaInst *allocationInstance = createEntryBlockAllocation(function, argument.getName(), argument.getType());
+            llvm::AllocaInst *allocationInstance = createEntryBlockAllocation(
+                function, argument.getName(), argument.getType());
             
             m_builder.CreateStore(&argument, allocationInstance);
             m_blockStack->addVariable(argument.getName(), allocationInstance, node, false);
@@ -292,15 +309,19 @@ namespace Aryiele {
         m_blockStack->escape();
         
         verifyFunction(*function);
+    
+        m_isInFunction = false;
         
         return GenerationError(true, function);
     }
     
     GenerationError CodeGenerator::generateCode(NodeLiteralNumberFloating* node) {
         if (node->value >= FLT_MIN && node->value <= FLT_MAX) {
-            return GenerationError(true, llvm::ConstantFP::get(m_context, llvm::APFloat((float)node->value)));
+            return GenerationError(true, llvm::ConstantFP::get(
+                m_context, llvm::APFloat((float)node->value)));
         } else if (node->value >= DBL_MIN && node->value <= DBL_MAX) {
-            return GenerationError(true, llvm::ConstantFP::get(m_context, llvm::APFloat(node->value)));
+            return GenerationError(true, llvm::ConstantFP::get(
+                m_context, llvm::APFloat(node->value)));
         }
         
         return GenerationError(false);
@@ -308,13 +329,17 @@ namespace Aryiele {
     
     GenerationError CodeGenerator::generateCode(NodeLiteralNumberInteger* node) {
         if (node->value >= CHAR_MIN && node->value <= CHAR_MAX) {
-            return GenerationError(true, llvm::ConstantInt::get(m_builder.getInt8Ty(), node->value));
+            return GenerationError(true, llvm::ConstantInt::get(
+                m_builder.getInt8Ty(), node->value));
         } else if (node->value >= SHRT_MIN && node->value <= SHRT_MAX) {
-            return GenerationError(true, llvm::ConstantInt::get(m_builder.getInt16Ty(), node->value));
+            return GenerationError(true, llvm::ConstantInt::get(
+                m_builder.getInt16Ty(), node->value));
         } else if (node->value >= INT_MIN && node->value <= INT_MAX) {
-            return GenerationError(true, llvm::ConstantInt::get(m_builder.getInt32Ty(), node->value));
+            return GenerationError(true, llvm::ConstantInt::get(
+                m_builder.getInt32Ty(), node->value));
         } else if (node->value >= LONG_MIN && node->value <= LONG_MAX) {
-            return GenerationError(true, llvm::ConstantInt::get(m_builder.getInt64Ty(), node->value));
+            return GenerationError(true, llvm::ConstantInt::get(
+                m_builder.getInt64Ty(), node->value));
         }
         
         return GenerationError(false);
@@ -322,34 +347,64 @@ namespace Aryiele {
     
     GenerationError CodeGenerator::generateCode(NodeOperationUnary* node) {
         if (node->expression->getType() == Node_StatementVariable) {
-            auto variable = std::dynamic_pointer_cast<NodeStatementVariable>(node->expression);
+            auto statement = std::dynamic_pointer_cast<NodeStatementVariable>(node->expression);
+            auto variable = m_blockStack->findVariable(statement->identifier);
+            llvm::GlobalVariable* global = nullptr;
+    
+            if (!variable) {
+                global = m_module->getNamedGlobal(statement->identifier);
+        
+                if (!global) {
+                    LOG_ERROR(
+                        "cannot generate a binary operation: lhs: unknown variable '" + statement->identifier + "'")
             
-            if (m_blockStack->findVariable(variable->identifier)->isConstant && isVariableSet(variable->identifier, m_blockStack->findVariable(variable->identifier)->initializationNode, node)) {
+                    return GenerationError();
+                }
+            }
+    
+            if ((variable &&variable->isConstant && isVariableSet(
+                    statement->identifier, variable->initializationNode, node, false)) ||
+                (global && global->isConstant() && isVariableSet(
+                    statement->identifier, nullptr, node, true))) {
                 LOG_ERROR("cannot redefine a constant")
-                
+        
                 return GenerationError();
             }
         }
-        llvm::Value *value = nullptr;
         
         if ((!node->left && node->operationType == ParserToken_OperatorUnaryArithmeticIncrement) ||
             (!node->left && node->operationType == ParserToken_OperatorUnaryArithmeticDecrement)) {
             auto lhsValue = generateCode(node->expression);
             
             llvm::AllocaInst* alloca = createEntryBlockAllocation(m_builder.GetInsertBlock()->getParent(),
-                                                                  node->operationType == ParserToken_OperatorUnaryArithmeticIncrement ? "inc" : "dec");
+                node->operationType == ParserToken_OperatorUnaryArithmeticIncrement ? "inc" : "dec");
             auto returnValue = m_builder.CreateStore(castType(lhsValue.value, alloca->getType()), alloca);
             
             if (node->expression->getType() == Node_StatementVariable) {
                 llvm::Value* operation = nullptr;
                 
                 if (node->operationType == ParserToken_OperatorUnaryArithmeticIncrement) {
-                    operation = m_builder.CreateAdd(lhsValue.value, getTypeDefaultStep(lhsValue.value->getType()), "add");
+                    operation = m_builder.CreateAdd(lhsValue.value, getTypeDefaultStep(lhsValue.value->getType()),
+                        "add");
                 } else {
-                    operation = m_builder.CreateSub(lhsValue.value, getTypeDefaultStep(lhsValue.value->getType()), "sub");
+                    operation = m_builder.CreateSub(lhsValue.value, getTypeDefaultStep(lhsValue.value->getType()),
+                        "sub");
                 }
                 
-                m_builder.CreateStore(operation, m_blockStack->findVariable(std::dynamic_pointer_cast<NodeStatementVariable>(node->expression)->identifier)->instance);
+                auto variable = m_blockStack->findVariable(
+                    std::dynamic_pointer_cast<NodeStatementVariable>(node->expression)->identifier);
+                llvm::GlobalVariable *global = nullptr;
+                
+                if (!variable) {
+                    global = m_module->getNamedGlobal(
+                        std::dynamic_pointer_cast<NodeStatementVariable>(node->expression)->identifier);
+                }
+                
+                if (variable) {
+                    m_builder.CreateStore(operation, variable->instance);
+                } else {
+                    m_builder.CreateStore(operation, global);
+                }
             }
             
             return GenerationError(true, returnValue->getValueOperand());
@@ -359,13 +414,26 @@ namespace Aryiele {
             llvm::Value* operation = nullptr;
             
             if (node->operationType == ParserToken_OperatorUnaryArithmeticIncrement) {
-                operation = m_builder.CreateAdd(lhsValue.value, getTypeDefaultStep(lhsValue.value->getType()), "add");
+                operation = m_builder.CreateAdd(lhsValue.value, getTypeDefaultStep(lhsValue.value->getType()),
+                    "add");
             } else {
-                operation = m_builder.CreateSub(lhsValue.value, getTypeDefaultStep(lhsValue.value->getType()), "sub");
+                operation = m_builder.CreateSub(lhsValue.value, getTypeDefaultStep(lhsValue.value->getType()),
+                    "sub");
             }
-            
-            if (node->expression->getType() == Node_StatementVariable) {
-                m_builder.CreateStore(operation, m_blockStack->findVariable(std::dynamic_pointer_cast<NodeStatementVariable>(node->expression)->identifier)->instance);
+    
+            auto variable = m_blockStack->findVariable(
+                std::dynamic_pointer_cast<NodeStatementVariable>(node->expression)->identifier);
+            llvm::GlobalVariable *global = nullptr;
+    
+            if (!variable) {
+                global = m_module->getNamedGlobal(
+                    std::dynamic_pointer_cast<NodeStatementVariable>(node->expression)->identifier);
+            }
+    
+            if (variable) {
+                m_builder.CreateStore(operation, variable->instance);
+            } else {
+                m_builder.CreateStore(operation, global);
             }
             
             return GenerationError(true, operation);
@@ -388,8 +456,24 @@ namespace Aryiele {
                 
                 return GenerationError();
             }
+    
+            auto variable = m_blockStack->findVariable(lhs->identifier);
+            llvm::GlobalVariable* global = nullptr;
             
-            if (m_blockStack->findVariable(lhs->identifier)->isConstant && isVariableSet(lhs->identifier, m_blockStack->findVariable(lhs->identifier)->initializationNode, node)) {
+            if (!variable) {
+                global = m_module->getNamedGlobal(lhs->identifier);
+                
+                if (!global) {
+                    LOG_ERROR("cannot generate a binary operation: lhs: unknown variable '" + lhs->identifier + "'")
+    
+                    return GenerationError();
+                }
+            }
+            
+            if ((variable && variable->isConstant &&
+                 isVariableSet(lhs->identifier, variable->initializationNode, node, false)) ||
+                (global && global->isConstant() &&
+                 isVariableSet(lhs->identifier, nullptr, node, true))) {
                 LOG_ERROR("cannot redefine a constant")
                 
                 return GenerationError();
@@ -403,19 +487,22 @@ namespace Aryiele {
                 return GenerationError();
             }
             
-            auto variable = m_blockStack->findVariable(lhs->identifier);
-            
-            if (!variable) {
-                LOG_ERROR("cannot generate a binary operation: lhs: unknown variable '" + lhs->identifier + "'")
-                
-                return GenerationError();
-            }
-            
             if (node->operationType == ParserToken_OperatorEqual) {
-                m_builder.CreateStore(castType(rhsValue.value, variable->instance->getType()), variable->instance);
+                if (variable) {
+                    m_builder.CreateStore(
+                        castType(rhsValue.value, variable->instance->getType()), variable->instance);
+                } else {
+                    m_builder.CreateStore(castType(rhsValue.value, global->getType()), global);
+                }
             } else {
-                auto load = m_builder.CreateLoad(variable->instance, lhs->identifier.c_str());
+                llvm::Value* load = nullptr;
                 llvm::Value* result = nullptr;
+                
+                if (variable) {
+                    load = m_builder.CreateLoad(variable->instance, lhs->identifier.c_str());
+                } else {
+                    load = m_builder.CreateLoad(global, lhs->identifier.c_str());
+                }
                 
                 if (node->operationType == ParserToken_OperatorArithmeticPlusEqual) {
                     result = m_builder.CreateAdd(load, castType(rhsValue.value, load->getType()), "add");
@@ -428,8 +515,12 @@ namespace Aryiele {
                 } else if (node->operationType == ParserToken_OperatorArithmeticRemainderEqual) {
                     result = m_builder.CreateURem(load, castType(rhsValue.value, load->getType()), "urem");
                 }
-                
-                m_builder.CreateStore(castType(result, variable->instance->getType()), variable->instance);
+    
+                if (variable) {
+                    m_builder.CreateStore(castType(result, variable->instance->getType()), variable->instance);
+                } else {
+                    m_builder.CreateStore(castType(result, global->getType()), global);
+                }
             }
             
             return GenerationError(true);
@@ -493,7 +584,8 @@ namespace Aryiele {
     
     GenerationError CodeGenerator::generateCode(NodeOperationTernary *node) {
         auto entryBlock = m_builder.GetInsertBlock();
-        auto ternaryBasicBlock = llvm::BasicBlock::Create(m_context, "_ternary_start", m_builder.GetInsertBlock()->getParent());
+        auto ternaryBasicBlock = llvm::BasicBlock::Create(
+            m_context, "_ternary_start", m_builder.GetInsertBlock()->getParent());
         
         m_builder.CreateBr(ternaryBasicBlock);
         m_builder.SetInsertPoint(ternaryBasicBlock);
@@ -504,16 +596,21 @@ namespace Aryiele {
             return GenerationError();
         }
         
-        auto leftBasicBlock = llvm::BasicBlock::Create(m_context, "_ternary_left", m_builder.GetInsertBlock()->getParent());
-        auto rightBasicBlock = llvm::BasicBlock::Create(m_context, "_ternary_right", m_builder.GetInsertBlock()->getParent());
+        auto leftBasicBlock = llvm::BasicBlock::Create(
+            m_context, "_ternary_left", m_builder.GetInsertBlock()->getParent());
+        auto rightBasicBlock = llvm::BasicBlock::Create(
+            m_context, "_ternary_right", m_builder.GetInsertBlock()->getParent());
         llvm::BasicBlock* endBasicBlock = nullptr;
         llvm::AllocaInst* alloca = nullptr;
         
         if (!allPathsReturn(node->lhs) || !allPathsReturn(node->rhs)) {
-            endBasicBlock = llvm::BasicBlock::Create(m_context, "_ternary_end", m_builder.GetInsertBlock()->getParent());
+            endBasicBlock = llvm::BasicBlock::Create(
+                m_context, "_ternary_end", m_builder.GetInsertBlock()->getParent());
             
-            alloca = createEntryBlockAllocation(m_builder.GetInsertBlock()->getParent(), "v_ternary_temp");
-            m_builder.CreateStore(castType(getTypeDefaultValue("Boolean"), alloca->getType()), alloca);
+            alloca = createEntryBlockAllocation(
+                m_builder.GetInsertBlock()->getParent(), "v_ternary_temp");
+            m_builder.CreateStore(castType(
+                getTypeDefaultValue("Boolean"), alloca->getType()), alloca);
         }
         
         m_builder.CreateCondBr(condition.value, leftBasicBlock, rightBasicBlock);
@@ -630,7 +727,8 @@ namespace Aryiele {
         if (node->variable && node->variable->getType() == Node_StatementVariableDeclaration) {
             auto var = std::dynamic_pointer_cast<NodeStatementVariableDeclaration>(node->variable);
             
-            alloca = createEntryBlockAllocation(m_builder.GetInsertBlock()->getParent(), var->variables[0]->identifier);
+            alloca = createEntryBlockAllocation(
+                m_builder.GetInsertBlock()->getParent(), var->variables[0]->identifier);
             startValue = generateCode(var->variables[0]->expression).value;
             m_builder.CreateStore(castType(startValue, alloca->getType()), alloca);
         }
@@ -640,7 +738,8 @@ namespace Aryiele {
         
         if (node->variable && node->variable->getType() == Node_StatementVariableDeclaration) {
             auto var = std::dynamic_pointer_cast<NodeStatementVariableDeclaration>(node->variable);
-            m_blockStack->addVariable(var->variables[0]->identifier, alloca, node->variable.get(), false);
+            m_blockStack->addVariable(
+                var->variables[0]->identifier, alloca, node->variable.get(), false);
         }
         
         llvm::Value* stepValue = nullptr;
@@ -650,7 +749,8 @@ namespace Aryiele {
         } else if (node->variable && node->variable->getType() == Node_StatementVariableDeclaration) {
             stepValue = getTypeDefaultStep(startValue->getType());
         } else if (node->variable) {
-            stepValue = getTypeDefaultStep(m_blockStack->findVariable(std::dynamic_pointer_cast<NodeStatementVariable>(node->variable)->identifier)->instance->getType());
+            stepValue = getTypeDefaultStep(m_blockStack->findVariable(
+                std::dynamic_pointer_cast<NodeStatementVariable>(node->variable)->identifier)->instance->getType());
         }
         
         auto endCondition = generateCode(node->condition).value;
@@ -675,15 +775,21 @@ namespace Aryiele {
                 std::string identifier;
                 
                 if (node->variable->getType() == Node_StatementVariableDeclaration) {
-                    identifier = std::dynamic_pointer_cast<NodeStatementVariableDeclaration>(node->variable)->variables[0]->identifier;
+                    identifier = std::dynamic_pointer_cast<NodeStatementVariableDeclaration>(
+                        node->variable)->variables[0]->identifier;
                     auto currentVar = m_builder.CreateLoad(alloca, identifier);
-                    auto nextVar = m_builder.CreateAdd(currentVar, castType(stepValue, currentVar->getType()), "v_for_next");
+                    auto nextVar = m_builder.CreateAdd(
+                        currentVar, castType(stepValue, currentVar->getType()), "v_for_next");
                     m_builder.CreateStore(nextVar, alloca);
                 } else {
                     identifier = std::dynamic_pointer_cast<NodeStatementVariable>(node->variable)->identifier;
-                    auto currentVar = m_builder.CreateLoad(m_blockStack->findVariable(std::dynamic_pointer_cast<NodeStatementVariable>(node->variable)->identifier)->instance, identifier);
-                    auto nextVar = m_builder.CreateAdd(currentVar, castType(stepValue, currentVar->getType()), "v_for_next");
-                    m_builder.CreateStore(nextVar, m_blockStack->findVariable(std::dynamic_pointer_cast<NodeStatementVariable>(node->variable)->identifier)->instance);
+                    auto currentVar = m_builder.CreateLoad(m_blockStack->findVariable(
+                        std::dynamic_pointer_cast<NodeStatementVariable>(node->variable)->identifier)->instance,
+                            identifier);
+                    auto nextVar = m_builder.CreateAdd(
+                        currentVar, castType(stepValue, currentVar->getType()), "v_for_next");
+                    m_builder.CreateStore(nextVar, m_blockStack->findVariable(
+                        std::dynamic_pointer_cast<NodeStatementVariable>(node->variable)->identifier)->instance);
                 }
             }
             
@@ -735,10 +841,12 @@ namespace Aryiele {
         }
         
         if (calledFunction->getReturnType()->isVoidTy()) {
-            return GenerationError(true, m_builder.CreateCall(calledFunction, argumentsValues, ""));
+            return GenerationError(
+                true, m_builder.CreateCall(calledFunction, argumentsValues, ""));
         }
         
-        return GenerationError(true, m_builder.CreateCall(calledFunction, argumentsValues, "call"));
+        return GenerationError(
+            true, m_builder.CreateCall(calledFunction, argumentsValues, "call"));
     }
     
     GenerationError CodeGenerator::generateCode(NodeStatementIf* node) {
@@ -757,11 +865,13 @@ namespace Aryiele {
             elseBasicBlock = llvm::BasicBlock::Create(m_context, "_if_else", function);
         }
         
-        if (!allPathsReturn(node->ifBody) || node->elseBody.empty() || (!node->elseBody.empty() && !allPathsReturn(node->elseBody))) {
+        if (!allPathsReturn(node->ifBody) ||
+        node->elseBody.empty() || (!node->elseBody.empty() && !allPathsReturn(node->elseBody))) {
             mergeBasicBlock = llvm::BasicBlock::Create(m_context, "_if_end", function);
         }
         
-        m_builder.CreateCondBr(conditionValue.value, ifBasicBlock, !node->elseBody.empty() ? elseBasicBlock : mergeBasicBlock);
+        m_builder.CreateCondBr(
+            conditionValue.value, ifBasicBlock, !node->elseBody.empty() ? elseBasicBlock : mergeBasicBlock);
         
         m_builder.SetInsertPoint(ifBasicBlock);
         m_blockStack->create();
@@ -825,7 +935,8 @@ namespace Aryiele {
             error.value = castType(error.value, m_builder.getCurrentFunctionReturnType(), true);
         }
         
-        m_builder.CreateRet(castType(error.value, m_builder.GetInsertBlock()->getParent()->getReturnType()));
+        m_builder.CreateRet(
+            castType(error.value, m_builder.GetInsertBlock()->getParent()->getReturnType()));
         
         return GenerationError(true, error.value);
     }
@@ -838,7 +949,8 @@ namespace Aryiele {
         auto function = m_builder.GetInsertBlock()->getParent();
         auto entryBlock = m_builder.GetInsertBlock();
         auto switchDefault = llvm::BasicBlock::Create(m_context, "_switch_default", function);
-        auto switchEnd = !allPathsReturn(node) ? llvm::BasicBlock::Create(m_context, "_switch_end", function) : nullptr;
+        auto switchEnd = !allPathsReturn(node) ? llvm::BasicBlock::Create(m_context, "_switch_end", function)
+            : nullptr;
         auto expressionValue = generateCode(node->expression);
         
         if (!expressionValue.value) {
@@ -877,7 +989,8 @@ namespace Aryiele {
             auto switchCase = llvm::BasicBlock::Create(m_context, "_switch_case", function);
             auto conditionValue = generateCode(caseNode->expression);
             
-            switchInst->addCase(llvm::dyn_cast<llvm::ConstantInt>(castType(conditionValue.value, expressionValue.value->getType())), switchCase);
+            switchInst->addCase(llvm::dyn_cast<llvm::ConstantInt>(
+                castType(conditionValue.value, expressionValue.value->getType())), switchCase);
             
             m_builder.SetInsertPoint(switchCase);
             
@@ -907,39 +1020,72 @@ namespace Aryiele {
         auto value = m_blockStack->findVariable(node->identifier);
         
         if (!value) {
-            LOG_ERROR("unknown variable: ", node->identifier)
+            auto gValue = m_module->getNamedGlobal(node->identifier);
+            
+            if (!gValue) {
+                LOG_ERROR("unknown variable: ", node->identifier)
+            }
+    
+            return GenerationError(true, m_builder.CreateLoad(gValue, node->identifier.c_str()));
         }
         
         return GenerationError(true, m_builder.CreateLoad(value->instance, node->identifier.c_str()));
     }
     
     GenerationError CodeGenerator::generateCode(NodeStatementVariableDeclaration *node) {
-        llvm::Function *function = m_builder.GetInsertBlock()->getParent();
-        llvm::Value* value;
+        if (m_isInFunction) {
+            llvm::Function *function = m_builder.GetInsertBlock()->getParent();
+            for (auto &variable : node->variables) {
+                GenerationError error;
         
-        for (auto &variable : node->variables) {
-            GenerationError error;
+                if (variable->expression) {
+                    error = generateCode(variable->expression);
             
-            if (variable->expression) {
-                error = generateCode(variable->expression);
+                    if (!error.success) {
+                        LOG_ERROR("cannot generate declaration of a variable")
                 
-                if (!error.success) {
-                    LOG_ERROR("cannot generate declaration of a variable")
+                        return GenerationError();
+                    }
+                }
+                else if (!variable->isConstant) {
+                    error.value = getTypeDefaultValue(variable->type);
+                }
+        
+                llvm::AllocaInst *allocationInstance = createEntryBlockAllocation(function, variable->identifier);
+        
+                if (error.value) {
+                    m_builder.CreateStore(castType(error.value, allocationInstance->getType()), allocationInstance);
+                }
+        
+                m_blockStack->addVariable(variable->identifier, allocationInstance, node, variable->isConstant);
+            }
+        } else {
+            for (auto &variable : node->variables) {
+                GenerationError error;
+        
+                if (variable->expression) {
+                    error = generateCode(variable->expression);
+            
+                    if (!error.success) {
+                        LOG_ERROR("cannot generate declaration of a variable")
+                
+                        return GenerationError();
+                    }
+                }
+                else if (!variable->isConstant) {
+                    error.value = getTypeDefaultValue(variable->type);
+                }
+        
+                if (error.value) {
+                    m_module->getOrInsertGlobal(variable->identifier,
+                        !variable->type.empty() ? getType(variable->type) : error.value->getType());
                     
-                    return GenerationError();
+                    m_module->getNamedGlobal(variable->identifier)->setInitializer(
+                        llvm::dyn_cast<llvm::ConstantInt>(!variable->type.empty() ? castType(
+                            error.value, getType(variable->type)) : error.value));
+                    m_module->getNamedGlobal(variable->identifier)->setConstant(variable->isConstant);
                 }
             }
-            else if (!variable->isConstant) {
-                error.value = getTypeDefaultValue(variable->type);
-            }
-            
-            llvm::AllocaInst *allocationInstance = createEntryBlockAllocation(function, variable->identifier);
-            
-            if (error.value) {
-                m_builder.CreateStore(castType(error.value, allocationInstance->getType()), allocationInstance);
-            }
-            
-            m_blockStack->addVariable(variable->identifier, allocationInstance, node, variable->isConstant);
         }
         
         return GenerationError(true);
@@ -955,15 +1101,19 @@ namespace Aryiele {
         llvm::BasicBlock* whileDoBasicBlock = nullptr;
         
         if (node->doOnce) {
-            whileDoBasicBlock = llvm::BasicBlock::Create(m_context, "_do_while_start", function);
+            whileDoBasicBlock = llvm::BasicBlock::Create(
+                m_context, "_do_while_start", function);
         }
         
-        auto whileBasicBlock = llvm::BasicBlock::Create(m_context, node->doOnce ? "_do_while_condition" : "_while_start", function);
-        auto whileBodyBasicBlock = llvm::BasicBlock::Create(m_context, node->doOnce ? "_do_while_body" : "_while_body", function);
+        auto whileBasicBlock = llvm::BasicBlock::Create(
+            m_context, node->doOnce ? "_do_while_condition" : "_while_start", function);
+        auto whileBodyBasicBlock = llvm::BasicBlock::Create(
+            m_context, node->doOnce ? "_do_while_body" : "_while_body", function);
         llvm::BasicBlock* whileEndBasicBlock = nullptr;
         
         if (!allPathsReturn(node->body)) {
-            whileEndBasicBlock = llvm::BasicBlock::Create(m_context, node->doOnce ? "_do_while_end" : "_while_end", function);
+            whileEndBasicBlock = llvm::BasicBlock::Create(
+                m_context, node->doOnce ? "_do_while_end" : "_while_end", function);
             
             m_continueList.emplace_back(whileBasicBlock);
             m_breakList.emplace_back(whileEndBasicBlock);
@@ -1011,6 +1161,157 @@ namespace Aryiele {
         }
         
         return GenerationError(true);
+    }
+    
+    bool CodeGenerator::isVariableSet(
+        const std::string &identifier, Node *startPosition, Node *breakPosition, bool global) {
+        
+        if (global) {
+            startPosition = m_root->children[0]->children[0].get();
+        }
+        if (!startPosition) {
+            return false;
+        }
+        
+        //LOG("================================================================")
+        //LOG("breakPosition: ", breakPosition, " - ", breakPosition->getTypeName())
+        //LOG("----------------")
+        
+        auto parent = startPosition->parent;
+        auto positionInParent = startPosition->getPositionInParent();
+        
+        for (int i = positionInParent; i < parent->children.size(); i++) {
+            auto currentPosition = parent->children[i].get();
+            
+            if (!currentPosition) {
+                continue;
+            }
+            
+            //LOG(i, ": currentPosition: ", currentPosition, " - ", currentPosition->getTypeName())
+            
+            if (parent->getType() == Node_StatementIf) {
+                auto parentNode = (NodeStatementIf*)(parent.get());
+                
+                bool inIf = false;
+                bool inElse = false;
+                
+                for (auto& statement : parentNode->ifBody) {
+                    if (statement && (statement.get() == breakPosition || statement->contains(breakPosition))) {
+                        inIf = true;
+                    }
+                }
+                
+                for (auto& statement : parentNode->elseBody) {
+                    if (statement && (statement.get() == breakPosition || statement->contains(breakPosition))) {
+                        inElse = true;
+                    }
+                }
+                
+                if ((inIf && std::find(parentNode->ifBody.begin(),
+                                       parentNode->ifBody.end(), parentNode->children[i]) == parentNode->ifBody.end()) ||
+                    (inElse && std::find(parentNode->elseBody.begin(),
+                                         parentNode->elseBody.end(), parentNode->children[i]) == parentNode->elseBody.end())) {
+                    break;
+                }
+            } else if (parent->getType() == Node_StatementSwitch) {
+                auto parentNode = (NodeStatementSwitch*)(parent.get());
+                
+                bool inCase = false;
+                int caseNumber = 0;
+                
+                for (auto& caseNode : parentNode->cases) {
+                    auto caseNodePtr = (NodeStatementCase*)(parent.get());
+                    
+                    for (auto& statement : caseNodePtr->body) {
+                        if (statement && (statement.get() == breakPosition || statement->contains(breakPosition))) {
+                            inCase = true;
+                            break;
+                        }
+                    }
+                    
+                    if (inCase) {
+                        break;
+                    }
+                    
+                    caseNumber++;
+                }
+                
+                if (inCase && i == caseNumber + 1) {
+                    break;
+                }
+            }
+            
+            if (currentPosition == breakPosition) {
+                break;
+            } else if (currentPosition->getType() == Node_StatementVariableDeclaration) {
+                auto currentNode = (NodeStatementVariableDeclaration*)currentPosition;
+                
+                for (auto& variable : currentNode->variables) {
+                    if (variable->identifier == identifier && variable->expression) {
+                        return true;
+                    }
+                }
+            } else if (currentPosition->getType() == Node_OperationBinary) {
+                auto currentNode = (NodeOperationBinary*)currentPosition;
+                
+                if ((currentNode->operationType == ParserToken_OperatorEqual ||
+                     currentNode->operationType == ParserToken_OperatorArithmeticPlusEqual ||
+                     currentNode->operationType == ParserToken_OperatorArithmeticMinusEqual ||
+                     currentNode->operationType == ParserToken_OperatorArithmeticMultiplyEqual ||
+                     currentNode->operationType == ParserToken_OperatorArithmeticDivideEqual ||
+                     currentNode->operationType == ParserToken_OperatorArithmeticRemainderEqual) &&
+                    ((NodeStatementVariable*)(currentNode->lhs.get()))->identifier == identifier) {
+                    return true;
+                }
+            } else if (currentPosition->getType() == Node_OperationUnary) {
+                auto currentNode = (NodeOperationUnary*)currentPosition;
+                
+                if ((currentNode->operationType == ParserToken_OperatorUnaryArithmeticIncrement ||
+                     currentNode->operationType == ParserToken_OperatorUnaryArithmeticDecrement) &&
+                    ((NodeStatementVariable*)(currentNode->expression.get()))->identifier == identifier) {
+                    return true;
+                }
+            } else if (currentPosition->getType() == Node_StatementIf) {
+                auto currentNode = (NodeStatementIf*)currentPosition;
+                
+                if (currentNode->children.size() > 1 &&
+                    isVariableSet(identifier, currentNode->children[1].get(), breakPosition, global)) {
+                    return true;
+                }
+            } else if (currentPosition->getType() == Node_StatementSwitch) {
+                auto currentNode = (NodeStatementSwitch*)currentPosition;
+                
+                if (currentNode->children.size() > 1 &&
+                    isVariableSet(identifier, currentNode->children[1].get(), breakPosition, global)) {
+                    return true;
+                }
+            } else if (currentPosition->getType() == Node_StatementFor) {
+                auto currentNode = (NodeStatementFor*)currentPosition;
+                
+                if (currentNode->children.size() > 3 &&
+                    isVariableSet(identifier, currentNode->children[3].get(), breakPosition, global)) {
+                    return true;
+                }
+            } else if (currentPosition->getType() == Node_StatementWhile) {
+                auto currentNode = (NodeStatementWhile*)currentPosition;
+                
+                if (currentNode->children.size() > 1 &&
+                    isVariableSet(identifier, currentNode->children[1].get(), breakPosition, global)) {
+                    return true;
+                }
+            } else if (global && currentPosition->getType() == Node_TopFunction) {
+                auto currentNode = (NodeTopFunction*)currentPosition;
+                
+                if (isVariableSet(identifier, currentNode->children[0].get(), breakPosition, global)) {
+                    return true;
+                }
+            } else if (!currentPosition->children.empty() && isVariableSet(identifier,
+                currentPosition->children[0].get(), breakPosition, global)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     bool CodeGenerator::allPathsReturn(Node* node) {
@@ -1087,143 +1388,6 @@ namespace Aryiele {
     bool CodeGenerator::allPathsReturn(std::vector<std::shared_ptr<Node>> nodes) {
         for (auto& statement : nodes) {
             if (allPathsReturn(statement)) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
-    
-    bool CodeGenerator::isVariableSet(const std::string &identifier, Node *startPosition, Node *breakPosition) {
-        if (!startPosition) {
-            return false;
-        }
-        
-        //LOG("================================================================")
-        //LOG("breakPosition: ", breakPosition, " - ", breakPosition->getTypeName())
-        //LOG("----------------")
-        
-        auto parent = startPosition->parent;
-        auto positionInParent = startPosition->getPositionInParent();
-        
-        for (int i = positionInParent; i < parent->children.size(); i++) {
-            auto currentPosition = parent->children[i].get();
-            
-            if (!currentPosition) {
-                continue;
-            }
-    
-            //LOG(i, ": currentPosition: ", currentPosition, " - ", currentPosition->getTypeName())
-            
-            if (parent->getType() == Node_StatementIf) {
-                auto parentNode = (NodeStatementIf*)(parent.get());
-    
-                bool inIf = false;
-                bool inElse = false;
-    
-                for (auto& statement : parentNode->ifBody) {
-                    if (statement && (statement.get() == breakPosition || statement->contains(breakPosition))) {
-                        inIf = true;
-                    }
-                }
-    
-                for (auto& statement : parentNode->elseBody) {
-                    if (statement && (statement.get() == breakPosition || statement->contains(breakPosition))) {
-                        inElse = true;
-                    }
-                }
-    
-                if ((inIf && std::find(parentNode->ifBody.begin(), parentNode->ifBody.end(), parentNode->children[i]) == parentNode->ifBody.end()) ||
-                    (inElse && std::find(parentNode->elseBody.begin(), parentNode->elseBody.end(), parentNode->children[i]) == parentNode->elseBody.end())) {
-                    break;
-                }
-            } else if (parent->getType() == Node_StatementSwitch) {
-                auto parentNode = (NodeStatementSwitch*)(parent.get());
-    
-                bool inCase = false;
-                int caseNumber = 0;
-                
-                for (auto& caseNode : parentNode->cases) {
-                    auto caseNodePtr = (NodeStatementCase*)(parent.get());
-                    
-                    for (auto& statement : caseNodePtr->body) {
-                        if (statement && (statement.get() == breakPosition || statement->contains(breakPosition))) {
-                            inCase = true;
-                            break;
-                        }
-                    }
-                    
-                    if (inCase) {
-                        break;
-                    }
-                    
-                    caseNumber++;
-                }
-    
-                if (inCase && i == caseNumber + 1) {
-                    break;
-                }
-            }
-            
-            if (currentPosition == breakPosition) {
-                break;
-            } else if (currentPosition->getType() == Node_StatementVariableDeclaration) {
-                auto currentNode = (NodeStatementVariableDeclaration*)currentPosition;
-    
-                for (auto& variable : currentNode->variables) {
-                    if (variable->identifier == identifier && variable->expression) {
-                        return true;
-                    }
-                }
-            } else if (currentPosition->getType() == Node_OperationBinary) {
-                auto currentNode = (NodeOperationBinary*)currentPosition;
-    
-                if ((currentNode->operationType == ParserToken_OperatorEqual ||
-                     currentNode->operationType == ParserToken_OperatorArithmeticPlusEqual ||
-                     currentNode->operationType == ParserToken_OperatorArithmeticMinusEqual ||
-                     currentNode->operationType == ParserToken_OperatorArithmeticMultiplyEqual ||
-                     currentNode->operationType == ParserToken_OperatorArithmeticDivideEqual ||
-                     currentNode->operationType == ParserToken_OperatorArithmeticRemainderEqual) &&
-                    ((NodeStatementVariable*)(currentNode->lhs.get()))->identifier == identifier) {
-                    return true;
-                }
-            } else if (currentPosition->getType() == Node_OperationUnary) {
-                auto currentNode = (NodeOperationUnary*)currentPosition;
-    
-                if ((currentNode->operationType == ParserToken_OperatorUnaryArithmeticIncrement ||
-                     currentNode->operationType == ParserToken_OperatorUnaryArithmeticDecrement) &&
-                    ((NodeStatementVariable*)(currentNode->expression.get()))->identifier == identifier) {
-                    return true;
-                }
-            } else if (currentPosition->getType() == Node_StatementIf) {
-                auto currentNode = (NodeStatementIf*)currentPosition;
-                
-                if (currentNode->children.size() > 1 &&
-                    isVariableSet(identifier, currentNode->children[1].get(), breakPosition)) {
-                    return true;
-                }
-            } else if (currentPosition->getType() == Node_StatementSwitch) {
-                auto currentNode = (NodeStatementSwitch*)currentPosition;
-    
-                if (currentNode->children.size() > 1 &&
-                    isVariableSet(identifier, currentNode->children[1].get(), breakPosition)) {
-                    return true;
-                }
-            } else if (currentPosition->getType() == Node_StatementFor) {
-                auto currentNode = (NodeStatementFor*)currentPosition;
-    
-                if (currentNode->children.size() > 3 &&
-                    isVariableSet(identifier, currentNode->children[3].get(), breakPosition)) {
-                    return true;
-                }
-            } else if (currentPosition->getType() == Node_StatementWhile) {
-                auto currentNode = (NodeStatementWhile*)currentPosition;
-    
-                if (currentNode->children.size() > 1 &&
-                    isVariableSet(identifier, currentNode->children[1].get(), breakPosition)) {
-                    return true;
-                }
-            } else if (!currentPosition->children.empty() && isVariableSet(identifier, currentPosition->children[0].get(), breakPosition)) {
                 return true;
             }
         }

@@ -69,6 +69,7 @@
 #include <Aryiele/CodeGenerator/Function.h>
 #include <Aryiele/AST/Nodes/NodeStatementBreak.h>
 #include <Aryiele/AST/Nodes/NodeStatementContinue.h>
+#include <Aryiele/AST/Nodes/NodeRoot.h>
 
 namespace Aryiele {
     class Node;
@@ -109,11 +110,12 @@ namespace Aryiele {
         GenerationError generateCode(NodeStatementVariable* node);
         GenerationError generateCode(NodeStatementVariableDeclaration* node);
         GenerationError generateCode(NodeStatementWhile* node);
+    
+        bool isVariableSet(const std::string& identifier, Node* startPosition, Node* breakPosition, bool global);
         
         static bool allPathsReturn(Node* node);
         static bool allPathsReturn(std::shared_ptr<Node> node);
         static bool allPathsReturn(std::vector<std::shared_ptr<Node>> node);
-        static bool isVariableSet(const std::string& identifier, Node* startPosition, Node* breakPosition);
         
         llvm::LLVMContext m_context;
         llvm::IRBuilder<> m_builder = llvm::IRBuilder<>(m_context);
@@ -122,6 +124,8 @@ namespace Aryiele {
         std::shared_ptr<BlockStack> m_blockStack;
         std::vector<llvm::BasicBlock*> m_continueList;
         std::vector<llvm::BasicBlock*> m_breakList;
+        std::shared_ptr<NodeRoot> m_root;
+        bool m_isInFunction;
     };
     
     CodeGenerator &getCodeGenerator();

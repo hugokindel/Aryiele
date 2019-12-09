@@ -89,6 +89,10 @@ namespace Aryiele {
                 m_nodes.emplace_back(parseFunction());
             } else if (m_currentToken.type == ParserToken_KeywordNamespace) {
                 m_nodes.emplace_back(parseNamespace());
+            } else if (m_currentToken.type == ParserToken_KeywordVar) {
+                m_nodes.emplace_back(parseVariableDeclaration());
+            } else if (m_currentToken.type == ParserToken_KeywordLet) {
+                m_nodes.emplace_back(parseVariableDeclaration(true));
             }
         }
         

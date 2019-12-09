@@ -36,17 +36,19 @@ namespace Aryiele {
             current->children.emplace_back(block);
         }
 
-        if (setAsCurrent)
+        if (setAsCurrent) {
             current = block;
+        }
 
         return current;
     }
 
     std::shared_ptr<Block> BlockStack::escape() {
-        if (current->parent)
+        if (current->parent) {
             current = current->parent;
-        else
+        } else {
             current = nullptr;
+        }
 
         return current;
     }
@@ -55,17 +57,20 @@ namespace Aryiele {
         auto block = current;
         std::shared_ptr<BlockVariable> variable = nullptr;
 
-        if (block->variables.find(identifier) != block->variables.end())
+        if (block->variables.find(identifier) != block->variables.end()) {
             variable = current->variables[identifier];
+        }
 
         while (!variable) {
             block = block->parent;
 
-            if (!block)
+            if (!block) {
                 break;
+            }
 
-            if (block->variables.find(identifier) != block->variables.end())
+            if (block->variables.find(identifier) != block->variables.end()) {
                 variable = block->variables[identifier];
+            }
         }
 
         return variable;
