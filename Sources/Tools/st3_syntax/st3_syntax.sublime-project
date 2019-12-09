@@ -1,0 +1,15 @@
+{
+	"folders":
+	[
+		{
+			"path": "."
+		}
+	],
+	"build_systems":
+	[
+		{
+			"name": "Python: Build",
+			"shell_cmd": "py ./build.py"
+		}
+	]
+}
